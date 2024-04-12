@@ -1,4 +1,10 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿const tabs = document.querySelectorAll('.nav-item');
+const currentPath = window.location.pathname;
+tabs.forEach(tab => {
+    const tabLink = tab.querySelector('a');
+    if (tabLink && tabLink.getAttribute('href') === currentPath) {
+        tab.classList.add('active');
+    } else {
+        tab.classList.remove('active');
+    }
+});
