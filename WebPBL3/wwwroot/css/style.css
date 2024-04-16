@@ -9963,14 +9963,17 @@ textarea.form-control {
     margin-bottom: 4px;
     font-weight: 400; }
     .block-27 ul li a, .block-27 ul li span {
-      color: #1089ff;
-      text-align: center;
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      line-height: 40px;
-      border-radius: 50%;
-      border: 1px solid #e6e6e6; }
+        color: #1089ff;
+        text-align: center;
+        display: flex;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        border: 1px solid #e6e6e6;
+        justify-content: center;
+        align-items: center;
+    }
     .block-27 ul li.active a, .block-27 ul li.active span {
       background: #1089ff;
       color: #fff;
@@ -10353,3 +10356,86 @@ textarea.form-control {
   100% {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: -136px; } }
+
+.car-wrap .img {
+    background-size: cover;
+    background-position: center;
+    height: 200px;
+    transition: transform 0.3s ease;
+}
+
+.car-wrap:hover .img {
+    transform: scale(1.05);
+}
+
+.car__item {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.car__item__pic__slider {
+    position: relative;
+}
+
+    .car__item__pic__slider img {
+        width: 100%;
+        height: auto;
+    }
+
+.car__item__text {
+    background-color: #fff;
+    padding: 20px;
+}
+
+.label-date {
+    background-color: #333;
+    color: #fff;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+
+.car__item__text__inner h5 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.car__item__text__inner ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .car__item__text__inner ul li {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+.car__item__price {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+.car-option {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.car__item__price h6 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.car__item__price span {
+    font-size: 16px;
+}
