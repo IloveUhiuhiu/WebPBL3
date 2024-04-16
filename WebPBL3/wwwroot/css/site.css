@@ -20,3 +20,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+.bg-breadcrumb {
+    background: linear-gradient(rgba(19, 53, 123, 0.5), rgba(19, 53, 123, 0.5)), url('https://watermark.lovepik.com/photo/20211122/large/lovepik-car-sales-staff-introduce-cars-picture_500676932.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 80vh;
+}
