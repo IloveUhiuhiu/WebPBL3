@@ -1,4 +1,4 @@
-﻿<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_3.jpg');" data-stellar-background-ratio="0.5">
+﻿<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_0.jpg');" data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
     <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
@@ -20,7 +20,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="images/bmw-2-series-gran-coupe-front-watermarked.jpg" />
+                            <img src="~/images/1.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -31,7 +31,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="~/images/1.jpg" />
+                            <img src="~/images/2-10.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -41,7 +41,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="~/images/2-10.jpg" />
+                            <img src="~/images/bmw-2-series-gran-coupe-front-watermarked.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -91,7 +91,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="~/images/2-10.jpg" />
+                            <img src="~/images/icon-m-u-aumgpos5a9.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -101,7 +101,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="~/images/image003-1.jpg" />
+                            <img src="~/images/icon-m-u-aumgpos5a9.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -111,7 +111,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="~/images/image_5.jpg" />
+                            <img src="~/images/image_4.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -121,7 +121,7 @@
                 <div class="box">
                     <a href="">
                         <div class="anh">
-                            <img src="~/images/bmw-2-series-gran-coupe-front-watermarked.jpg" />
+                            <img src="~/images/car-7.jpg" />
                         </div>
                         <h4>Bmw 2 series</h4>
                         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores, minus! Velit quidem impedit, nostrum magni labore odio, sunt a officiis ipsa mollitia numquam laudantium deleniti veritatis incidunt, enim totam ut?</p>
@@ -131,3 +131,53 @@
         </div>
     </div>
 </div>
+
+<!-- phân trang -->
+<div class="pagination">
+    <a href="#" class="prev">&laquo; Trang trước</a>
+    <a href="#" class="next">Trang tiếp theo &raquo;</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var currentPage = 1;
+        var itemsPerPage = 8; // Số lượng tin tức trên mỗi trang
+        var items = document.querySelectorAll('.box'); // Lấy danh sách các tin tức
+        var totalPages = Math.ceil(items.length / itemsPerPage); // Tính tổng số trang
+
+        function showPage(page) {
+            var startIndex = (page - 1) * itemsPerPage;
+            var endIndex = startIndex + itemsPerPage;
+
+            items.forEach(function (item, index) {
+                if (index >= startIndex && index < endIndex) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Hiển thị trang đầu tiên khi trang được tải
+        showPage(currentPage);
+
+        // Xử lý sự kiện click trên nút Trang trước
+        document.querySelector('.prev').addEventListener('click', function (e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        });
+
+        // Xử lý sự kiện click trên nút Trang tiếp theo
+        document.querySelector('.next').addEventListener('click', function (e) {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        });
+    });
+
+</script>

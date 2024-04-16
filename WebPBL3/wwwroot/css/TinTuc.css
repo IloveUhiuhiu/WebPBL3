@@ -1,16 +1,19 @@
 .section1{
     color: black;
+    margin: auto;
     font-family: segoe ui;
-    margin-top: 200px;
-    margin-bottom: 200px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    width: 1440px;
 }
 .anh{
     width: 100%;
-    height: 200px;
+    height: 180px;
     overflow: hidden;
 }
 img{
     width: 100%;
+    height: 100%
 }
 a{
     text-decoration: none;
@@ -18,7 +21,11 @@ a{
 }
 .box {
     overflow: hidden;
-    transition:  0.8s;
+    transition: 0.8s;
+    border: 1px solid rgb(228, 220, 220);
+    margin-bottom: 20px;
+    border-radius: 10px;
+    height: 354px;
 }
 
 .box:hover img {
@@ -28,3 +35,43 @@ a{
 .box:hover h4{
     color: red;
 }
+h4{
+    font-size: 15px;
+   margin-top: 7px;
+   margin-left: 10px;
+}
+p {
+    margin-top: -10px;
+    margin-left: 10px;
+    font-size: 13px
+}
+
+/*phân trang*/
+/* phân trang */
+.pagination {
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.pagination a {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 45px;
+        color: #333;
+        text-decoration: none;
+        margin-right: 20px;
+}
+
+    .pagination a:hover {
+        /*background-color: #8C222A;*/
+        transform: scale(1.1);
+    }
+
+.pagination .prev,
+.pagination .next {
+        font-weight: bold;
+}
+  
