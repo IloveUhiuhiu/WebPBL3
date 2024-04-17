@@ -75,10 +75,6 @@ a {
 header {
     width: 1480px;
     max-width: 100%;
-    margin: auto;
-    height: 50px;
-    display: flex;
-    align-items: center;
     position: relative;
     z-index: 100;
 }
@@ -9062,6 +9058,7 @@ h1, h2,  h4, h5,
         .car-wrap .text .price {
             color: #1089ff;
             margin-bottom: 0;
+            margin-top: 10px; /* Điều chỉnh khoảng cách từ phía dưới */
             font-weight: 600;
             display: flex;
             justify-content: center;
@@ -9224,6 +9221,52 @@ h1, h2,  h4, h5,
 
 .car-list {
   overflow-x: scroll; }
+
+.check {
+    list-style-type: none; /* Loại bỏ dấu đầu dòng của danh sách */
+    margin-bottom: 10px; /* Khoảng cách dưới giữa các mục */
+}
+
+    .check i {
+        margin-right: 5px; /* Khoảng cách bên phải giữa biểu tượng và văn bản */
+        color: green; /* Màu của biểu tượng */
+        font-size: 1.2em; /* Kích thước của biểu tượng */
+    }
+
+    .check:hover {
+        background-color: #f0f0f0; /* Màu nền khi rê chuột qua mục */
+    }
+
+.remove {
+    list-style-type: none; /* Loại bỏ dấu đầu dòng của danh sách */
+    margin-bottom: 10px; /* Khoảng cách dưới giữa các mục */
+}
+
+    .remove i {
+        margin-right: 5px; /* Khoảng cách bên phải giữa biểu tượng và văn bản */
+        color: red; /* Màu của biểu tượng */
+        font-size: 1.2em; /* Kích thước của biểu tượng */
+    }
+
+    .remove:hover {
+        background-color: #f0f0f0; /* Màu nền khi rê chuột qua mục */
+    }
+/* Định dạng các ngôi sao */
+.star {
+    font-size: 15px; /* Kích thước của các ngôi sao */
+    color: gold; /* Màu sắc của các ngôi sao */
+}
+
+/* Định dạng phần trả lời */
+.reply {
+    color: blue; /* Màu của liên kết trả lời */
+    text-decoration: none; /* Loại bỏ gạch chân của liên kết */
+}
+
+    /* Khi rê chuột qua phần trả lời */
+    .reply:hover {
+        text-decoration: underline; /* Gạch chân khi rê chuột qua */
+    }
 
 .table {
   min-width: 1000px !important;
