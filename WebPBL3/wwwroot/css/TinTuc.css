@@ -1,4 +1,4 @@
-.section1{
+/*.section1{
     color: black;
     margin: auto;
     font-family: segoe ui;
@@ -44,11 +44,11 @@ p {
     margin-top: -10px;
     margin-left: 10px;
     font-size: 13px
-}
+}*/
 
 /*phân trang*/
 /* phân trang */
-.pagination {
+/*.pagination {
     text-align: center;
     justify-content: center;
     margin-bottom: 30px;
@@ -65,13 +65,102 @@ p {
         margin-right: 20px;
 }
 
-    .pagination a:hover {
+    .pagination a:hover {*/
         /*background-color: #8C222A;*/
-        transform: scale(1.1);
+        /*transform: scale(1.1);
     }
 
 .pagination .prev,
 .pagination .next {
         font-weight: bold;
+}*/
+
+
+.section2 {
+    width: 1200px;
+    margin-bottom: 100px;
+    margin-left: 250px;
+    margin-top: 0px;
 }
-  
+
+    .section2 .duoi {
+        display: flex;
+    }
+
+        .section2 .duoi .trai {
+            width: 800px;
+        }
+
+            .section2 .duoi .trai .box {
+                display: flex;
+                overflow: hidden;
+                border: 1px solid rgb(228, 220, 220);
+                width: 100%;
+                border-radius: 10px;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                margin-bottom: 20px;
+            }
+
+        .section2 .duoi .box .trai .anh {
+            width: 30%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+img {
+    width: 90%;
+    height: 90%;
+    padding-top: 7%;
+    padding-left: 7%;
+    text-align: center;
+}
+
+h3 {
+    font-family: "Segoe UI Light", "Segoe UI", sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+    color: black;
+}
+
+p {
+    font-family: "Segoe UI Light", "Segoe UI", sans-serif;
+    font-size: 17px;
+    color: rgb(163, 152, 152);
+}
+
+.section2 .duoi .phai {
+    width: 200px;
+    margin-left: 10px;
+    border-left: 3px solid #5a5858;
+    text-align: center;
+}
+
+    .section2 .duoi .phai .box {
+        border: 1px solid rgb(228, 220, 220);
+        width: 100%;
+        height: 150px;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+h2 {
+    margin-bottom: 20px;
+    color: rgb(118, 16, 6);
+}
+
+h1 {
+    margin-bottom: 20px;
+    margin-left: 10px;
+    color: rgb(118, 16, 6);
+}
+
+a {
+    text-decoration: none;
+}
+
+.box:hover h3 {
+    color: rgb(118, 16, 6);
+}
+

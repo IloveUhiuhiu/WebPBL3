@@ -7,10 +7,12 @@ namespace WebPBL3.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
         {
             _logger = logger;
+            _db = db;   
         }
 
         public IActionResult Index()
@@ -21,6 +23,11 @@ namespace WebPBL3.Controllers
         public IActionResult About()
         {
             return View(); 
+        }
+        public IActionResult Contact()
+        {   
+            List<Province> provinces = _db.Provinces.ToList();
+            return View(provinces);
         }
 
         public IActionResult Privacy()
