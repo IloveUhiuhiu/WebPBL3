@@ -28,3 +28,51 @@ body {
     background-attachment: fixed;
     height: 80vh;
 }
+
+.bg-breadcrumb {
+    background: linear-gradient(rgba(19, 53, 123, 0.5), rgba(19, 53, 123, 0.5)), url('https://watermark.lovepik.com/photo/20211122/large/lovepik-car-sales-staff-introduce-cars-picture_500676932.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 80vh;
+}
+
+.feature .icon {
+    display: inline-block;
+    position: relative;
+}
+
+    .feature .icon:before {
+        content: "";
+        width: 33px;
+        height: 33px;
+        position: absolute;
+        background: rgba(59, 93, 80, 0.2);
+        border-radius: 50%;
+        right: -8px;
+        bottom: 0;
+    }
+
+.icon img {
+    width: 40px;
+}
+.rounde span {
+    display: block;
+}
+
+
+.product-rating {
+    display: inline-block;
+}
+
+    .product-rating i {
+        color: rgb(207, 207, 6);
+    }
+#intro {
+    background-image: url("/images/acount.jpg");
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
