@@ -20,10 +20,11 @@ namespace WebPBL3.Controllers
             return View();
         }
         public IActionResult CarListTable()
-        {   
+        {
             List<Car> cars = _db.Cars.ToList();
-            
+
             return View(cars);
+
         }
         public IActionResult Create()
         {
