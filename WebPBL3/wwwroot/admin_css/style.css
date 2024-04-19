@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+﻿/*------------------------------------------------------------------
     File Name: style.css
     Template Name: Pluto - Responsive HTML5 Template
     Created By: html.design
@@ -226,7 +226,6 @@ ul {
     margin: 0px;
 }
 
-
 /*--
 a.btn {
     min-width: 170px;
@@ -242,7 +241,7 @@ a.btn {
     margin-top: 10px;
 }
 --*/
-
+F
 .red_bg {
     background: #ff4748;
 }
@@ -314,7 +313,9 @@ a.btn {
 button i {
     color: #fff;
 }
-
+.btn-group .btn + .btn {
+    margin-left: 5px;
+}
 .lead {
     font-size: 18px;
     line-height: 30px;
@@ -1349,7 +1350,11 @@ a[data-toggle="collapse"] {
 /*------------------------------------------------------------------
     7. Table style
 -------------------------------------------------------------------*/
-
+th, td {
+    text-align: inherit;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
 .table_format.strp table {
     border-radius: 8px 8px 0 0;
     overflow: hidden;
@@ -1379,6 +1384,7 @@ a[data-toggle="collapse"] {
     line-height: 1;
     width: white-space;
 }
+
 
 .top_countries_section {
     background-color: #ff4748;
@@ -1439,10 +1445,11 @@ a[data-toggle="collapse"] {
 }
 
 
+
+
 /*------------------------------------------------------------------
     8. Social icon
 -------------------------------------------------------------------*/
-
 .socile_icons {
     border-radius: 5px;
     overflow: hidden;
