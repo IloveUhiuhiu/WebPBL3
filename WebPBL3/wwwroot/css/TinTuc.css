@@ -109,8 +109,9 @@ p {
 .trai img {
     width: 90%;
     height: 90%;
-    padding-top: 7%;
-    padding-left: 7%;
+    
+    
+    text-align: center;
 }
 .phai img {
     width: 90%;
