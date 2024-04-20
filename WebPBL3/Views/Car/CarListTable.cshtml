@@ -1,4 +1,4 @@
-﻿@model List<Car>
+﻿@model List<CarDto>
 @{	
     ViewData["Title"] = "Quản lý ô tô";
 	Layout = "_AdminLayout";
@@ -64,7 +64,7 @@
                             @obj.CarName
                         </td>
                         <td>
-                            @obj.Make
+                            @obj.MakeName
                         </td>
                         <td>
                             @obj.Price
