@@ -9536,16 +9536,6 @@ h1, h2,  h4, h5,
         background: transparent;
         display: none; } }
 
-.form-control {
-  height: 52px !important;
-  background: #fff !important;
-  color: #000000 !important;
-  font-size: 18px;
-  border-radius: 5px;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important; }
-  .form-control:focus, .form-control:active {
-    border-color: #000000; }
 
 textarea.form-control {
   height: inherit !important; }
