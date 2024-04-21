@@ -4,12 +4,18 @@ using WebPBL3.Models;
 namespace WebPBL3.Models
 {
     public class Make
-    {
+    {   
+        public Make() {
+            MakeID = 0;
+            MakeName = string.Empty;
+        }
         [Key]
         [Display(Name = "Mã hãng")]
         public int MakeID { get; set; }
-        [Required(ErrorMessage = "Tên hãng không thể trống")]
+
+
         [Display(Name = "Tên hãng")]
+        [Required(ErrorMessage = "Tên hãng không thể trống")]
         [StringLength(maximumLength: 50)]
         public string MakeName { get; set; }
 

@@ -1,1 +1,106 @@
-﻿
+﻿@model WebPBL3.Models.Car
+
+@{
+    var makes = ViewData["makes"] as List<Make>;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="CarID" value="0" />
+           
+            <div class="form-group">
+                <label asp-for="CarName" class="control-label">Tên Ô tô</label>
+                <input asp-for="CarName" class="form-control" />
+                <span asp-validation-for="CarName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Photo" class="control-label">Hình ảnh</label>
+                <input asp-for="Photo" class="form-control" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MakeID" class="control-label">Thương hiệu</label>
+                <select asp-for="MakeID" class="form-control">
+                    @foreach (var i in makes)
+                    {
+                        <option value=@i.MakeID>@i.MakeName</option>
+                    }
+                   
+                    <!-- Thêm các tùy chọn khác tại đây -->
+                </select>
+                <span asp-validation-for="MakeID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label">Giá xe</label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Engine" class="control-label">Động cơ</label>
+                <input asp-for="Engine" class="form-control" />
+                <span asp-validation-for="Engine" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Seat" class="control-label">Số chỗ ngồi</label>
+                <input asp-for="Seat" class="form-control" />
+                <span asp-validation-for="Seat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dimension" class="control-label">Kích thước</label>
+                <input asp-for="Dimension" class="form-control" />
+                <span asp-validation-for="Dimension" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Origin" class="control-label">Nguồn gốc</label>
+                <input asp-for="Origin" class="form-control" />
+                <span asp-validation-for="Origin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Topspeed" class="control-label">Tốc độ tối đa</label>
+                <input asp-for="Topspeed" class="form-control" />
+                <span asp-validation-for="Topspeed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Capacity" class="control-label">Dung tích</label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FuelConsumption" class="control-label">Nhiên liệu</label>
+                <input asp-for="FuelConsumption" class="form-control" />
+                <span asp-validation-for="FuelConsumption" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Color" class="control-label">Màu sắc</label>
+                <input asp-for="Color" class="form-control" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year" class="control-label">Năm sản xuất</label>
+                <input asp-for="Year" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label">Số lượng</label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Mô tả</label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary form-control">Create</button>
+            <a asp-controller="Car" asp-action="CarListTable" class="btn btn-outline-primary border  form-control">
+                Back to List
+            </a>
+        </form>
+    </div>
+</div>
+
+

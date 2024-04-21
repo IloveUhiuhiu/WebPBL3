@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TextTemplating;
 using System.Drawing;
 using WebPBL3.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebPBL3.Controllers
 {
@@ -23,41 +24,39 @@ namespace WebPBL3.Controllers
             return View();
         }
         public IActionResult CarListTable()
-        {
-            List<CarDto> _cars = _db.Cars
-                .Include(c => c.Make)
-                .Select(c => new CarDto
-                {
-                    CarID = c.CarID,
-                    CarName = c.CarName,
-                    Price = c.Price,
-                    Seat = c.Seat,
-                    Origin = c.Origin,
-                    Dimension = c.Dimension,
-                    Capacity = c.Capacity,
-                    Topspeed = c.Topspeed,
-                    Color = c.Color,
-                    Photo = c.Photo,
-                    Year = c.Year,
-                    Engine = c.Engine,
-                    Quantity = c.Quantity,
-                    Description = c.Description,
-                    FuelConsumption = c.FuelConsumption,
-                    MakeName = c.Make.MakeName
-                })
-                .ToList();
-            return View(_cars);
+        {   
+            
+            List<Car> cars = _db.Cars.Include(c => c.Make).ToList();
+            return View(cars);
         }
         // [GET]
         public IActionResult Create()
         {
+            List<Make> makes = _db.Makes.ToList();
+            ViewData["makes"] = makes;
             return View();
         }
         // [POST]
         [HttpPost]
-        public IActionResult Create(CarDto car)
+        public IActionResult Create(Car c)
         {
-            return View(car);
+            
+            if (ModelState.IsValid)
+            {
+                var carid = Convert.ToInt32(_db.Cars
+                    .OrderByDescending(car => car.CarID)
+                    .FirstOrDefault().CarID) + 1;
+                var caridTxt = carid.ToString().PadLeft(8, '0');
+                c.CarID = caridTxt;
+
+                _db.Cars.Add(c);
+                    
+                _db.SaveChanges();
+                
+                return RedirectToAction("CarListTable");
+            }
+            return View();
+            
         }
         public IActionResult Update()
         {

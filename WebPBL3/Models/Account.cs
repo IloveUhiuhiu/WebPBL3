@@ -23,7 +23,7 @@ namespace  WebPBL3.Models
         public string Email { get; set; }
 
         [Display(Name = "Password")]
-        [StringLength(maximumLength: 50)]
+        [StringLength(maximumLength: 100)]
         [Required(ErrorMessage = "Bạn phải nhập password")]
         public string Password { get; set; }
 
