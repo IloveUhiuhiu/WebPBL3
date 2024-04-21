@@ -30,7 +30,7 @@ namespace WebPBL3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user=_db.Accounts.FirstOrDefault(u=>u.Email==model.Email);
+                var user=_db.Accounts.Include(u => u.Role).FirstOrDefault(u=>u.Email==model.Email);
                 if (user != null)
                 {
                     if (BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
@@ -38,7 +38,7 @@ namespace WebPBL3.Controllers
                         var claims = new List<Claim>()
                         {
                             new Claim(ClaimTypes.Name, user.Email),
-                            new Claim(ClaimTypes.Role,user.RoleID.ToString())
+                            new Claim(ClaimTypes.Role,user.Role.RoleName)
                         };
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var principal=new ClaimsPrincipal(identity);
@@ -82,7 +82,7 @@ namespace WebPBL3.Controllers
                 Role role=await _db.Roles.FirstOrDefaultAsync(r=>r.RoleName=="User");
                 var newAccount = new Account
                 {
-                    AccountID=Guid.NewGuid().ToString(),
+                    AccountID = "hh",
                     Email = model.Email,
                     Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     Status = true,
@@ -92,6 +92,10 @@ namespace WebPBL3.Controllers
                 await _db.SaveChangesAsync();
                 return RedirectToAction("Login");
             }
+            return View();
+        }
+        public IActionResult Denied()
+        {
             return View();
         }
     }
