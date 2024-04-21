@@ -82,7 +82,7 @@ namespace WebPBL3.Controllers
                 Role role=await _db.Roles.FirstOrDefaultAsync(r=>r.RoleName=="User");
                 var newAccount = new Account
                 {
-                    AccountID = "hh",
+                    AccountID = Guid.NewGuid().ToString().Substring(0,10),
                     Email = model.Email,
                     Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     Status = true,
