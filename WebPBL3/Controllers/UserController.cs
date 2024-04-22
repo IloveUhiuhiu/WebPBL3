@@ -8,9 +8,5 @@ namespace WebPBL3.Controllers
         {
             return View();
         }
-        public IActionResult Login()
-        {
-            return View();
-        }
     }
 }
