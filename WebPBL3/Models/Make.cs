@@ -5,10 +5,8 @@ namespace WebPBL3.Models
 {
     public class Make
     {   
-        public Make() {
-            MakeID = 0;
-            MakeName = string.Empty;
-        }
+       
+        
         [Key]
         [Display(Name = "Mã hãng")]
         public int MakeID { get; set; }

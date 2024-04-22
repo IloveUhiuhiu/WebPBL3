@@ -58,7 +58,6 @@ namespace WebPBL3.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<double>("Capacity")
-                        .HasMaxLength(50)
                         .HasColumnType("float");
 
                     b.Property<string>("CarName")
@@ -355,14 +354,14 @@ namespace WebPBL3.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserID")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
                     b.HasKey("StaffID");
 
                     b.HasIndex("UserID")
-                        .IsUnique()
-                        .HasFilter("[UserID] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Staffs");
                 });
@@ -374,6 +373,7 @@ namespace WebPBL3.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("AccountID")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -411,8 +411,7 @@ namespace WebPBL3.Migrations
                     b.HasKey("UserID");
 
                     b.HasIndex("AccountID")
-                        .IsUnique()
-                        .HasFilter("[AccountID] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("WardID");
 
@@ -539,7 +538,8 @@ namespace WebPBL3.Migrations
                     b.HasOne("WebPBL3.Models.User", "User")
                         .WithOne("Staff")
                         .HasForeignKey("WebPBL3.Models.Staff", "UserID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -549,7 +549,8 @@ namespace WebPBL3.Migrations
                     b.HasOne("WebPBL3.Models.Account", "Account")
                         .WithOne("User")
                         .HasForeignKey("WebPBL3.Models.User", "AccountID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebPBL3.Models.Ward", "Ward")
                         .WithMany()

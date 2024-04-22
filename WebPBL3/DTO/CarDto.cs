@@ -4,8 +4,8 @@ namespace WebPBL3.Models
 {
     public class CarDto
     {
-        [Required]
-        public string CarID { get; set; }
+        
+        public string? CarID { get; set; }
         [Required]
         public string CarName { get; set; }
         [Required]
@@ -36,7 +36,9 @@ namespace WebPBL3.Models
         [Required]
         public string FuelConsumption { get; set; }
         
-        [Required]
-        public string MakeName { get; set; }
+        public string? MakeName { get; set; }
+        
+        public int MakeID { get; set; }
+        
     }
 }

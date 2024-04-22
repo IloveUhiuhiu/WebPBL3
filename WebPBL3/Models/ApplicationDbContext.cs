@@ -62,7 +62,6 @@ namespace WebPBL3.Models
                 entity.HasOne(u => u.Account)
                .WithOne(a => a.User)
                .HasForeignKey<User>(u => u.AccountID)
-               .IsRequired(false)
                .OnDelete(DeleteBehavior.Cascade);
             });
             modelBuilder.Entity<Staff>(entity =>
@@ -72,10 +71,10 @@ namespace WebPBL3.Models
                 .WithOne(s => s.Staff)
                 .HasForeignKey(s => s.StaffID)
                 .OnDelete(DeleteBehavior.NoAction);
+
                 entity.HasOne(a => a.User)
                 .WithOne(u => u.Staff)
                 .HasForeignKey<Staff>(s => s.UserID)
-                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
             });
 

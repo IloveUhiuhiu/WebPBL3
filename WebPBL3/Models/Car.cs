@@ -2,6 +2,7 @@
 using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebPBL3.Models
 {
@@ -81,10 +82,9 @@ namespace WebPBL3.Models
         [Display(Name = "Mức tiêu thụ")]
         [StringLength(maximumLength: 50)]
         public string FuelConsumption { get; set; }
-        public bool Flag { get; set; } 
-
-
-        public Make Make { get; set; }
+        public bool Flag { get; set; }
+        
+        public Make? Make { get; set; }
         [Display(Name = "Mã hãng")]
         public int MakeID { get; set; }
     }
