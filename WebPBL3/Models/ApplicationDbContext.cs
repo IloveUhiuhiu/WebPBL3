@@ -35,19 +35,19 @@ namespace WebPBL3.Models
                 .HasForeignKey("DistrictID")
                 .OnDelete(DeleteBehavior.NoAction);
             });
+            
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.HasOne(a => a.Role)
                 .WithMany()
                 .HasForeignKey(a => a.RoleID)
                 .OnDelete(DeleteBehavior.NoAction);
+
+                
             });
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasOne(u => u.Account)
-                .WithOne(a => a.User)
-                .HasForeignKey<Account>(u => u.AccountID)
-                .OnDelete(DeleteBehavior.Cascade);
+               
 
                 entity.HasOne(u => u.Ward)
                 .WithMany()
@@ -57,17 +57,25 @@ namespace WebPBL3.Models
                 .WithOne(u => u.User)
                 .HasForeignKey(u => u.UserID)
                 .OnDelete(DeleteBehavior.NoAction);
+
+                
+                entity.HasOne(u => u.Account)
+               .WithOne(a => a.User)
+               .HasForeignKey<User>(u => u.AccountID)
+               .OnDelete(DeleteBehavior.Cascade);
             });
             modelBuilder.Entity<Staff>(entity =>
             {
-                entity.HasOne(s => s.User)
-                .WithOne(u => u.Staff)
-                .HasForeignKey<User>(s => s.UserID)
-                .OnDelete(DeleteBehavior.Cascade);
+                
                 entity.HasMany(n => n.News)
                 .WithOne(s => s.Staff)
                 .HasForeignKey(s => s.StaffID)
                 .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(a => a.User)
+                .WithOne(u => u.Staff)
+                .HasForeignKey<Staff>(s => s.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Order>(entity =>

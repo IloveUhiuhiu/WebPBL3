@@ -51,20 +51,6 @@ namespace WebPBL3.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Staffs",
-                columns: table => new
-                {
-                    StaffID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Salary = table.Column<int>(type: "int", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    UserID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Staffs", x => x.StaffID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Cars",
                 columns: table => new
                 {
@@ -74,7 +60,7 @@ namespace WebPBL3.Migrations
                     Seat = table.Column<int>(type: "int", nullable: false),
                     Origin = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Dimension = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Capacity = table.Column<double>(type: "float", maxLength: 50, nullable: false),
+                    Capacity = table.Column<double>(type: "float", nullable: false),
                     Topspeed = table.Column<float>(type: "real", nullable: false),
                     Color = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Photo = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -116,26 +102,23 @@ namespace WebPBL3.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NewS",
+                name: "Accounts",
                 columns: table => new
                 {
-                    NewsID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdateBy = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    StaffID = table.Column<string>(type: "nvarchar(10)", nullable: false)
+                    AccountID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    RoleID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NewS", x => x.NewsID);
+                    table.PrimaryKey("PK_Accounts", x => x.AccountID);
                     table.ForeignKey(
-                        name: "FK_NewS_Staffs_StaffID",
-                        column: x => x.StaffID,
-                        principalTable: "Staffs",
-                        principalColumn: "StaffID");
+                        name: "FK_Accounts_Roles_RoleID",
+                        column: x => x.RoleID,
+                        principalTable: "Roles",
+                        principalColumn: "RoleID");
                 });
 
             migrationBuilder.CreateTable(
@@ -176,42 +159,16 @@ namespace WebPBL3.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.UserID);
                     table.ForeignKey(
-                        name: "FK_Users_Staffs_UserID",
-                        column: x => x.UserID,
-                        principalTable: "Staffs",
-                        principalColumn: "StaffID",
+                        name: "FK_Users_Accounts_AccountID",
+                        column: x => x.AccountID,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Users_Wards_WardID",
                         column: x => x.WardID,
                         principalTable: "Wards",
                         principalColumn: "WardID");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Accounts",
-                columns: table => new
-                {
-                    AccountID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
-                    RoleID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Accounts", x => x.AccountID);
-                    table.ForeignKey(
-                        name: "FK_Accounts_Roles_RoleID",
-                        column: x => x.RoleID,
-                        principalTable: "Roles",
-                        principalColumn: "RoleID");
-                    table.ForeignKey(
-                        name: "FK_Accounts_Users_AccountID",
-                        column: x => x.AccountID,
-                        principalTable: "Users",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,6 +190,49 @@ namespace WebPBL3.Migrations
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "UserID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Staffs",
+                columns: table => new
+                {
+                    StaffID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Salary = table.Column<int>(type: "int", nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Staffs", x => x.StaffID);
+                    table.ForeignKey(
+                        name: "FK_Staffs_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NewS",
+                columns: table => new
+                {
+                    NewsID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateBy = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    StaffID = table.Column<string>(type: "nvarchar(10)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NewS", x => x.NewsID);
+                    table.ForeignKey(
+                        name: "FK_NewS_Staffs_StaffID",
+                        column: x => x.StaffID,
+                        principalTable: "Staffs",
+                        principalColumn: "StaffID");
                 });
 
             migrationBuilder.CreateTable(
@@ -333,6 +333,18 @@ namespace WebPBL3.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Staffs_UserID",
+                table: "Staffs",
+                column: "UserID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_AccountID",
+                table: "Users",
+                column: "AccountID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_WardID",
                 table: "Users",
                 column: "WardID");
@@ -347,9 +359,6 @@ namespace WebPBL3.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Accounts");
-
-            migrationBuilder.DropTable(
                 name: "DetailOrders");
 
             migrationBuilder.DropTable(
@@ -357,9 +366,6 @@ namespace WebPBL3.Migrations
 
             migrationBuilder.DropTable(
                 name: "NewS");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Cars");
@@ -371,13 +377,19 @@ namespace WebPBL3.Migrations
                 name: "Makes");
 
             migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
                 name: "Staffs");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
                 name: "Wards");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Districts");

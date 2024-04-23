@@ -35,8 +35,8 @@ namespace WebPBL3.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("RoleID")
                         .HasColumnType("int");
@@ -58,7 +58,6 @@ namespace WebPBL3.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<double>("Capacity")
-                        .HasMaxLength(50)
                         .HasColumnType("float");
 
                     b.Property<string>("CarName")
@@ -361,6 +360,9 @@ namespace WebPBL3.Migrations
 
                     b.HasKey("StaffID");
 
+                    b.HasIndex("UserID")
+                        .IsUnique();
+
                     b.ToTable("Staffs");
                 });
 
@@ -408,6 +410,9 @@ namespace WebPBL3.Migrations
 
                     b.HasKey("UserID");
 
+                    b.HasIndex("AccountID")
+                        .IsUnique();
+
                     b.HasIndex("WardID");
 
                     b.ToTable("Users");
@@ -438,12 +443,6 @@ namespace WebPBL3.Migrations
 
             modelBuilder.Entity("WebPBL3.Models.Account", b =>
                 {
-                    b.HasOne("WebPBL3.Models.User", "User")
-                        .WithOne("Account")
-                        .HasForeignKey("WebPBL3.Models.Account", "AccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WebPBL3.Models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleID")
@@ -451,8 +450,6 @@ namespace WebPBL3.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebPBL3.Models.Car", b =>
@@ -536,11 +533,22 @@ namespace WebPBL3.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebPBL3.Models.Staff", b =>
+                {
+                    b.HasOne("WebPBL3.Models.User", "User")
+                        .WithOne("Staff")
+                        .HasForeignKey("WebPBL3.Models.Staff", "UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WebPBL3.Models.User", b =>
                 {
-                    b.HasOne("WebPBL3.Models.Staff", "Staff")
+                    b.HasOne("WebPBL3.Models.Account", "Account")
                         .WithOne("User")
-                        .HasForeignKey("WebPBL3.Models.User", "UserID")
+                        .HasForeignKey("WebPBL3.Models.User", "AccountID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -550,7 +558,7 @@ namespace WebPBL3.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Staff");
+                    b.Navigation("Account");
 
                     b.Navigation("Ward");
                 });
@@ -563,6 +571,12 @@ namespace WebPBL3.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("District");
+                });
+
+            modelBuilder.Entity("WebPBL3.Models.Account", b =>
+                {
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebPBL3.Models.District", b =>
@@ -588,19 +602,16 @@ namespace WebPBL3.Migrations
             modelBuilder.Entity("WebPBL3.Models.Staff", b =>
                 {
                     b.Navigation("News");
-
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebPBL3.Models.User", b =>
                 {
-                    b.Navigation("Account")
-                        .IsRequired();
-
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("Staff")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
