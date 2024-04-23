@@ -1,4 +1,6 @@
-﻿<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5">
+﻿@model List<News>
+
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
     <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
@@ -193,90 +195,27 @@
             <div class="trai">
                 <div class="container">
                     <div class="row">
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh">
-                                      <img src="~/images/c200-avantgarde-plus.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi commodi totam fug</h3>
-                                        <span>19/4/2024</span>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, doloremque. Doloremque, maxime. Voluptate, porro. Voluptate, porro.
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                         <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh">
-                                      <img src="~/images/c200-avantgarde-plus.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi commodi totam fug</h3>
-                                        <span>19/4/2024</span>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, doloremque. Doloremque, maxime. Voluptate, porro. Voluptate, porro.
+                        @foreach (var news in Model)
+                        {
+                            string[] words1 = news.Title.Split(' ');
+                            string Titles = string.Join(" ", words1.Take(10));
+                            string[] words2 = news.Content.Split(' ');
+                            string Contents = string.Join(" ", words2.Take(39)) +"...";
+                             <a href="">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="box">
+                                        <div class="anh">
+                                          <img src=@news.Photo />
+                                        </div>
+                                        <div class="text">
+                                            <h3>@Titles</h3>
+                                                <span>@news.CreateAt.ToString("dd/MM/yyyy")</span>
+                                            <p>@Contents</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                         <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh">
-                                      <img src="~/images/c200-avantgarde-plus.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi commodi totam fug</h3>
-                                        <span>19/4/2024</span>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, doloremque. Doloremque, maxime. Voluptate, porro. Voluptate, porro.
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh">
-                                      <img src="~/images/unnamed-1.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi commodi totam fug</h3>
-                                        <span>19/4/2024</span>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, doloremque. Doloremque, maxime. Voluptate, porro. Voluptate, porro.
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh">
-                                      <img src="~/images/unnamed-3.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi commodi totam fug</h3>
-                                        <span>19/4/2024</span>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, doloremque. Doloremque, maxime. Voluptate, porro. Voluptate, porro.
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh">
-                                     <img src="~/images/bmw-2-series-gran-coupe-front-watermarked.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi commodi totam fug</h3>
-                                        <span>19/4/2024</span>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, doloremque. Doloremque, maxime. Voluptate, porro. Voluptate, porro.
-                                    </div>
-                                </div>
-                        </a>
-                        </div>
+                            </a>
+                        } 
                     </div>
                 </div>
             </div>
@@ -284,58 +223,28 @@
                 <h2>Tin nổi bật</h2>
                 <div class="container">
                     <div class="row">
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh1">
-                                      <img src="~/images/c200-avantgarde-plus.jpg" />
-                                    </div>
-                                    <div class="text1">
-                                        <h3>Lorem ipsum</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh1">
-                                      <img src="~/images/2-10.jpg" />
-                                    </div>
-                                    <div class="text1">
-                                        <h3>Lorem ipsum</h3>
+                    @foreach (var news in Model)
+                    {
+                        string[] words1 = news.Title.Split(' ');
+                        string Titles = string.Join(" ", words1.Take(8)) +". . .";
+                            <a href="">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="box">
+                                        <div class="anh1">
+                                          <img src=@news.Photo />
+                                        </div>
+                                        <div class="text1">
+                                            <h3>@Titles</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                       <a href="">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="box">
-                                <div class="anh1">
-                                  <img src="~/images/unnamed-1.jpg" />
-                                </div>
-                                <div class="text1">
-                                    <h3>Lorem ipsum</h3>
-                                </div>
-                            </div>
-                        </div>
-                       </a>
-                        <a href="">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="box">
-                                    <div class="anh1">
-                                      <img src="~/images/unnamed-2.jpg" />
-                                    </div>
-                                    <div class="text">
-                                        <h3>Lorem ipsum</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                            </a>
+                    }
                     </div>
                 </div>
             </div>
-       </div>
+       </div>  
+</div>
  
 <!-- phân trang -->
 <div class="pagination">

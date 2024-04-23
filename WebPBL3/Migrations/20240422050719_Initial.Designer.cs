@@ -12,7 +12,7 @@ using WebPBL3.Models;
 namespace WebPBL3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421133622_Initial")]
+    [Migration("20240422050719_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
