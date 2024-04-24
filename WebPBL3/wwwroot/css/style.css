@@ -415,14 +415,10 @@ hr {
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: 0.5rem; }
-
 p {
     margin-top: 0;
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
 }
-
 abbr[title],
 abbr[data-original-title] {
   text-decoration: underline;
@@ -8490,9 +8486,10 @@ body {
   font-family: "Poppins", Arial, sans-serif;
   background: #fff;
   font-size: 16px;
+  color: black;
   line-height: 1.8;
   font-weight: 400;
-  color: #999999; }
+}
   body.menu-show {
     overflow: hidden;
     position: fixed;
@@ -8508,12 +8505,6 @@ a {
     text-decoration: none;
     color: #1089ff;
     outline: none !important; }
-
-h1, h2,  h4, h5,
-.h1, .h2,  .h4, .h5 {
-  line-height: 1.5;
-  color: darkred;
-  font-weight: 400; }
 
 .text-primary {
   color: #1089ff !important; }
