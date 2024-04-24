@@ -1,0 +1,110 @@
+﻿@model IEnumerable<WebPBL3.Models.News>
+
+@{
+    ViewData["Title"] = "Quản lý Tin Tức";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách tin tức</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4 table-bordered">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+            <div class="col-6 text-end" style="text-align: right;">
+                <a href="#" id="btnAddNews" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                    <i class="fa-solid fa-plus"></i>  Thêm tin tức
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Tiêu đề
+                    </th>
+                    <th>
+                        Nội dung
+                    </th>
+                    <th>
+                        Ảnh
+                    </th>
+                    <th>
+                        Ngày tạo
+                    </th>
+                    <th>
+                        Ngày cập nhật
+                    </th>
+                    <th>
+                        Mã nhân viên
+                    </th>
+                    <th>
+                        Staff
+                    </th>
+                    <th>
+
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var obj in Model.OrderBy(u => u.NewsID))
+                {
+                    <tr>
+                        <td>@obj.Title</td>
+                        <td>@obj.Content</td>
+                        <td>
+                            <img src=@obj.Photo width="100" height=auto />
+                        </td>
+                        <td>
+                            @obj.CreateAt
+                        </td>
+                        <td>
+                            @obj.UpdateAt
+                        </td>
+                        <td>
+                            @obj.UpdateBy
+                        </td>
+                        @* <td>
+                    @obj.Staff.StaffID
+                    </td> *@
+
+                        <td>
+                            <div class="w-75 d-flex justify-content-around btn-group" role="group">
+                                <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.NewsID" class="btn btn-outline-success">
+                                    <i class="fa-solid fa-eye"></i>
+                                    Chi tiết
+                                </a>
+
+                                <!-- Sử dụng icon pen cho Cập nhật -->
+                                <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.NewsID" class="btn btn-warning">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    Cập nhật
+                                </a>
+
+                                <!-- Sử dụng icon trash cho Xóa -->
+                                <a asp-controller="Category" asp-action="Delete" asp-route-id="@obj.NewsID" class="btn btn-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                    Xóa
+                                </a>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+

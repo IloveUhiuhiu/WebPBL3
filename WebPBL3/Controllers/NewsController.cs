@@ -5,17 +5,20 @@ namespace WebPBL3.Controllers
 {
     public class NewsController : Controller
     {
+        private ApplicationDbContext _db;
+        public NewsController(ApplicationDbContext db)
+        {
+            _db = db;
+        }
         public IActionResult Index()
         {
-            return View();
+            List<News> list = _db.NewS.ToList();
+            return View(list);
         }
-        public IActionResult DanhSachTinTuc()
+        public IActionResult ListNews()
         {
-            return View(model: StaticNews.AllNews);
-        }
-        public IActionResult ThemTinTuc()
-        {
-            return View();
+            List<News> DanhSachTinTuc = _db.NewS.ToList();
+            return View(DanhSachTinTuc);
         }
     }
 }
