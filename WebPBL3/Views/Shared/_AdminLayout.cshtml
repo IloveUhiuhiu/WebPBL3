@@ -33,7 +33,18 @@
     <!-- scrollbar css -->
     <link rel="stylesheet" href="~/admin_css/perfect-scrollbar.css" />
     <!-- custom css -->
-    <link rel="stylesheet" href="~/admin_css/custom.css" />
+    <link href="@Url.Content(" ~ /admin_css/custom.css")" />
+
+    <!--google fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+    <!--google material icon-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -69,11 +80,7 @@
                             <a href="#dashboard"><i class="fa fa-dashboard yellow_color"></i> <span>Quản lý ô tô</span></a>
   
                         </li>
-                        <li>
-                            <a href="contact.html">
-                                <i class="fa fa-paper-plane red_color"></i> <span>Quản lý nhân viên</span>
-                            </a>
-                        </li>
+                        <li><a href="~/Staff/AddStaff"><i class="fa-solid fa-user"></i> <span>Quản lý nhân viên</span></a></li>
                         <li><a href="widgets.html"><i class="fa fa-clock-o orange_color"></i> <span>Quản lý khách hàng</span></a></li>
                         <li><a href="charts.html"><i class="fa fa-bar-chart-o green_color"></i> <span>Quản lý bán hàng</span></a></li>
                         <li>
@@ -168,5 +175,7 @@
     <!-- custom js -->
     <script src="~/admin_js/custom.js"></script>
     <script src="~/admin_js/chart_custom_style1.js"></script>
+    <script src="~/admin_js/jquery-3.3.1.slim.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
