@@ -98,5 +98,10 @@ namespace WebPBL3.Controllers
         {
             return View();
         }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
     }
 }
