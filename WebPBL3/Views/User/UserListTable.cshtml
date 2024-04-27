@@ -1,6 +1,7 @@
-﻿@model List<CarDto>
+﻿
+@model List<UserDto>
 @{
-    ViewData["Title"] = "Quản lý ô tô";
+    ViewData["Title"] = "Quản lý khách hàng";
     Layout = "_AdminLayout";
 }
 
@@ -8,7 +9,7 @@
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Danh sách sản phẩm</h2>
+                <h2 class="text-white py-2">Danh sách khách hàng</h2>
             </div>
         </div>
     </div>
@@ -17,8 +18,8 @@
             <div class="col-6">
             </div>
             <div class="col-6 text-end" style="text-align: right;">
-                <a asp-controller="Car" asp-action="Create" class="btn btn-primary">
-                    <i class="fa-solid fa-plus"></i>  Thêm sản phẩm
+                <a asp-controller="User" asp-action="Create" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i>  Thêm khách hàng
                 </a>
             </div>
         </div>
@@ -30,25 +31,22 @@
                         STT
                     </th>
                     <th>
-                        Mã xe
+                        Mã khách hàng
                     </th>
                     <th>
-                        Ảnh
+                        Họ và tên
                     </th>
                     <th>
-                        Tên xe
+                        Số điện thoại
                     </th>
                     <th>
-                        Thương hiệu
+                        Email
                     </th>
                     <th>
-                        Giá
+                        CCCD
                     </th>
                     <th>
-                        Số chỗ ngồi
-                    </th>
-                    <th>
-                        Số lượng
+                        Địa chỉ
                     </th>
                     <th>
 
@@ -58,57 +56,69 @@
             </thead>
             <tbody>
 
-                @foreach (var obj in Model.OrderBy(u => u.CarID))
+                @foreach (var obj in Model.OrderBy(u => u.UserID))
                 {
                     <tr>
                         <td>@obj.STT</td>
-                        <td>@obj.CarID</td>
-						<td>
-                            <img src="~/upload/car/@obj.Photo" width="60" style="height:auto;" />
+                        <td>@obj.UserID</td>
+                        <td>
+                            @obj.FullName
                         </td>
                         <td>
-                            @obj.CarName
+                            @obj.PhoneNumber
                         </td>
                         <td>
-                            @obj.MakeName
+                            @obj.Email
                         </td>
                         <td>
-                            @obj.Price
+                            @obj.IdentityCard
                         </td>
                         <td>
-                            @obj.Seat
-                        </td>
+
                         <td>
-                            @obj.Quantity
+                                @Html.DisplayFor(modelItem => obj.Address)
+                                @if (!string.IsNullOrEmpty(obj.WardName) && !string.IsNullOrEmpty(obj.DistrictName) && !string.IsNullOrEmpty(obj.ProvinceName))
+                                {
+
+                                    @: ,
+                                    @Html.DisplayFor(modelItem => obj.WardName)
+                                    @: ,
+                                    @Html.DisplayFor(modelItem => obj.DistrictName)
+                                    @: ,
+                                    @Html.DisplayFor(modelItem => obj.ProvinceName)
+                                }
                         </td>
+                            
+                        </td>
+                        
 
 
                         <td>
                             <div class="btn-group" role="group" styke="gap: 10px">
-                                <a asp-controller="Car" asp-action="Details" asp-route-id="@obj.CarID" class="btn btn-outline-success">
+                                <a asp-controller="User" asp-action="Details" asp-route-id="@obj.UserID" class="btn btn-outline-success">
                                     <i class="fa-solid fa-eye"></i>
                                     Chi tiết
                                 </a>
 
                                 <!-- Sử dụng icon pen cho Cập nhật -->
-                                <a asp-controller="Car" asp-action="Edit" asp-route-id="@obj.CarID" class="btn btn-warning">
+                                <a asp-controller="User" asp-action="Edit" asp-route-id="@obj.UserID" class="btn btn-warning">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     Cập nhật
                                 </a>
 
                                 <!-- Sử dụng icon trash cho Xóa -->
-                                
-                                <a href=" #myModal" class="btn btn-danger" data-toggle="modal" >
+
+                                <a href=" #myModal" class="btn btn-danger" data-toggle="modal">
                                     <i class="fa-solid fa-trash"></i>
                                     Xóa
                                 </a>
-                                
+
                                 <div id="myModal" class="modal fade">
                                     <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <div class="icon-box" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;" ></i>
+                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
                                                 </div>
                                                 <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -117,11 +127,11 @@
                                                 <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
                                             </div>
                                             <div class="modal-footer">
-                                                <a asp-controller="Car" asp-action="Delete" asp-route-id="@obj.CarID" class="btn btn-danger">
+                                                <a asp-controller="Car" asp-action="Delete" asp-route-id="@obj.UserID" class="btn btn-danger">
                                                     Xác nhận
                                                 </a>
                                                 <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
-                                           
+
                                             </div>
                                         </div>
                                     </div>

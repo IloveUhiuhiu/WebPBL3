@@ -23,6 +23,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
     options.AddPolicy("User", policy => policy.RequireRole("User"));
+    options.AddPolicy("Staff", policy => policy.RequireRole("Staff"));
 });
 var app = builder.Build();
 
@@ -44,6 +45,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Car}/{action=CarListTable}/{id?}");
 
 app.Run();

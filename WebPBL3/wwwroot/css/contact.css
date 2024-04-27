@@ -1,0 +1,8 @@
+﻿@media (min-width: 1200px) {
+     h3 {
+        font-size: 1.5rem;
+    }
+}
+h3 {
+    font-size: calc(1.2rem + .6vw);
+}

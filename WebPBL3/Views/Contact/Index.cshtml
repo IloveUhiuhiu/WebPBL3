@@ -1,11 +1,15 @@
-﻿<div class="container-fluid bg-breadcrumb">
+﻿@section ContactStyles {
+    <link href="~/css/contact.css" rel="stylesheet" />
+}
+
+<div class="container-fluid bg-breadcrumb">
     <div class="container text-center py-5" style="max-width: 900px;">
     </div>
 </div>
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h3 class="text-danger text-uppercase mb-5">Liên hệ với chúng tôi</h3>
+            <h3 class="fw-bold text-uppercase mb-5">Liên hệ với chúng tôi</h3>
         </div>
         <div class="row g-4">
             <div class="col-12">
@@ -13,19 +17,19 @@
                     <div class="col-md-4">
                         <div class="bg-light d-flex flex-column justify-content-center p-4">
                             <h5 class="text-uppercase">Địa chỉ</h5>
-                            <p class="m-0"><i class="fa-solid fa-location-dot text-danger me-2"></i>Liên Chiểu, Đà Nẵng</p>
+                            <p class="m-0"><i class="fa-solid fa-location-dot text-danger me-2 pr-2"></i>Liên Chiểu, Đà Nẵng</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light d-flex flex-column justify-content-center p-4">
                             <h5 class="text-uppercase">Số điện thoại</h5>
-                            <p class="m-0"><i class="fa-solid fa-phone text-danger me-2"></i>0905688888</p>
+                            <p class="m-0"><i class="fa-solid fa-phone text-danger me-2 pr-2"></i>0905688888</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light d-flex flex-column justify-content-center p-4">
                             <h5 class="text-uppercase">Email</h5>
-                            <p class="m-0"><i class="fa fa-envelope-open text-danger me-2"></i>dragoncar@gmail.com</p>
+                            <p class="m-0"><i class="fa fa-envelope-open text-danger me-2 pr-2"></i>dragoncar@gmail.com</p>
                         </div>
                     </div>
                 </div>
@@ -41,32 +45,26 @@
                     <p class="mb-4">Liên hệ với chúng tôi nếu bạn có bất kì thắc mắc nào!</p>
                     <form>
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                    <label for="name">Họ và tên</label>
-                                </div>
+                            <div class="col-6 mb-2">
+                                <input type="text" class="form-control" id="name" placeholder="Họ và tên">
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" placeholder="Your Email">
-                                    <label for="email">Địa chỉ email</label>
-                                </div>
+                            <div class="col-6">
+                           
+                                    <input type="email" class="form-control" id="email" placeholder="Địa chỉ email">
+                       
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="subject" placeholder="Subject">
-                                    <label for="subject">Chủ đề</label>
-                                </div>
+                            <div class="col-12 mb-2">
+                            
+                                    <input type="text" class="form-control" id="subject" placeholder="Chủ đề">
+                           
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control" placeholder="Leave a message here" id="message" style="height: 100px"></textarea>
-                                    <label for="message">Tin nhắn</label>
-                                </div>
+                            <div class="col-12 mb-2">
+                           
+                                    <textarea class="form-control" placeholder="Tin nhắn" id="message" style="height: 100px" rows="3"></textarea>
+                       
                             </div>
 
-                            <div class="product-rating">
+                            <div class="product-rating" style="padding-left: 15px;">
                                 <span class="fs-5">Đánh giá: </span>
                                 <i class="fa-sharp fa-solid fa-star"></i>
                                 <i class="fa-sharp fa-solid fa-star"></i>
