@@ -13,11 +13,6 @@
     <div class="col-md-4">
         <form asp-action="AddStaff">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <div class="form-group">
-                <label asp-for="StaffID" class="control-label"></label>
-                <input asp-for="StaffID" class="form-control" />
-                <span asp-validation-for="StaffID" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
                 <label asp-for="FullName" class="control-label"></label>
                 <input asp-for="FullName" class="form-control" />
@@ -67,35 +62,6 @@
                 <input asp-for="Salary" class="form-control" />
                 <span asp-validation-for="Salary" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <label asp-for="ProvinceName" class="control-label"></label>
-                <div>
-                    <select class="form-select form-select-sm mb-3" id="city" aria-label=".form-select-sm">
-                        <option value="" selected>Chọn tỉnh thành</option>
-                    </select>
-                </div>
-                <span asp-validation-for="ProvinceName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DistrictName" class="control-label"></label>
-                <div>
-                    <select class="form-select form-select-sm mb-3" id="district" aria-label=".form-select-sm">
-                        <option value="" selected>Chọn quận huyện</option>
-                    </select>
-                </div>
-                <span asp-validation-for="DistrictName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="WardName" class="control-label"></label>
-                <div>
-                    <select class="form-select form-select-sm" id="ward" aria-label=".form-select-sm">
-                        <option value="" selected>Chọn phường xã</option>
-                    </select>
-                </div>
-                <span asp-validation-for="WardName" class="text-danger"></span>
-            </div> *@
 
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
@@ -103,14 +69,25 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="WardID" class="control-label"></label>
-                <input asp-for="WardID" class="form-control" />
-                <span asp-validation-for="WardID" class="text-danger"></span>
+                <label asp-for="ProvinceName" class="control-label"></label>
+                <select class="form-control" id="province"></select>
+                <span asp-validation-for="ProvinceName" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="DistrictName" class="control-label"></label>
+                <select id="district" class="form-control">
+                    <option value="">Chọn huyện</option>
+                </select>
+                <span asp-validation-for="DistrictName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="WardName" class="control-label"></label>
+                <select id="ward" class="form-control">
+                    <option value="">Chọn xã</option>
+                </select>
+                <span asp-validation-for="WardName" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
@@ -127,46 +104,22 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
-    var citis = document.getElementById("city");
-    var districts = document.getElementById("district");
-    var wards = document.getElementById("ward");
-    var Parameter = {
-        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
-        method: "GET",
-        responseType: "application/json",
-    };
-    var promise = axios(Parameter);
-    promise.then(function (result) {
-        renderCity(result.data);
+    $(document).ready(function () {
+        LoadProvince();
     });
-
-    function renderCity(data) {
-        for (const x of data) {
-            citis.options[citis.options.length] = new Option(x.Name, x.Id);
-        }
-        citis.onchange = function () {
-            district.length = 1;
-            ward.length = 1;
-            if (this.value != "") {
-                const result = data.filter(n => n.Id === this.value);
-
-                for (const k of result[0].Districts) {
-                    district.options[district.options.length] = new Option(k.Name, k.Id);
-                }
+    function LoadProvince() {
+        $.ajax({
+            alert('ok');
+            url: '/Staff/GetProvince',
+            success: function (result) {
+                $.each(result, function (i, data) {
+                    $('#province').append('<Option value=' + data.ProvinceID + '>' + data.ProvinceName + '</Option>');
+                });
+               
             }
-        };
-        district.onchange = function () {
-            ward.length = 1;
-            const dataCity = data.filter((n) => n.Id === citis.value);
-            if (this.value != "") {
-                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
-
-                for (const w of dataWards) {
-                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
-                }
-            }
-        };
+        });
+        
     }
 </script>

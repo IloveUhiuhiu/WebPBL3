@@ -160,7 +160,7 @@ body {
 .car-image {
     max-width: 100%; /* Ảnh tự động co giãn theo kích thước của phần tử cha */
     height: auto; /* Đảm bảo tỷ lệ khung hình tự động */
-    margin: 50px auto 50px auto;
+    margin: 30px auto 50px auto;
 }
 
 .car-table thead th {
