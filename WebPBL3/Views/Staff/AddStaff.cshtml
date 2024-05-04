@@ -1,0 +1,172 @@
+﻿@model WebPBL3.DTO.Staff.AddStaffDTO
+
+@{
+    ViewData["Title"] = "AddStaff";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1>AddStaff</h1>
+
+<h4>AddStaffDTO</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddStaff">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <div class="form-group">
+                <label asp-for="StaffID" class="control-label"></label>
+                <input asp-for="StaffID" class="form-control" />
+                <span asp-validation-for="StaffID" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityCard" class="control-label"></label>
+                <input asp-for="IdentityCard" class="form-control" />
+                <span asp-validation-for="IdentityCard" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label">Giới tính</label>
+                <select asp-for="Gender" class="form-control">
+                    <option value="true">Nam</option>
+                    <option value="false">Nữ</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Photo" class="control-label"></label>
+                <input asp-for="Photo" class="form-control" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Position" class="control-label"></label>
+                <input asp-for="Position" class="form-control" />
+                <span asp-validation-for="Position" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Salary" class="control-label"></label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="ProvinceName" class="control-label"></label>
+                <div>
+                    <select class="form-select form-select-sm mb-3" id="city" aria-label=".form-select-sm">
+                        <option value="" selected>Chọn tỉnh thành</option>
+                    </select>
+                </div>
+                <span asp-validation-for="ProvinceName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DistrictName" class="control-label"></label>
+                <div>
+                    <select class="form-select form-select-sm mb-3" id="district" aria-label=".form-select-sm">
+                        <option value="" selected>Chọn quận huyện</option>
+                    </select>
+                </div>
+                <span asp-validation-for="DistrictName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="WardName" class="control-label"></label>
+                <div>
+                    <select class="form-select form-select-sm" id="ward" aria-label=".form-select-sm">
+                        <option value="" selected>Chọn phường xã</option>
+                    </select>
+                </div>
+                <span asp-validation-for="WardName" class="text-danger"></span>
+            </div> *@
+
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WardID" class="control-label"></label>
+                <input asp-for="WardID" class="form-control" />
+                <span asp-validation-for="WardID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+    var citis = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var Parameter = {
+        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+        method: "GET",
+        responseType: "application/json",
+    };
+    var promise = axios(Parameter);
+    promise.then(function (result) {
+        renderCity(result.data);
+    });
+
+    function renderCity(data) {
+        for (const x of data) {
+            citis.options[citis.options.length] = new Option(x.Name, x.Id);
+        }
+        citis.onchange = function () {
+            district.length = 1;
+            ward.length = 1;
+            if (this.value != "") {
+                const result = data.filter(n => n.Id === this.value);
+
+                for (const k of result[0].Districts) {
+                    district.options[district.options.length] = new Option(k.Name, k.Id);
+                }
+            }
+        };
+        district.onchange = function () {
+            ward.length = 1;
+            const dataCity = data.filter((n) => n.Id === citis.value);
+            if (this.value != "") {
+                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+
+                for (const w of dataWards) {
+                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                }
+            }
+        };
+    }
+</script>

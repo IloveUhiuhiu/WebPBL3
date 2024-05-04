@@ -19,92 +19,80 @@
 		</div>
 </section>
 *@
-@{
-Layout = null;
-}
 
-
- 
 <section class="ftco-section ftco-car-details">
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-md-12">
 				<div class="car-details">
-					<div class="img rounded" style="background-image: url('@Url.Content("~/images/car-8.jpg")');"></div>
-					<div class="text text-center">
-						<span class="subheading">Cheverolet</span>
+					<div class="left">
+						<div class="text text-center" style="font-family: BarlowExtraBold;">
+							<h2 style="color:black">CÁC THÔNG SỐ CỦA XE</h2>
+						</div>
+						<div class="car-table-container">
+							<table class="car-table">
+								<thead>
+									<tr>
+										<th>Danh mục</th>
+										<th>Thông số</th>
+									</tr>
+								</thead>
+								<tbody style="max-height: 400px; overflow-y: auto; padding-bottom: px;">
+									<tr>
+										<td>Hãng xe</td>
+										<td>Mercedes</td>
+									</tr>
+									<tr>
+										<td>Nguồn gốc</td>
+										<td>Đức</td>
+									</tr>
+									<tr>
+										<td>Màu sắc</td>
+										<td>Đỏ</td>
+									</tr>
+									<tr>
+										<td>Dung tích</td>
+										<td>40L</td>
+									</tr>
+									<tr>
+										<td>Số chỗ</td>
+										<td>5</td>
+									</tr>
+									<tr>
+										<td>Động cơ</td>
+										<td>6 xi-lanh</td>
+									</tr>
+									<tr>
+										<td>Vận tốc tối đa</td>
+										<td>250 km/h</td>
+									</tr>
+									<tr>
+										<td>Công suất tối đa</td>
+										<td>400 mã lực</td>
+									</tr>
+									<tr>
+										<td>Tiêu hao nhiên liệu (l/100km)</td>
+										<td></td> <!-- Thông số không được cung cấp -->
+									</tr>
+									<tr>
+										<td>Kích thước (dài x rộng x cao)</td>
+										<td>4623 x 1855 x 1679 mm</td>
+									</tr>
+									<tr>
+										<td>Năm sản xuất</td>
+										<td>2022</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="right" style="display: flex; flex-direction: column; align-items: center;margin-top: 30px;">
+						<!-- Thêm margin-bottom để tạo khoảng cách giữa ảnh và giá -->
+						<img src="~/images/car-8.jpg" alt="Alternate Text" class="car-image" />
 						<h2>Mercedes Grand Sedan</h2>
+						<h5 style="color:black">Giá chỉ từ: 1.000.000.000 VND</h5>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md d-flex align-self-stretch ftco-animate">
-				<div class="media block-6 services">
-					<div class="media-body py-md-4">
-						<div class="d-flex mb-3 align-items-center">
-							<div class="icon d-flex align-items-center justify-content-center">
-								<span class="flaticon-pistons"></span>
-							</div>
-							<div class="text">
-								<h3 class="heading mb-0 pl-3">
-									Hộp số
-									<span>Số sàn</span>
-								</h3>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-md d-flex align-self-stretch ftco-animate">
-				<div class="media block-6 services">
-					<div class="media-body py-md-4">
-						<div class="d-flex mb-3 align-items-center">
-							<div class="icon d-flex align-items-center justify-content-center">
-								<span class="flaticon-car-seat"></span>
-							</div>
-							<div class="text">
-								<h3 class="heading mb-0 pl-3">
-									Số ghế
-									<span>5</span>
-								</h3>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-md d-flex align-self-stretch ftco-animate">
-				<div class="media block-6 services">
-					<div class="media-body py-md-4">
-						<div class="d-flex mb-3 align-items-center">
-							<div class="icon d-flex align-items-center justify-content-center">
-								<span class="flaticon-backpack"></span>
-							</div>
-							<div class="text">
-								<h3 class="heading mb-0 pl-3">
-									Hành lý
-									<span>4 túi</span>
-								</h3>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-md d-flex align-self-stretch ftco-animate">
-				<div class="media block-6 services">
-					<div class="media-body py-md-4">
-						<div class="d-flex mb-3 align-items-center">
-							<div class="icon d-flex align-items-center justify-content-center">
-								<span class="flaticon-diesel"></span>
-							</div>
-							<div class="text">
-								<h3 class="heading mb-0 pl-3">
-									Nhiên liệu
-									<span>Xăng</span>
-								</h3>
-							</div>
-						</div>
-					</div>
+
 				</div>
 			</div>
 		</div>
@@ -113,12 +101,6 @@ Layout = null;
 				<div class="bd-example bd-example-tabs">
 					<div class="d-flex justify-content-center">
 						<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-
-							<li class="nav-item">
-								<a class="nav-link active" id="pills-description-tab" data-toggle="pill"
-								   href="#pills-description" role="tab" aria-controls="pills-description"
-								   aria-expanded="true">Tính năng</a>
-							</li>
 							<li class="nav-item">
 								<a class="nav-link" id="pills-manufacturer-tab" data-toggle="pill"
 								   href="#pills-manufacturer" role="tab" aria-controls="pills-manufacturer"
@@ -132,58 +114,14 @@ Layout = null;
 					</div>
 
 					<div class="tab-content" id="pills-tabContent">
-						<div class="tab-pane fade show active" id="pills-description" role="tabpanel"
-							 aria-labelledby="pills-description-tab">
-							<div class="row">
-								<div class="col-md-4">
-									<ul class="features">
-										<li class="check"><i class="fa-solid fa-check"></i></span>Điều hòa không khí</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>Ghé trẻ em</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>GPS</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>Hành lý</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>Âm nhạc</li>
-									</ul>
-								</div>
-								<div class="col-md-4">
-									<ul class="features">
-										<li class="check"><i class="fa-solid fa-check"></i></span>Dây an toàn</li>
-										<li class="remove"><i class="fa-solid fa-xmark"></i></span>Giường ngủ</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>Nước</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>Bluetooth</li>
-										<li class="remove"><i class="fa-solid fa-xmark"></i></span>Máy tính tích hợp</li>
-									</ul>
-								</div>
-								<div class="col-md-4">
-									<ul class="features">
-										<li class="check"><i class="fa-solid fa-check"></i></span>Đầu vào âm thanh</li>
-										<li class="check">
-											<i class="fa-solid fa-check"></i></span>Chuyến đi dài ngày
-										</li>
-										<li class="check"><i class="fa-solid fa-check"></i></span>Bộ phụ kiện xe hơi</li>
-										<li class="check">
-											<i class="fa-solid fa-check"></i></span>Khóa từ xa
-											locking
-										</li>
-										<li class="check">
-											<i class="fa-solid fa-check"></i></span>Điều hòa không khí
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-
 						<div class="tab-pane fade" id="pills-manufacturer" role="tabpanel"
 							 aria-labelledby="pills-manufacturer-tab">
 							<p>
-								Even the all-powerful Pointing has no control about the blind texts it is an almost
-								unorthographic life One day however a small line of blind text by the name of Lorem
-								Ipsum decided to leave for the far World of Grammar.
-							</p>
-							<p>
-								When she reached the first hills of the Italic Mountains, she had a last view back on
-								the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the
-								subline of her own road, the Line Lane. Pityful a rethoric question ran over her
-								cheek, then she continued her way.
+								Mercedes Grand Sedan là biểu tượng của sự sang trọng và đẳng cấp trong thế giới xe hơi.
+								Với thiết kế tinh tế và động cơ mạnh mẽ, nó đưa người lái và hành khách
+								vào một không gian tiện nghi và thoải mái. Được trang bị các tính năng tiên tiến như
+								hệ thống thông tin và giải trí hàng đầu cùng các công nghệ lái xe tự động tiên tiến,
+								Mercedes Grand Sedan không chỉ là phương tiện di chuyển mà còn là biểu tượng của phong cách và đẳng cấp.
 							</p>
 						</div>
 
