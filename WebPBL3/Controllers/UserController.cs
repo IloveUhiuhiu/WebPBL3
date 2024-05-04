@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Data;
+using System.Numerics;
 using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
@@ -13,6 +14,7 @@ namespace WebPBL3.Controllers
     {
         ApplicationDbContext _db;
         private IWebHostEnvironment _environment;
+        private int limits = 10;
         public UserController (ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
@@ -23,7 +25,7 @@ namespace WebPBL3.Controllers
             return View();
         }
         // GET
-        public IActionResult UserListTable()
+        public IActionResult UserListTable(string searchtxt ="", int page = 1)
         {
             if (!TempData.ContainsKey("wards"))
             {
@@ -43,10 +45,11 @@ namespace WebPBL3.Controllers
                 TempData["provinces"] = provinces;
                 TempData["provinces"] = JsonConvert.SerializeObject(provinces, settings);
                 TempData.Keep("provinces");
+             
 
             }
 
-            List<UserDto> users = _db.Users.Include(a => a.Account).Include(w => w.Ward).Select(u => new UserDto
+            List<UserDto> users = _db.Users.Include(a => a.Account).Include(w => w.Ward).Where(u => (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).Select(u => new UserDto
             { 
 				AccountID = u.AccountID,
 		        Email = u.Account.Email,
@@ -69,6 +72,14 @@ namespace WebPBL3.Controllers
 		        ProvinceName = u.Ward.District.Province.ProvinceName,
 
 			}).ToList();
+            var total = users.Count;
+            var totalPage = (total + limits - 1) / limits;
+            if (page < 1) page = 1;
+            if (page > totalPage) page = totalPage;
+            ViewBag.totalRecord = total;
+            ViewBag.totalPage = totalPage;
+            ViewBag.currentPage = page;
+            users = users.Skip((page - 1) * limits).Take(limits).ToList();
             int cnt = 0;
             foreach (var user in users)
             {
@@ -192,10 +203,15 @@ namespace WebPBL3.Controllers
             }
 
             Account account = _db.Accounts.Where(a => a.AccountID == user.AccountID).FirstOrDefault();
-
-            Ward ward = _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefault();
-            District district = _db.Districts.Where(d => d.DistrictID == ward.DistrictID).FirstOrDefault();
-            Province province = _db.Provinces.Where(p => p.ProvinceID == district.ProvinceID).FirstOrDefault();
+            Ward ward = new Ward();
+            District district = new District();
+            Province province = new Province();
+            ward = _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefault();
+            if (ward != null)
+            {
+                district = _db.Districts.Where(d => d.DistrictID == ward.DistrictID).FirstOrDefault();
+                if (district != null) province = _db.Provinces.Where(p => p.ProvinceID == district.ProvinceID).FirstOrDefault();
+            }
             UserDto userFromDb = new UserDto
             {
                 UserID = user.AccountID,
@@ -208,7 +224,8 @@ namespace WebPBL3.Controllers
                 Address = user.Address,
                 ProvinceName = province.ProvinceName,
                 DistrictName = district.DistrictName,
-                WardName = ward.WardName,              
+                WardName = ward.WardName,  
+                Photo = user.Photo,
             };
 
             return View(userFromDb);

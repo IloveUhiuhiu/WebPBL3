@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TextTemplating;
 using Newtonsoft.Json;
 using System;
@@ -14,6 +15,7 @@ namespace WebPBL3.Controllers
     {
         private ApplicationDbContext _db;
         private IWebHostEnvironment _environment;
+        private int limits = 10;
         public CarController(ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
@@ -28,15 +30,17 @@ namespace WebPBL3.Controllers
         {
             return View();
         }
-        public IActionResult CarListTable()
+        public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
         {
+           
+           
             if (!TempData.ContainsKey("makes"))
             {
                 List<Make> makes = _db.Makes.ToList();
                 TempData["makes"] = JsonConvert.SerializeObject(makes);
                 TempData.Keep("makes");
             }
-            List<CarDto> cars = _db.Cars.Include(c => c.Make).Where(c => c.Flag == false).Select (c => new CarDto
+            List<CarDto> cars = await _db.Cars.Include(c => c.Make).OrderBy(c => c.CarID).Where(c => c.Flag == false && (makeid==0||c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt))).Select(c => new CarDto
             {
                 CarID = c.CarID,
                 CarName = c.CarName,
@@ -51,7 +55,7 @@ namespace WebPBL3.Controllers
                 Engine = c.Engine,
 
                 Origin = c.Origin,
-                Price  = c.Price,
+                Price = c.Price,
                 Quantity = c.Quantity,
 
                 Seat = c.Seat,
@@ -60,7 +64,17 @@ namespace WebPBL3.Controllers
 
                 MakeID = c.MakeID,
                 MakeName = c.Make.MakeName,
-            }).ToList();
+            }).ToListAsync();
+            var total = cars.Count;
+            var totalPage = (total +limits - 1) / limits;
+            if (page < 1) page = 1;
+            if (page > totalPage) page = totalPage;
+            ViewBag.totalRecord = total;
+            ViewBag.totalPage = totalPage;
+            ViewBag.currentPage = page;
+            ViewBag.makeid = makeid;
+            ViewBag.searchtxt = searchtxt;
+            cars = cars.Skip((page - 1) * limits).Take(limits).ToList();
             int cnt = 0;
             foreach (var car in cars)
             {
@@ -141,7 +155,7 @@ namespace WebPBL3.Controllers
         }
         public IActionResult Edit(string? id)
         {
-            
+
             
             if (String.IsNullOrEmpty(id))
             {
@@ -289,11 +303,13 @@ namespace WebPBL3.Controllers
             };
             return View(carDtoFromDb);
         }
-        [HttpPost]
+        
         public async Task<IActionResult> Delete(string? id)
         {
+            
             if (String.IsNullOrEmpty(id))
             {
+                
                 return NotFound();
             }
             Car? car = _db.Cars.FirstOrDefault(c => c.CarID == id);
@@ -302,7 +318,7 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            
+           
             car.Flag = true;
             try
             {

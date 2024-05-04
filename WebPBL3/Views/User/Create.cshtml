@@ -24,18 +24,21 @@
 
 <div class="container-xl px-4 mt-4">
    
-    <hr class="mt-0 mb-4">
+<hr class="mt-0 mb-4">
+    <form method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-xl-4">
             <!-- Profile picture card-->
             <div class="card mb-4 mb-xl-0">
                 <div class="card-body text-center">
                     <!-- Profile picture image-->
-                    <img class="img-account-profile rounded-circle mb-2" src="https://i0.wp.com/carnaiba.pe.gov.br/site/wp-content/uploads/2022/05/user-avatar.png?resize=250%2C250" alt="">
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="https://i0.wp.com/carnaiba.pe.gov.br/site/wp-content/uploads/2022/05/user-avatar.png?resize=250%2C250" alt="" style=" width: 200px;height:200px;">
                     <!-- Profile picture help block-->
+                        <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage">
                     <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                    
                     <!-- Profile picture upload button-->
-                    <button class="btn btn-primary" type="button">Thêm ảnh</button>
+                   
                 </div>
             </div>
         </div>
@@ -44,7 +47,7 @@
             <div class="card mb-4">
                 <div class="card-header">Thông tin chi tiết</div>
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
+                    
                         @if (TempData["Error"] != null)
                         {
                             <div class="text-danger">
@@ -165,12 +168,36 @@
                                 </a>
                             </div>
                         </div>
-                    </form>
+                    
                 </div>
             </div>
         </div>
     </div>
+    </form>
 </div>
+<script>
+    // Get the file input element and the image element
+    const fileInput = document.getElementById('uploadimage');
+    const profileImage = document.getElementById('profileimage');
+
+    // Add an event listener to the file input element
+    fileInput.addEventListener('change', function (event) {
+        // Check if a file is selected
+        if (event.target.files && event.target.files[0]) {
+            // Create a FileReader to read the file
+            const reader = new FileReader();
+
+            // Set up a callback function that runs when the file is read
+            reader.onload = function (e) {
+                // Update the src attribute of the image element with the new image
+                profileImage.src = e.target.result;
+            };
+
+            // Read the selected file as a data URL
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    });
+</script>
 @* <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script>
     var citis = document.getElementById("city");
