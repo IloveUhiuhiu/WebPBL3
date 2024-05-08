@@ -15,7 +15,7 @@ namespace WebPBL3.Models
             IdentityCard = string.Empty;
             Address = string.Empty;
             Photo = string.Empty;
-            WardID = 0;
+            //WardID = 0;
         }
 
         [Key]
@@ -57,8 +57,6 @@ namespace WebPBL3.Models
         [StringLength(maximumLength: 10)]
         public string AccountID { get; set; }
 
-        public Ward Ward { get; set; }
-        public int WardID { get; set; }
         public Staff Staff { get; set; }
 
         public List<Feedback> Feedbacks { get; set; }

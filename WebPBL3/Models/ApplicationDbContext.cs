@@ -49,10 +49,10 @@ namespace WebPBL3.Models
             {
                
 
-                entity.HasOne(u => u.Ward)
-                .WithMany()
-                .HasForeignKey(u => u.WardID)
-                .OnDelete(DeleteBehavior.NoAction);
+                //entity.HasOne(u => u.Ward)
+                //.WithMany()
+                //.HasForeignKey(u => u.WardID)
+                //.OnDelete(DeleteBehavior.NoAction);
                 entity.HasMany(f => f.Feedbacks)
                 .WithOne(u => u.User)
                 .HasForeignKey(u => u.UserID)

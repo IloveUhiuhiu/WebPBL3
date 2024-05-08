@@ -38,6 +38,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    @RenderSection("OrderStyles", required: false)
 </head>
 
 <body class="dashboard dashboard_1">
@@ -70,12 +71,12 @@
   
                         </li>
                         <li>
-                            <a href="contact.html">
+                            <a href="@Url.Action("CarListTable","Car")">
                                 <i class="fa fa-paper-plane red_color"></i> <span>Quản lý nhân viên</span>
                             </a>
                         </li>
-                        <li><a href="widgets.html"><i class="fa fa-clock-o orange_color"></i> <span>Quản lý khách hàng</span></a></li>
-                        <li><a href="charts.html"><i class="fa fa-bar-chart-o green_color"></i> <span>Quản lý bán hàng</span></a></li>
+                        <li><a href="@Url.Action("CarListTable","Car")"><i class="fa fa-clock-o orange_color"></i> <span>Quản lý khách hàng</span></a></li>
+                        <li><a href="@Url.Action("Index","Order")"><i class="fa-solid fa-file-invoice green-color"></i></i> <span>Quản lý bán hàng</span></a></li>
                         <li>
                             <a href="~/News/ListNews"><i class="fa fa-diamond purple_color"></i> <span>Quản lý tin tức</span></a>
      
