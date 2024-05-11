@@ -5,8 +5,8 @@
     <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
             <div class="col-md-9 ftco-animate pb-5">
-                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Cars <i class="ion-ios-arrow-forward"></i></span></p>
-                <h1 class="mb-3 bread">Choose Your Car</h1>
+                @* <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Cars <i class="ion-ios-arrow-forward"></i></span></p>
+                <h1 class="mb-3 bread">Choose Your Car</h1> *@
             </div>
         </div>
     </div>
@@ -188,62 +188,65 @@
 
 
 <div class="section2">
-       <div class="tren">
+    <div class="container">
+         <div class="tren">
             <h1>Tin Tức</h1>
-       </div>
-       <div class="duoi">
+         </div>
+
+         <div class="duoi">
             <div class="trai">
-                <div class="container">
                     <div class="row">
                         @foreach (var news in Model)
                         {
                             string[] words1 = news.Title.Split(' ');
                             string Titles = string.Join(" ", words1.Take(10));
                             string[] words2 = news.Content.Split(' ');
-                            string Contents = string.Join(" ", words2.Take(39)) +"...";
-                             <a href="">
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="box">
-                                        <div class="anh">
-                                          <img src=@news.Photo />
-                                        </div>
-                                        <div class="text">
-                                            <h3>@Titles</h3>
-                                                <span>@news.CreateAt.ToString("dd/MM/yyyy")</span>
-                                            <p>@Contents</p>
+                            string Contents = string.Join(" ", words2.Take(30)) + "...";
+                                <a asp-controller="News" asp-action="DetailUser" asp-route-id="@news.NewsID" >
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="box">
+                                            <div class="anh">
+                                                  <img src="~/images/@news.Photo" />
+                                            </div>
+                                            <div class="text">
+                                                <h3>@Titles</h3>
+                                                    <span>@news.CreateAt.ToString("dd/MM/yyyy")</span>
+                                                <p>@Contents</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
-                        } 
+                                </a>
+                        }
                     </div>
-                </div>
             </div>
             <div class="phai">
                 <h2>Tin nổi bật</h2>
-                <div class="container">
+               
                     <div class="row">
-                    @foreach (var news in Model)
-                    {
-                        string[] words1 = news.Title.Split(' ');
-                        string Titles = string.Join(" ", words1.Take(8)) +". . .";
-                            <a href="">
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="box">
-                                        <div class="anh1">
-                                          <img src=@news.Photo />
-                                        </div>
-                                        <div class="text1">
-                                            <h3>@Titles</h3>
+                        @foreach (var news in Model.Take(4))
+                        {
+                            string[] words1 = news.Title.Split(' ');
+                            string Titles = string.Join(" ", words1.Take(8)) + ". . .";
+                                    <a asp-controller="News" asp-action="DetailUser" asp-route-id="@news.NewsID">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="box">
+                                            <div class="anh1">
+                                                  <img src="~/images/@news.Photo" />
+                                            </div>
+                                            <div class="text1">
+                                                <h3>@Titles</h3>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
-                    }
+                                </a>
+                        }
                     </div>
-                </div>
+
             </div>
-       </div>  
+       </div>
+     </div>
+      
+     
 </div>
  
 <!-- phân trang -->
