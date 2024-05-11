@@ -45,7 +45,7 @@ namespace WebPBL3.DTO.Staff
 
         [Display(Name = "Lương")]
         public int Salary { get; set; }
-        public int WardID { get; set; }
+        public int? WardID { get; set; }
 
     }
 }

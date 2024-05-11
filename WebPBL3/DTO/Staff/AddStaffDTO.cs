@@ -58,7 +58,7 @@ namespace WebPBL3.DTO.Staff
 
         //[StringLength(maximumLength: 50)]
         //public string ProvinceName { get; set; }
-        public int WardID { get; set; }
+        public int? WardID { get; set; }
         [Display(Name = "Email")]
         [StringLength(maximumLength: 50)]
         [Required(ErrorMessage = "Bạn phải nhập email")]
