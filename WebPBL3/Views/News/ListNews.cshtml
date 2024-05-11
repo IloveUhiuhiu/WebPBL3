@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebPBL3.Models.News>
+﻿@model IEnumerable<WebPBL3.DTO.NewsDto>
 
 @{
     ViewData["Title"] = "Quản lý Tin Tức";
@@ -19,7 +19,8 @@
             <div class="col-6">
             </div>
             <div class="col-6 text-end" style="text-align: right;">
-                <a href="#" id="btnAddNews" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                @*  data-bs-toggle="modal" data-bs-target="#createNewsModal" *@
+                <a href="~/News/Create" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>  Thêm tin tức
                 </a>
             </div>
@@ -28,6 +29,9 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>
+                        STT
+                    </th>
                     <th>
                         Tiêu đề
                     </th>
@@ -41,13 +45,7 @@
                         Ngày tạo
                     </th>
                     <th>
-                        Ngày cập nhật
-                    </th>
-                    <th>
-                        Mã nhân viên
-                    </th>
-                    <th>
-                        Staff
+                        Tác Giả
                     </th>
                     <th>
 
@@ -60,42 +58,60 @@
                 @foreach (var obj in Model.OrderBy(u => u.NewsID))
                 {
                     <tr>
+                        <td>@obj.STT</td>
                         <td>@obj.Title</td>
                         <td>@obj.Content</td>
                         <td>
-                            <img src=@obj.Photo width="100" height=auto />
+                            <img src="~/images/@obj.Photo" width="100" height="auto;" />
                         </td>
                         <td>
-                            @obj.CreateAt
+                            @obj.CreateAt.ToString("dd/MM/yyyy")
                         </td>
                         <td>
-                            @obj.UpdateAt
+                            @obj.FullName
                         </td>
-                        <td>
-                            @obj.UpdateBy
-                        </td>
-                        @* <td>
-                    @obj.Staff.StaffID
-                    </td> *@
-
                         <td>
                             <div class="w-75 d-flex justify-content-around btn-group" role="group">
-                                <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.NewsID" class="btn btn-outline-success">
+                                <a asp-controller="News" asp-action="DetailUser" asp-route-id="@obj.NewsID" class="btn btn-outline-success">
                                     <i class="fa-solid fa-eye"></i>
                                     Chi tiết
                                 </a>
 
                                 <!-- Sử dụng icon pen cho Cập nhật -->
-                                <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.NewsID" class="btn btn-warning">
+                                <a asp-controller="News" asp-action="Edit" asp-route-id="@obj.NewsID" class="btn btn-warning">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     Cập nhật
                                 </a>
 
                                 <!-- Sử dụng icon trash cho Xóa -->
-                                <a asp-controller="Category" asp-action="Delete" asp-route-id="@obj.NewsID" class="btn btn-danger">
+                                <a href=" #myModal-@obj.NewsID" class="btn btn-danger" data-toggle="modal">
                                     <i class="fa-solid fa-trash"></i>
                                     Xóa
                                 </a>
+
+                                <div id="myModal-@obj.NewsID" class="modal fade">
+                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="icon-box" style="margin-right: 10px;">
+                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                                </div>
+                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a asp-controller="News" asp-action="Delete" asp-route-id="@obj.NewsID" class="btn btn-danger">
+                                                    Xác nhận
+                                                </a>
+                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
 
@@ -108,3 +124,4 @@
     </div>
 </div>
 
+@* @Html.Partial("CreateNews") *@

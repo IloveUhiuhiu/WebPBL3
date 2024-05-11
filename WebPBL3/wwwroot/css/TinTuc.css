@@ -88,7 +88,7 @@ p {
 }
 
 .section2 .duoi .trai {
-            width: 800px;
+        width: 800px;
 }
 
 .section2 .duoi .trai .box {
@@ -128,8 +128,10 @@ p {
 
 .section2 .duoi .phai {
     width: 200px;
+    height:632px;
     margin-left: 10px;
     border-left: 3px solid #5a5858;
+    padding-left: 15px;
     
 }
 
@@ -142,7 +144,9 @@ p {
         margin-bottom: 20px;
         overflow: hidden;
 }
-
+.section2 .duoi .phai .read {
+    margin-right: 20px;
+}
 .section2 .duoi .phai .box .anh1
 {
     width: 95%;
@@ -187,9 +191,11 @@ a {
     text-align: center;
     margin-top: 30px;
     margin-left: 300px;
+    margin-bottom: 20px;
+    margin-left: 567px;
 }
 
-.pagination a {
+    .pagination a {
         display: inline-block;
         padding: 3px 4px;
         background-color: #f0f0f0;
@@ -198,7 +204,8 @@ a {
         color: #333;
         text-decoration: none;
         margin-right: 20px;
-}
+        
+    }
 
     .pagination a:hover {
 background-color: #8C222A;
