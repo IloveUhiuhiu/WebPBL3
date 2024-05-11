@@ -17,6 +17,7 @@
     var provincesJson = TempData["provinces"] as string;
     TempData.Keep("provinces");
     var provinces = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Province>>(provincesJson);
+
 }
 
 
@@ -31,8 +32,8 @@
             <!-- Profile picture card-->
             <div class="card mb-4 mb-xl-0">
                 <div class="card-body text-center">
-                    <!-- Profile picture image-->
-                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="https://i0.wp.com/carnaiba.pe.gov.br/site/wp-content/uploads/2022/05/user-avatar.png?resize=250%2C250" alt="" style=" width: 200px;height:200px;">
+						<!-- Profile picture image-->
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/userkh000000.jpg" alt="" style=" width: 200px;height:200px;">
                     <!-- Profile picture help block-->
                         <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage">
                     <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>

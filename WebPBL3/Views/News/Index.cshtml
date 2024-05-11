@@ -1,7 +1,4 @@
-﻿
-@section NewStyles{
-    <link href="~/css/TinTuc.css" rel="stylesheet"/>
-}
+﻿@model List<News>
 
 <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
@@ -230,7 +227,7 @@
                         {
                             string[] words1 = news.Title.Split(' ');
                             string Titles = string.Join(" ", words1.Take(8)) + ". . .";
-                                    <a asp-controller="News" asp-action="DetailUser" asp-route-id="@news.NewsID">
+                                <a asp-controller="News" asp-action="DetailUser" asp-route-id="@news.NewsID">
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="box">
                                             <div class="anh1">
