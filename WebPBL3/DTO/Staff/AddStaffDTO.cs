@@ -1,76 +1,29 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace WebPBL3.DTO.Staff
 {
-    public class AddStaffDTO
+    using System.Web;
+    public partial class AddStaffDTO
     {
         [Key]
-
-        [Display(Name = "Mã nhân viên")]
-        [StringLength(maximumLength: 10)]
         public string? StaffID { get; set; }
-
-        [Display(Name = "Họ và tên")]
-        [Required(ErrorMessage = "Bạn phải nhập họ và tên")]
-        [StringLength(maximumLength: 50)]
         public string FullName { get; set; }
-
-        [Display(Name = "Số điện thoại")]
-        [StringLength(maximumLength: 15)]
-        [Required(ErrorMessage = "Bạn phải nhập số điện thoại")]
         public string PhoneNumber { get; set; }
-
-        [Display(Name = "Số CCCD")]
-        [StringLength(maximumLength: 12, MinimumLength = 9, ErrorMessage = "CCCD phải tối thiểu 9 và tối đa 12 chữ số.")]
         public string IdentityCard { get; set; }
-
-        [Display(Name = "Giới tính")]
         public bool? Gender { get; set; }
-
-        [Display(Name = "Ngày sinh")]
         public DateTime? BirthDate { get; set; }
-
-        [Display(Name = "Địa chỉ")]
-        [StringLength(maximumLength: 200, ErrorMessage = "Địa chỉ quá dài")]
-        public string Address { get; set; }
-
-        [Display(Name = "Ảnh")]
-        public string Photo { get; set; }
-
-        [Required(ErrorMessage = "Chức vụ chưa có")]
-        [Display(Name = "Chức vụ")]
-        [StringLength(maximumLength: 50)]
+        public string? Address { get; set; }
         public string Position { get; set; }
-
-        [Display(Name = "Lương")]
         public int Salary { get; set; }
-        //[Display(Name = "Tên xã")]
-
-        //[StringLength(maximumLength: 50)]
-        //public string WardName { get; set; }
-
-        //[Display(Name = "Tên huyện")]
-
-        //[StringLength(maximumLength: 50)]
-        //public string DistrictName { get; set; }
-
-        //[Display(Name = "Tên tỉnh")]
-
-        //[StringLength(maximumLength: 50)]
-        //public string ProvinceName { get; set; }
-        public int? WardID { get; set; }
-        [Display(Name = "Email")]
-        [StringLength(maximumLength: 50)]
-        [Required(ErrorMessage = "Bạn phải nhập email")]
+        public string? WardName { get; set; }
+        public string? DistrictName { get; set; }
+        public string? ProvinceName { get; set; }
         public string Email { get; set; }
-
-        [Display(Name = "Password")]
-        [StringLength(maximumLength: 100)]
-        [Required(ErrorMessage = "Bạn phải nhập password")]
-        public string Password { get; set; }
-
-        [Display(Name = "Trạng thái hoạt động")]
+        public string? Password { get; set; }
         public bool Status { get; set; }
-
+        [NotMapped]
+        public IFormFile? Photo { get; set; }
     }
 }
