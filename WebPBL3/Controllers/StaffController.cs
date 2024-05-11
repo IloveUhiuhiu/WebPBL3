@@ -1,19 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebPBL3.DTO.Staff;
 using WebPBL3.Models;
+using System.IO;
+using System.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace WebPBL3.Controllers
 {
     public class StaffController : Controller
     {
         private ApplicationDbContext _db;
-
-        public StaffController(ApplicationDbContext db)
+        private int pageSize = 10;
+        private readonly IWebHostEnvironment environment;
+        public StaffController(ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
+            this.environment = environment;
         }
-        public IActionResult listStaffs()
+        public IActionResult listStaffs(int page = 1)
         {
             var staffDTOs = (from staff in _db.Staffs
                              join user in _db.Users on staff.UserID equals user.UserID
@@ -30,7 +38,19 @@ namespace WebPBL3.Controllers
                                  Address = user.Address,
                                  Position = staff.Position,
                                  Salary = staff.Salary
-                             }).ToList();
+                             }).OrderBy(staff => staff.FullName)
+                       .Skip((page - 1) * pageSize)
+                       .Take(pageSize)
+                       .ToList();
+
+            int totalStaffs = _db.Staffs.Count();
+            int totalPages = (totalStaffs + pageSize - 1) / pageSize;
+
+            if (totalPages == 0) totalPages = 1;
+
+            ViewBag.Staffs = staffDTOs;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = page;
 
             return View(staffDTOs);
         }
@@ -40,33 +60,36 @@ namespace WebPBL3.Controllers
             var ward = await _db.Wards
                 .Include(w => w.District)
                     .ThenInclude(d => d.Province)
-                .FirstOrDefaultAsync(w => w.WardName == wardName &&
-                                            w.District.DistrictName == districtName &&
-                                            w.District.Province.ProvinceName == provinceName);
-                return ward.WardID;
+                .FirstOrDefaultAsync(w => w.WardName.Contains(wardName) &&
+                                            w.District.DistrictName.Contains(districtName) &&
+                                            w.District.Province.ProvinceName.Contains(provinceName));
+            return ward.WardID;
         }
+        [HttpGet]
         public JsonResult GetProvince()
         {
-            var province = _db.Provinces.ToList();
-            return new JsonResult(province);
-        }
-        public JsonResult GetDistrict(int id)
-        {
-            var district = _db.Districts.Where(x => x.Province.ProvinceID == id).ToList();
-            return new JsonResult(district);
-        }
-        public JsonResult GetWard(int id)
-        {
-            var ward = _db.Wards.Where(x => x.District.DistrictID == id).ToList();
-            return new JsonResult(ward);
+            var provinces = _db.Provinces.ToList();
+            return new JsonResult(provinces);
         }
 
+        public JsonResult GetDistrict(int id)
+        {
+            var districts = _db.Districts.Where(d => d.ProvinceID == id).Select(d => new { id = d.DistrictID, name = d.DistrictName }).ToList();
+            return new JsonResult(districts);
+        }
+
+        public JsonResult GetWard(int id)
+        {
+            var wards = _db.Wards.Where(w => w.DistrictID == id).Select(w => new { id = w.WardID, name = w.WardName }).ToList();
+            return new JsonResult(wards);
+        }
+        public IActionResult AddStaff()
+        {
+            return View();
+        }
+        [HttpPost]
         public async Task<IActionResult> AddStaff(AddStaffDTO staffDTO)
         {
-            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-            {
-                Console.WriteLine($"Error: {error.ErrorMessage}");
-            }
             if (ModelState.IsValid)
             {
                 using (var transaction = _db.Database.BeginTransaction())
@@ -74,7 +97,6 @@ namespace WebPBL3.Controllers
                     try
                     {
                         int newRoleID = 2;
-                        //int wardID = await GetWardIDAsync(staffDTO.WardName, staffDTO.DistrictName, staffDTO.ProvinceName);
                         var accid = 1;
                         var lastAcc = _db.Accounts.OrderByDescending(a => a.AccountID).FirstOrDefault();
                         if (lastAcc != null)
@@ -83,12 +105,19 @@ namespace WebPBL3.Controllers
                         }
                         Console.WriteLine(accid + staffDTO.Email);
                         var accidTxt = accid.ToString().PadLeft(8, '0');
+                        var accWithEmail = _db.Accounts.FirstOrDefault(u => u.Email == staffDTO.Email);
+                        if (accWithEmail != null)
+                        {
+                            TempData["Error"] = "Email đã tồn tại";
+                            return View(staffDTO);
+                        }
                         var newAccount = new Account
                         {
                             AccountID = accidTxt,
                             Email = staffDTO.Email,
                             Password = "123456",
                             RoleID = newRoleID,
+                            Status = false,
                         };
                         _db.Accounts.Add(newAccount);
                         await _db.SaveChangesAsync();
@@ -100,7 +129,35 @@ namespace WebPBL3.Controllers
                             userid = Convert.ToInt32(lastUser.UserID.Substring(2)) + 1;
                         }
                         var useridTxt = "NV" + userid.ToString().PadLeft(6, '0');
-                        int newWardID = await GetWardIDAsync(staffDTO.WardName, staffDTO.DistrictName, staffDTO.ProvinceName);
+                        Console.WriteLine($"WardName: {staffDTO.WardName}");
+                        Console.WriteLine($"DistrictName: {staffDTO.DistrictName}");
+                        Console.WriteLine($"ProvinceName: {staffDTO.ProvinceName}");
+                        int newWardID = Convert.ToInt32(staffDTO.WardName);
+                        var staffId = 1;
+                        var lastStaff = _db.Staffs.OrderByDescending(u => u.StaffID).FirstOrDefault();
+                        if (lastStaff != null)
+                        {
+                            staffId = Convert.ToInt32(lastStaff.StaffID.Substring(2)) + 1;
+                        }
+                        var staffTxt = "NV" + staffId.ToString().PadLeft(6, '0');
+                        staffDTO.StaffID = staffTxt;
+                        var accWithIdentityCard = _db.Users.FirstOrDefault(u => u.IdentityCard == staffDTO.IdentityCard);
+                        if (accWithIdentityCard != null)
+                        {
+                            TempData["Error"] = "CCCD đã tồn tại";
+                            return View(staffDTO);
+                        }
+                        string newFilename = null;
+                        if (staffDTO.Photo != null)
+                        {
+                            newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                            newFilename += Path.GetExtension(staffDTO.Photo!.FileName);
+                            string imageFullPath = environment.WebRootPath + "/upload/staff/" + newFilename;
+                            using (var stream = System.IO.File.Create(imageFullPath))
+                            {
+                                staffDTO.Photo.CopyTo(stream);
+                            }
+                        }
                         var newUser = new User
                         {
                             UserID = useridTxt,
@@ -110,21 +167,12 @@ namespace WebPBL3.Controllers
                             Gender = staffDTO.Gender,
                             BirthDate = staffDTO.BirthDate,
                             Address = staffDTO.Address,
-                            Photo = staffDTO.Photo,
+                            Photo = newFilename,
                             WardID = newWardID,
                             AccountID = newAccount.AccountID,
                         };
                         _db.Users.Add(newUser);
                         await _db.SaveChangesAsync();
-
-                        var staffId = 1;
-                        var lastStaff = _db.Staffs.OrderByDescending(u => u.StaffID).FirstOrDefault();
-                        if (lastStaff != null)
-                        {
-                            staffId = Convert.ToInt32(lastStaff.UserID.Substring(2)) + 1;
-                        }
-                        var staffTxt = "NV" + staffId.ToString().PadLeft(6, '0');
-                        staffDTO.StaffID = staffTxt;
                         var newStaff = new Staff
                         {
                             StaffID = staffDTO.StaffID,
@@ -134,8 +182,8 @@ namespace WebPBL3.Controllers
                         };
                         _db.Staffs.Add(newStaff);
                         await _db.SaveChangesAsync();
-                        transaction.Commit(); 
-                        return RedirectToAction("Index", "Home");
+                        transaction.Commit();
+                        return RedirectToAction("listStaffs");
 
                     }
                     catch (Exception ex)
@@ -144,10 +192,10 @@ namespace WebPBL3.Controllers
                         var errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                         ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi thêm nhân viên: " + errorMessage);
                     }
+                    var provinces = _db.Provinces.ToList();
+                    ViewBag.Provinces = new SelectList(provinces, "ProvinceID", "ProvinceName");
                 }
             }
-            //var provinces = await _db.Provinces.ToListAsync();
-            //ViewBag.Provinces = provinces;
             return View(staffDTO);
         }
         public async Task<IActionResult> DeleteStaff(string id)
@@ -190,7 +238,11 @@ namespace WebPBL3.Controllers
             }
             User user = _db.Users.FirstOrDefault(u => u.UserID == staff.UserID);
             Account account = _db.Accounts.FirstOrDefault(a => a.AccountID == user.AccountID);
-            GetStaffDTO staffDTO = new GetStaffDTO
+            Ward ward = _db.Wards.FirstOrDefault(w => w.WardID == user.WardID);
+            District district = _db.Districts.FirstOrDefault(d => d.DistrictID == ward.DistrictID);
+            Province province = _db.Provinces.FirstOrDefault(p => p.ProvinceID == district.ProvinceID);
+
+            AddStaffDTO staffDTO = new AddStaffDTO
             {
                 StaffID = staff.StaffID,
                 FullName = user.FullName,
@@ -200,73 +252,109 @@ namespace WebPBL3.Controllers
                 Gender = user.Gender,
                 BirthDate = user.BirthDate,
                 Address = user.Address,
-                Photo = user.Photo,
                 Position = staff.Position,
                 Salary = staff.Salary,
+                ProvinceName = province.ProvinceName,
+                DistrictName = district.DistrictName,
+                WardName = ward.WardName,
             };
+            ViewData["Photo"] = user.Photo;
             return View(staffDTO);
         }
 
-        public async Task<ActionResult> UpdateStaff(int id, UpdateStaffDTO staffDTO)
+        public async Task<ActionResult> UpdateStaff(string? id)
         {
-
-            try
+            if (String.IsNullOrEmpty(id))
             {
-                var staff = await _db.Staffs.FindAsync(id);
-                var user = await _db.Users.FindAsync(staff.UserID);
-                var account = await _db.Accounts.FindAsync(user.AccountID);
-                var ward = await _db.Wards.FindAsync(user.WardID);
-                var district = await _db.Districts.FindAsync(ward.DistrictID);
-                var province = await _db.Provinces.FindAsync(district.ProvinceID);
-                if (staff != null)
-                {
-                    staff.Position = staffDTO.Position;
-                    staff.Salary = (int)staffDTO.Salary;
-                    user.FullName = staffDTO.FullName;
-                    account.Email = staffDTO.Email;
-                    user.Address = staffDTO.Address;
-                    user.PhoneNumber = staffDTO.PhoneNumber;
-                    user.IdentityCard = staffDTO.IdentityCard;
-                    user.Gender = staffDTO.Gender;
-                    user.BirthDate = staffDTO.BirthDate;
-                    user.Photo = staffDTO.Photo;
-                    ward.WardName = staffDTO.WardName;
-                    district.DistrictName = staffDTO.DistrictName;
-                    province.ProvinceName = staffDTO.ProvinceName;
-                    int newWardID = await GetWardIDAsync(staffDTO.WardName, staffDTO.DistrictName, staffDTO.ProvinceName);
-                    user.WardID = newWardID;
-                    await _db.SaveChangesAsync();
-                    var getStaff = new GetStaffDTO
-                    {
-                        StaffID = staff.StaffID,
-                        UserID = user.UserID,
-                        AccountID = user.AccountID,
-                        RoleID = account.RoleID,
-                        FullName = user.FullName,
-                        Email = account.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        IdentityCard = user.IdentityCard,
-                        Gender = user.Gender,
-                        BirthDate = user.BirthDate,
-                        Address = user.Address,
-                        Photo = user.Photo,
-                        Position = staff.Position,
-                        Salary = staff.Salary,
-                        WardID = user.WardID,
-                    };
-                    return StatusCode(StatusCodes.Status200OK, getStaff);
-
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Không tìm thấy ID!");
-                }
+                return NotFound();
             }
-            catch (Exception err)
+            Staff? staff = await _db.Staffs.FindAsync(id);
+            if (staff == null)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, err);
+                return NotFound();
             }
+            User user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == staff.UserID);
+            Account account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
+            Ward ward = await _db.Wards.FirstOrDefaultAsync(w => w.WardID == user.WardID);
+            District district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
+            Province province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
+            AddStaffDTO getstaffDTO = new AddStaffDTO
+            {
+                StaffID = staff.StaffID,
+                FullName = user.FullName,
+                Email = account.Email,
+                PhoneNumber = user.PhoneNumber,
+                IdentityCard = user.IdentityCard,
+                Gender = user.Gender,
+                BirthDate = user.BirthDate,
+                Address = user.Address,
+                Position = staff.Position,
+                Salary = staff.Salary,
+                ProvinceName = province.ProvinceName,
+                DistrictName = district.DistrictName,
+                WardName = ward.WardName,
+                // Thêm các thông tin khác cần thiết
+            };
+            ViewData["Photo"] = user.Photo;
+            // Trả về view cập nhật với thông tin nhân viên đã được khởi tạo
+            return View("UpdateStaff",getstaffDTO);
         }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateStaff(AddStaffDTO staffDTO)
+        {
+            Staff staff = await _db.Staffs.FindAsync(staffDTO.StaffID);
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            User user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == staff.UserID);
+            Account account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
+            string newFilename = user.Photo;
+            if (ModelState.IsValid)
+            {
+                if(staffDTO.Photo != null)
+                {
+                    newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFilename += Path.GetExtension(staffDTO.Photo!.FileName);
+                    string imageFullPath = environment.WebRootPath + "/upload/staff/" + newFilename;
+                    using (var stream = System.IO.File.Create(imageFullPath))
+                    {
+                        staffDTO.Photo.CopyTo(stream);
+                    }
+                    string oldImageFullPath = environment.WebRootPath + "/upload/staff" + user.Photo;
+                    System.IO.File.Delete(oldImageFullPath);
+                }
+                
+                staff.Position = staffDTO.Position;
+                staff.Salary = (int)staffDTO.Salary;
+                user.FullName = staffDTO.FullName;
+                account.Email = staffDTO.Email;
+                user.Address = staffDTO.Address;
+                user.PhoneNumber = staffDTO.PhoneNumber;
+                user.IdentityCard = staffDTO.IdentityCard;
+                user.Gender = staffDTO.Gender;
+                user.BirthDate = staffDTO.BirthDate;
+                user.Photo = newFilename;
+                try
+                {
+                    _db.Accounts.Update(account);
+                    _db.Users.Update(user);
+                    _db.Staffs.Update(staff);
+                    _db.SaveChangesAsync();
+                    return RedirectToAction("listStaffs");
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return NotFound();
+                }
+
+            }
+            ViewData["Photo"] = user.Photo;
+            return View(staffDTO);
+        }
+
         public async Task<ActionResult<Car>> getStaffById([FromRoute] string id)
         {
             try
