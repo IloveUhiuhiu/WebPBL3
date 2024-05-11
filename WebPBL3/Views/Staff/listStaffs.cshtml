@@ -1,0 +1,166 @@
+﻿@model IEnumerable<WebPBL3.DTO.Staff.GetStaffDTO>
+
+@{
+    ViewData["Title"] = "listStaffs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách nhân viên</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-md-6">
+                @using (Html.BeginForm("Search", "Staff", FormMethod.Get))
+                {
+                    <div class="form-row">
+                        <div class="col-md-8 mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-sm" id="searchTerm" name="searchTerm">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <select class="form-control form-control-sm" id="searchField" name="searchField">
+                                <option value="FullName">Tên NV</option>
+                                <option value="IdentityCard">CCCD</option>
+                                <option value="PhoneNumber">SĐT</option>
+                                <option value="Address">Địa chỉ</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                }
+            </div>
+            <div class="col-6 text-end" style="text-align: right;">
+                <a asp-controller="Staff" asp-action="AddStaff" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i>  Thêm nhân viên
+                </a>
+            </div>
+        </div>
+
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        STT
+                    </th>
+                    <th>
+                        Mã nhân viên 
+                    </th>
+                    <th>
+                        Tên nhân viên
+                    </th>
+                    <th>
+                        Giới tính
+                    </th>
+                    <th>
+                        SĐT
+                    </th>
+                    <th>
+                        CCCD
+                    </th>
+                    <th>
+
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{ var stt = 1; }
+                @foreach (var obj in Model)
+                {
+                    <tr>
+                        <td>@stt</td>
+                        <td>@obj.StaffID</td>
+                        <td>
+                            @obj.FullName
+                        </td>
+                        <td>
+                            @if (@obj.Gender.HasValue)
+                            {
+                                @if (@obj.Gender.Value)
+                                {
+                                    @:Nam
+                                }
+                                else
+                                {
+                                    @:Nữ
+                                }
+                            }
+                        </td>
+
+                        <td>
+                            @obj.PhoneNumber
+                        </td>
+                        <td>
+                            @obj.IdentityCard
+                        </td>
+
+                        <td style ="width: 30px;">
+                            <div class="btn-group" role="group" style="gap: 10px">
+                                <a asp-controller="Staff" asp-action="Details" asp-route-id="@obj.StaffID" class="btn btn-outline-success" style="border-radius: 5px;">
+                                    <i class="fa-solid fa-eye" style="border-radius: 5px;"></i>
+                                </a>
+
+                                <!-- Sử dụng icon pen cho Cập nhật -->
+                                <a asp-controller="Car" asp-action="Edit" asp-route-id="@obj.StaffID" class="btn btn-warning" style="border-radius: 5px;">
+                                    <i class="fa-solid fa-pen-to-square" style="border-radius: 5px;"></i>
+                                </a>
+
+                                <!-- Sử dụng icon trash cho Xóa -->
+
+                                <a href="#myModal-@obj.StaffID" class="btn btn-danger" data-toggle="modal" style="border-radius: 5px;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+
+                                <div id="myModal-@obj.StaffID" class="modal fade">
+                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="icon-box" style="margin-right: 10px;">
+                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                                </div>
+                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a asp-controller="Staff" asp-action="DeleteStaff" asp-route-id="@obj.StaffID" class="btn btn-danger">
+                                                    Xác nhận
+                                                </a>
+                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                    stt++;
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+

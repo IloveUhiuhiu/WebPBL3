@@ -4,7 +4,7 @@
 
 
 @{
-    
+
 
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var makesJson = TempData["makes"] as string;
@@ -18,11 +18,11 @@
 
 <div class="row">
     <div class="col-md-12">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <input type="hidden" name="CarID" value="0" /> *@
-            
-           <div class="form row">
+            <input type="hidden" name="Photo" value="0" />
+
+            <div class="form row">
                 <div class="form-group col-md-3">
                     <label asp-for="CarName" class="control-label">Tên Ô tô</label>
                     <input asp-for="CarName" class="form-control" />
@@ -30,7 +30,7 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label asp-for="Photo" class="control-label">Hình ảnh</label>
-                    <input asp-for="Photo" class="form-control" />
+                    <input type="file" class="form-control" id="uploadimage" name="uploadimage">
                     <span asp-validation-for="Photo" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-3">
@@ -48,13 +48,13 @@
                     <span asp-validation-for="MakeID" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-3">
-                    <label asp-for="Price" class="control-label">Giá xe</label>
+                    <label asp-for="Price" class="control-label">Giá xe (VND)</label>
                     <input asp-for="Price" class="form-control" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
-           </div>
-           
-           <div class="form row">
+            </div>
+
+            <div class="form row">
                 <div class="form-group col-md-3">
                     <label asp-for="Engine" class="control-label">Động cơ</label>
                     <input asp-for="Engine" class="form-control" />
@@ -66,7 +66,7 @@
                     <span asp-validation-for="Seat" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-3">
-                    <label asp-for="Dimension" class="control-label">Kích thước</label>
+                    <label asp-for="Dimension" class="control-label">Kích thước (A x B x C)</label>
                     <input asp-for="Dimension" class="form-control" />
                     <span asp-validation-for="Dimension" class="text-danger"></span>
                 </div>
@@ -75,16 +75,16 @@
                     <input asp-for="Origin" class="form-control" />
                     <span asp-validation-for="Origin" class="text-danger"></span>
                 </div>
-           </div>
-            
-           <div class=" form row">
+            </div>
+
+            <div class=" form row">
                 <div class="form-group col-md-3">
-                    <label asp-for="Topspeed" class="control-label">Tốc độ tối đa</label>
+                    <label asp-for="Topspeed" class="control-label">Tốc độ tối đa (Km/h)</label>
                     <input asp-for="Topspeed" class="form-control" />
                     <span asp-validation-for="Topspeed" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-3">
-                    <label asp-for="Capacity" class="control-label">Dung tích</label>
+                    <label asp-for="Capacity" class="control-label">Dung tích (L)</label>
                     <input asp-for="Capacity" class="form-control" />
                     <span asp-validation-for="Capacity" class="text-danger"></span>
                 </div>
@@ -98,9 +98,9 @@
                     <input asp-for="Color" class="form-control" />
                     <span asp-validation-for="Color" class="text-danger"></span>
                 </div>
-           </div>
-            
-           <div class="form row">
+            </div>
+
+            <div class="form row">
                 <div class="form-group col-md-3">
                     <label asp-for="Year" class="control-label">Năm sản xuất</label>
                     <input asp-for="Year" class="form-control" />
@@ -116,13 +116,18 @@
                     <input asp-for="Description" class="form-control" />
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-           </div>
+            </div>
+            <div class="form row" style="display: flex; justify-content: flex-end;">
+                <div class="form-group col-md-2">
+                    <button type="submit" class="btn btn-primary form-control">Thêm mới</button>
+                </div>
+                <div class="form-group col-md-2">
+                    <a asp-controller="Car" asp-action="CarListTable" class="btn btn-outline-primary border form-control">
+                        Quay lại danh sách
+                    </a>
+                </div>
+            </div>
             
-            <button type="submit" class="btn btn-primary form-control">Create</button>
-            <a asp-controller="Car" asp-action="CarListTable" class="btn btn-outline-primary border  form-control">
-                Back to List
-            </a>
-        </form></div>
+        </form>
+    </div>
 </div>
-
-

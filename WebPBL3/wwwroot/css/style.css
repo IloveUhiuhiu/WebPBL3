@@ -415,14 +415,10 @@ hr {
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: 0.5rem; }
-
 p {
     margin-top: 0;
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
 }
-
 abbr[title],
 abbr[data-original-title] {
   text-decoration: underline;
@@ -8490,9 +8486,10 @@ body {
   font-family: "Poppins", Arial, sans-serif;
   background: #fff;
   font-size: 16px;
+  color: black;
   line-height: 1.8;
   font-weight: 400;
-  color: #999999; }
+}
   body.menu-show {
     overflow: hidden;
     position: fixed;
@@ -8509,22 +8506,16 @@ a {
     color: #1089ff;
     outline: none !important; }
 
-h1, h2,  h4, h5,
-.h1, .h2,  .h4, .h5 {
-  line-height: 1.5;
-  color: darkred;
-  font-weight: 400; }
-
 .text-primary {
   color: #1089ff !important; }
 
 .ftco-navbar-light {
-  background: transparent !important;
-  position: absolute;
- 
-  left: 0;
-  right: 0;
-  z-index: 3; }
+    background: #410404 !important;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 3;
+}
   @media (max-width: 991.98px) {
     .ftco-navbar-light {
       background: #000000 !important;
@@ -8621,15 +8612,16 @@ h1, h2,  h4, h5,
       text-decoration: none;
       color: darkred;
       outline: none !important; }
-  .ftco-navbar-light.scrolled {
+.ftco-navbar-light.scrolled {
     position: fixed;
     right: 0;
     left: 0;
     top: 0;
     margin-top: -130px;
-    background: #fff !important;
+    background: white !important;
     -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1); }
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
     @media (max-width: 991.98px) {
       .ftco-navbar-light.scrolled .nav-item > .nav-link {
         padding-left: 0 !important;

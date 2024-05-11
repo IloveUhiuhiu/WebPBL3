@@ -22,7 +22,6 @@ namespace WebPBL3.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
         public IActionResult About()
         {
             return View(); 

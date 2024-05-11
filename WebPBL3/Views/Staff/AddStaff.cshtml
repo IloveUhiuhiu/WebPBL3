@@ -1,0 +1,125 @@
+﻿@model WebPBL3.DTO.Staff.AddStaffDTO
+
+@{
+    ViewData["Title"] = "AddStaff";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1>AddStaff</h1>
+
+<h4>AddStaffDTO</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddStaff">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityCard" class="control-label"></label>
+                <input asp-for="IdentityCard" class="form-control" />
+                <span asp-validation-for="IdentityCard" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label">Giới tính</label>
+                <select asp-for="Gender" class="form-control">
+                    <option value="true">Nam</option>
+                    <option value="false">Nữ</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Photo" class="control-label"></label>
+                <input asp-for="Photo" class="form-control" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Position" class="control-label"></label>
+                <input asp-for="Position" class="form-control" />
+                <span asp-validation-for="Position" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Salary" class="control-label"></label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProvinceName" class="control-label"></label>
+                <select class="form-control" id="province"></select>
+                <span asp-validation-for="ProvinceName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DistrictName" class="control-label"></label>
+                <select id="district" class="form-control">
+                    <option value="">Chọn huyện</option>
+                </select>
+                <span asp-validation-for="DistrictName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="WardName" class="control-label"></label>
+                <select id="ward" class="form-control">
+                    <option value="">Chọn xã</option>
+                </select>
+                <span asp-validation-for="WardName" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        LoadProvince();
+    });
+    function LoadProvince() {
+        $.ajax({
+            alert('ok');
+            url: '/Staff/GetProvince',
+            success: function (result) {
+                $.each(result, function (i, data) {
+                    $('#province').append('<Option value=' + data.ProvinceID + '>' + data.ProvinceName + '</Option>');
+                });
+               
+            }
+        });
+        
+    }
+</script>

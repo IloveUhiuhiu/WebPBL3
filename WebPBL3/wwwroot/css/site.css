@@ -76,3 +76,99 @@ body {
     background-position: center;
     background-size: cover;
 }
+.new-border {
+    border: 3px solid black; /* Màu và độ dày của khung viền */
+    border-radius: 10px; /* Độ cong của góc */
+    padding: 20px; /* Khoảng cách nội dung và khung viền */
+    display: inline-block; /* Đảm bảo khối không căng ra toàn bộ chiều rộng */
+}
+
+.car-details {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các phần tử chuyển hàng khi không còn đủ không gian */
+}
+
+.left {
+    flex: 1; /* Phần trái chiếm một phần tỷ lệ linh hoạt của không gian còn lại */
+}
+
+.right {
+    flex: 1; /* Phần phải chiếm một phần tỷ lệ linh hoạt của không gian còn lại */
+    display: flex;
+    justify-content: center; /* Căn giữa nội dung ngang của phần phải */
+    align-items: center; /* Căn giữa nội dung dọc của phần phải */
+    margin-left: 50px;
+}
+
+.text h2 {
+    font-size: 24px;
+}
+
+.text h3 {
+    font-size: 16px;
+}
+
+.text h5 {
+    font-size: 14px;
+    color: black;
+}
+
+.text h2 + h5 {
+    border-bottom: 1px solid black;
+    margin-bottom: 10px; /* Tăng khoảng cách giữa các phần tử */
+}
+
+/* Đường line2 giữa h5 và h2 */
+.text h5 + h2 {
+    border-bottom: 1px solid black;
+    margin-top: 10px; /* Tăng khoảng cách giữa các phần tử */
+}
+
+.car-table-container {
+    scrollbar-width: thin;
+    max-height: 500px; /* Đặt chiều cao tối đa của vùng chứa bảng */
+    overflow-y: auto; /* Thêm thanh cuộn khi bảng vượt quá chiều cao */
+    border: 1px solid black; /* Đường viền cho vùng chứa */
+    /*position: relative;*/
+}
+
+.car-table-header {
+    overflow: hidden; /* Loại bỏ thanh cuộn ngang */
+}
+
+.car-table-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.car-table {
+    width: 100%; /* Bảng rộng bằng phần tử chứa */
+    border-collapse: collapse; /* Gộp đường viền */
+}
+
+    .car-table th, .car-table td {
+        padding: 8px; /* Khoảng cách giữa nội dung và đường viền */
+        text-align: left; /* Căn lề văn bản */
+        border: 1px solid black; /* Đường viền xung quanh ô */
+    }
+
+    .car-table th {
+        background-color: #9F2125; /* Màu nền của tiêu đề cột */
+        color: white; /* Màu văn bản của tiêu đề cột */
+    }
+
+.car-image {
+    max-width: 100%; /* Ảnh tự động co giãn theo kích thước của phần tử cha */
+    height: auto; /* Đảm bảo tỷ lệ khung hình tự động */
+    margin: 30px auto 50px auto;
+}
+
+.car-table thead th {
+    position: sticky;
+    top: 0; /* Giữ phần tử thể hiện ở đỉnh khi cuộn */
+    z-index: 2; /* Đảm bảo phần tử thể hiện nằm trên cùng */
+    background-color: #9F2125; /* Màu nền của tiêu đề cột */
+    color: white; /* Màu văn bản của tiêu đề cột */
+}
+
+
