@@ -4,7 +4,7 @@ namespace WebPBL3.Models
 {
     public class CarDto
     {
-        
+        public int? STT;
         public string? CarID { get; set; }
         [Required]
         public string CarName { get; set; }

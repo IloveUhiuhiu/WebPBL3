@@ -10,7 +10,7 @@ namespace WebPBL3.Models
         public User()
         {
             UserID = string.Empty;
-            FullName = string.Empty;
+            FullName = "User";
             PhoneNumber = string.Empty;
             IdentityCard = string.Empty;
             Address = string.Empty;
@@ -25,18 +25,17 @@ namespace WebPBL3.Models
 
 
         [Display(Name = "Họ và tên ")]
-        [Required(ErrorMessage = "Bạn phải nhập họ và tên")]
         [StringLength(maximumLength: 50)]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
         [Display(Name = "Số điện thoại")]
         [StringLength(maximumLength: 15)]
-        [Required(ErrorMessage = "Bạn phải nhập số điện thoại")]
-        public string PhoneNumber { get; set; }
+        
+        public string? PhoneNumber { get; set; }
 
         [Display(Name = "Số CCCD")]
         [StringLength(maximumLength: 12, MinimumLength = 9, ErrorMessage = "CCCD phải tối thiểu 9 và tối đa 12 chữ số.")]
-        public string IdentityCard { get; set; }
+        public string? IdentityCard { get; set; }
 
         [Display(Name = "Giới tính")]
         public bool? Gender { get; set; }
