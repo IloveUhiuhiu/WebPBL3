@@ -18,25 +18,49 @@
                 <div class="col-12">
                     <h4>Thông tin khách hàng</h4>
                 </div>
+                <div class="col-12" style="font-size: 15px">
+                    <p>(Khách hàng đã có tài khoản. Nhập địa chỉ email: <input id="txtSearch" name="existEmail" placeholder="Email" type="email" /> )</p>
+                </div>
                 <div class="col-6 mb-2">
                     <label asp-for="FullName"></label>
                     <input asp-for="FullName" value="@Model?.FullName" type="text" class="form-control">
                 </div>
-                <div class="col-6">
+                <div class="col-6 mb-2">
                     <label asp-for="IdentityCard"></label>
                     <input asp-for="IdentityCard" value="@Model?.IdentityCard" class="form-control">
                 </div>
                 <div class="col-6 mb-2">
-                    <label asp-for="Address"></label>
-                    <input asp-for="Address" class="form-control" value="@Model?.Address">
-                </div>
-                <div class="col-6">
                     <label asp-for="PhoneNumber"></label>
                     <input asp-for="PhoneNumber" value="@Model?.PhoneNumber" class="form-control">
                 </div>
-                <div class="col-6">
+                <div class="col-6 mb-2">
                     <label asp-for="Email"></label>
                     <input asp-for="Email" value="@Model?.Email" class="form-control">
+                </div>
+                <div class="col-6 mb-2">
+                    <label>Địa chỉ</label>
+                    <input placeholder="Số nhà, đường" class="form-control" id="street">
+                </div>
+                <div class="col-6 mb-2">
+                    <label>&nbsp;</label>
+                    <div>
+                        <select class="form-select form-control" id="city">
+                            <option value="" selected>Tỉnh thành</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-6 mb-2">
+                    <select class="form-select form-control" id="district">
+                        <option value="" selected>Quận huyện</option>
+                    </select>
+                </div>
+                <div class="col-6 mb-2">
+                    <select class="form-select form-control" id="ward">
+                        <option value="" selected>Xã phường</option>
+                    </select>
+                </div>
+                <div>
+                    <input id="address" asp-for="Address" value="@Model?.Address" hidden/>
                 </div>
                 <div class="col-12 mt-3">
                     <h4>Thêm sản phẩm</h4>
@@ -138,12 +162,16 @@
 </div>
 
 <script>
+    var cities = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var address = document.getElementById("address");
+    var street = document.getElementById("street");
     function submitForm(action) {
+        address.value = street.value + "-" + cities.value + "-" + districts.value + "-" + wards.value;
         document.getElementById('myForm').action = action;
         document.getElementById('myForm').submit();
     }
-
-     
         var deleteItems = document.querySelectorAll(".delete-item");
         deleteItems.forEach(item => {
             item.addEventListener('click', (e) => {
@@ -158,4 +186,72 @@
                 submitForm('/Order/DeleteItem');
             })
         })
+    async function getData() {
+        const url = "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json"
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.Name, city.Id);
+        });
+        cities.onchange = function () {
+            if (this.value !== "") {
+                const selectedCity = res.find(city => city.Id === this.value);
+                if (selectedCity && selectedCity.Districts) {
+                    selectedCity.Districts.forEach(district => {
+                        districts.options[districts.options.length] = new Option(district.Name, district.Id);
+                    });
+                }
+            }
+        };
+        districts.onchange = function () {
+            if (this.value !== "") {
+                const dataDistincts = res.find(city => city.Id === cities.value).Districts;
+                const selectedDistrict = dataDistincts.find(district => district.Id === this.value);
+                if (selectedDistrict && selectedDistrict.Wards) {
+                    selectedDistrict.Wards.forEach(ward => {
+                        wards.options[wards.options.length] = new Option(ward.Name,ward.Id);
+                    });
+                }
+            }
+        }
+    }
+    
+    async function extractAddress(addr){
+        await renderCities();
+        const arr = addr.split('-');
+        console.log(arr);
+        if (arr[0] !== "") { 
+            street.value = arr[0];
+        }
+        if (arr[1] != "" &&arr[1] !== undefined) {
+            cities.value = arr[1].toString();
+            console.log("cities.value= " + arr[1].toString());
+            cities.dispatchEvent(new Event('change'));
+        }
+        if (arr[2] != "" && arr[2] !== undefined) {
+            districts.value = arr[2].toString();
+            districts.dispatchEvent(new Event('change'));
+        }
+        if (arr[3] != "" && arr[3] !== undefined) {
+            wards.value = arr[3].toString();
+        }
+    }
+    extractAddress(address.value);
+
+    document.getElementById("txtSearch").addEventListener("keydown", function (event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            var url = '@Url.Action("ExtractEmail", "Order")'
+            document.getElementById('myForm').action = url;
+            document.getElementById('myForm').submit();
+        }
+    });
  </script>

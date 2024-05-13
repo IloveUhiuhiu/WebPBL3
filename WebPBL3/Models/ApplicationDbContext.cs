@@ -72,7 +72,6 @@ namespace WebPBL3.Models
                 .WithOne(s => s.Staff)
                 .HasForeignKey(s => s.StaffID)
                 .OnDelete(DeleteBehavior.NoAction);
-
                 entity.HasOne(a => a.User)
                 .WithOne(u => u.Staff)
                 .HasForeignKey<Staff>(s => s.UserID)

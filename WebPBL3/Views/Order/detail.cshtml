@@ -116,4 +116,64 @@
             <div class="col-lg-12 text-center"><button class="btn btn-danger">Quay lại</button></div>
         </div>
     </div>
+<script>
+    async function getData() {
+        const url = "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json"
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.Name, city.Id);
+        });
+        cities.onchange = function () {
+            if (this.value !== "") {
+                const selectedCity = res.find(city => city.Id === this.value);
+                if (selectedCity && selectedCity.Districts) {
+                    selectedCity.Districts.forEach(district => {
+                        districts.options[districts.options.length] = new Option(district.Name, district.Id);
+                    });
+                }
+            }
+        };
+        districts.onchange = function () {
+            if (this.value !== "") {
+                const dataDistincts = res.find(city => city.Id === cities.value).Districts;
+                const selectedDistrict = dataDistincts.find(district => district.Id === this.value);
+                if (selectedDistrict && selectedDistrict.Wards) {
+                    selectedDistrict.Wards.forEach(ward => {
+                        wards.options[wards.options.length] = new Option(ward.Name,ward.Id);
+                    });
+                }
+            }
+        }
+    }
 
+    async function extractAddress(addr){
+        await renderCities();
+        const arr = addr.split('-');
+        console.log(arr);
+        if (arr[0] !== "") {
+            street.value = arr[0];
+        }
+        if (arr[1] != "" &&arr[1] !== undefined) {
+            cities.value = arr[1].toString();
+            console.log("cities.value= " + arr[1].toString());
+            cities.dispatchEvent(new Event('change'));
+        }
+        if (arr[2] != "" && arr[2] !== undefined) {
+            districts.value = arr[2].toString();
+            districts.dispatchEvent(new Event('change'));
+        }
+        if (arr[3] != "" && arr[3] !== undefined) {
+            wards.value = arr[3].toString();
+        }
+    }
+
+</script>

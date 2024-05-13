@@ -18,7 +18,7 @@ namespace WebPBL3.Controllers
         {
             _context = db;
         }
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
             string orderJson = TempData["orders"] as string;
             if(TempData["status"] != null)
@@ -39,6 +39,15 @@ namespace WebPBL3.Controllers
             {
                 orders = _context.Orders.ToList();
             }
+            double total = orders.Count;
+            var totalPage = (int)Math.Ceiling(total / 10);
+            if (page < 1)
+                page = 1;
+            if (page > totalPage) 
+                page = totalPage;
+            ViewBag.totalPage = totalPage;
+            ViewBag.currentPage = page;
+            orders = orders.Skip((page - 1) * 10).Take(10).ToList();
             return View(orders);
         }
         public IActionResult Creat() 
@@ -54,6 +63,27 @@ namespace WebPBL3.Controllers
                 orderDTO = JsonConvert.DeserializeObject<OrderDTO>(orderDTOJson);
             }
             return View(orderDTO);
+        }
+        [HttpPost]
+        public IActionResult ExtractEmail(string existEmail)
+        {
+            User? u = _context.Users
+                .Include(a => a.Account)
+                .FirstOrDefault(u => u.Account.Email == existEmail);
+            if (u != null)
+            {
+                OrderDTO orderDTO = new OrderDTO
+                {
+                    FullName = u.FullName,
+                    IdentityCard = u.IdentityCard,
+                    PhoneNumber = u.PhoneNumber,
+                    Email = existEmail,
+                    Address = u.Address,
+                };
+                string orderDTOJson = JsonConvert.SerializeObject(orderDTO);
+                TempData["orderDTO"] = orderDTOJson;
+            }
+            return RedirectToAction("Creat");
         }
         [HttpPost]
         public IActionResult AddItem(OrderDTO orderDTO,string CarID, int quantity)

@@ -6,6 +6,8 @@
     ViewData["Title"] = "Quản lý bán hàng";
     Layout = "_AdminLayout";
     int count = 1;
+    int page = ViewBag.currentPage;
+    int total = ViewBag.totalPage;
 }
 <div class="card shadow border-0">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
@@ -128,6 +130,32 @@
         </table>
     </div>
 </div>
+@if (total > 0)
+{
+    <ul style="display: flex; justify-content: center; align-items: center; padding: 0; margin-top: 10px; list-style: none;">
+        <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;"><a asp-action="Index" asp-route-page="@(page - 1)" class="prev" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">&laquo</a></li>
+        @for (int i = 1; i <= total; i++)
+        {
+            @if (i == page)
+            {
+                <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;background-color: #37B247;">
+                    <a asp-action="Index"  asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                        @i
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                    <a asp-action="Index" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                        @i
+                    </a>
+                </li>
+            }
+        }
+        <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;"><a asp-action="Index" asp-route-page="@(page + 1)" class="next" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">&raquo;</a></li>
+    </ul>
+}
 <script>
         document.getElementById('submitForm').addEventListener('click', (e) => {
             e.preventDefault();

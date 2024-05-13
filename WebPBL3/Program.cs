@@ -25,6 +25,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("User", policy => policy.RequireRole("User"));
     options.AddPolicy("Staff", policy => policy.RequireRole("Staff"));
 });
+
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromMinutes(3);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +47,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
