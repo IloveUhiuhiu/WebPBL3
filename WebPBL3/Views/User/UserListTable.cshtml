@@ -117,12 +117,12 @@
 
                                 <!-- Sử dụng icon trash cho Xóa -->
 
-                                <a href=" #myModal" class="btn btn-danger" data-toggle="modal">
+                                <a href=" #myModal-@obj.UserID" class="btn btn-danger" data-toggle="modal">
                                     <i class="fa-solid fa-trash"></i>
                                     Xóa
                                 </a>
 
-                                <div id="myModal" class="modal fade">
+                                <div id="myModal-@obj.UserID" class="modal fade">
                                     <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -133,7 +133,7 @@
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
                                             <div class="modal-body">
-                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
                                             </div>
                                             <div class="modal-footer">
                                                 <a asp-controller="User" asp-action="Delete" asp-route-id="@obj.UserID" class="btn btn-danger">

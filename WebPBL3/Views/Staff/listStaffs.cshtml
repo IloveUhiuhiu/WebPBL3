@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<WebPBL3.DTO.Staff.GetStaffDTO>
-
 @{
     ViewData["Title"] = "listStaffs";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -16,33 +15,29 @@
 
     <div class="card-body p-4">
         <div class="row pb-3">
-            <div class="col-md-6">
-                @using (Html.BeginForm("Search", "Staff", FormMethod.Get))
-                {
+            <div class="col-6">
+                <form id="searchForm" action="@Url.Action("Search", "Staff")" method="get">
                     <div class="form-row">
-                        <div class="col-md-8 mb-3">
-                            <div class="input-group">
-                                <input type="text" class="form-control form-control-sm" id="searchTerm" name="searchTerm">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                    </button>
-                                </div>
+                        <div class="col-8">
+                            <div class="input-group rounded">
+                                <input type="text" class="form-control rounded" id="searchTerm" name="searchTerm" placeholder="Search" aria-label="Search" aria-describedby="search-addon">
+                                <span id="searchIcon" class="input-group-text border-0" id="search-addon">
+                                    <i class="fas fa-search"></i>
+                                </span>
                             </div>
                         </div>
-
-                        <div class="col-md-4 mb-3">
-                            <select class="form-control form-control-sm" id="searchField" name="searchField">
+                        <div class="col-4">
+                            <select class="form-control rounded" id="searchField" name="searchField">
                                 <option value="FullName">Tên NV</option>
                                 <option value="IdentityCard">CCCD</option>
                                 <option value="PhoneNumber">SĐT</option>
                                 <option value="Address">Địa chỉ</option>
                             </select>
                         </div>
-                        
                     </div>
-                }
+                </form>
             </div>
+            
             <div class="col-6 text-end" style="text-align: right;">
                 <a asp-controller="Staff" asp-action="AddStaff" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>  Thêm nhân viên
@@ -73,6 +68,9 @@
                         CCCD
                     </th>
                     <th>
+                        Địa chỉ
+                    </th>
+                    <th>
 
                     </th>
 
@@ -80,7 +78,7 @@
             </thead>
             <tbody>
                 @{ var stt = 1; }
-                @foreach (var obj in Model)
+                @foreach (var obj in Model.OrderBy(u => u.StaffID))
                 {
                     <tr>
                         <td>@stt</td>
@@ -108,6 +106,9 @@
                         <td>
                             @obj.IdentityCard
                         </td>
+                        <td>
+                            @obj.Address
+                        </td>
 
                         <td style ="width: 30px;">
                             <div class="btn-group" role="group" style="gap: 10px">
@@ -116,7 +117,7 @@
                                 </a>
 
                                 <!-- Sử dụng icon pen cho Cập nhật -->
-                                <a asp-controller="Car" asp-action="Edit" asp-route-id="@obj.StaffID" class="btn btn-warning" style="border-radius: 5px;">
+                                <a asp-controller="Staff" asp-action="UpdateStaff" asp-route-id="@obj.StaffID" class="btn btn-warning" style="border-radius: 5px;">
                                     <i class="fa-solid fa-pen-to-square" style="border-radius: 5px;"></i>
                                 </a>
 
@@ -160,7 +161,30 @@
         </table>
 
     </div>
+    
 </div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@section scripts
+{
+    <script>
+        document.getElementById("searchIcon").addEventListener("click", function () {
+            performSearch();
+        });
+
+        document.getElementById("searchForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            performSearch();
+        });
+
+        function performSearch() {
+            var searchTerm = document.getElementById("searchTerm").value;
+            var searchField = document.getElementById("searchField").value;
+            var url = "@Url.Action("Search", "Staff")" + "?searchTerm=" + searchTerm + "&searchField=" + searchField;
+            window.location.href = url;
+        }
+    </script>
+
+}
 
 
 

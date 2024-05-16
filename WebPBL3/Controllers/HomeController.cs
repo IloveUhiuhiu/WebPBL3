@@ -18,15 +18,18 @@ namespace WebPBL3.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.HideHeader = false;
             return View();
         }
 
         public IActionResult About()
         {
+            ViewBag.HideHeader = false;
             return View(); 
         }
         public IActionResult Contact()
-        {   
+        {
+            ViewBag.HideHeader = false;
             List<Province> provinces = _db.Provinces.ToList();
             return View(provinces);
         }

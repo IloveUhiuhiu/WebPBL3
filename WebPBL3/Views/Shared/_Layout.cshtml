@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
   <head>
 
@@ -23,34 +24,39 @@
 	<link href="~/css/owl.theme.default.min.css" rel="stylesheet"/>
 	<link href="~/css/site.css" rel="stylesheet" /> 
 	<link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/tintuc.css" rel="stylesheet" />
     @RenderSection("NewStyles", required: false)
     @RenderSection("AboutStyles",required:false)
     @RenderSection("ContactStyles",required: false)
   </head>
   <body>
       <!--Header-->
-		<header>
-			<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar ftco-navbar-light" id="ftco-navbar">
-				<div class="container">
-					<a class="navbar-brand" href="index.html">Dragon<span>Car</span></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fa-solid fa-bars"></i>Menu
+    @if (ViewBag.HideHeader != null && !(bool)ViewBag.HideHeader)
+    {
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+                <div class="container">
+                    <a class="navbar-brand" href="index.html">Dragon<span>Car</span></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa-solid fa-bars"></i>Menu
                     </button>
-					<div class="collapse navbar-collapse" id="ftco-nav">
-						<ul class="navbar-nav ml-auto">
-							<li class="nav-item active"><a href="@Url.Action("Index", "Home")" class="nav-link">Trang Chủ</a></li>
-							<li class="nav-item "><a href="@Url.Action("About", "Home")" class="nav-link">Giới Thiệu</a></li>
-							<li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link">Hãng Xe</a></li>
+                    <div class="collapse navbar-collapse" id="ftco-nav">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item active"><a href="@Url.Action("Index", "Home")" class="nav-link">Trang Chủ</a></li>
+                            <li class="nav-item "><a href="@Url.Action("About", "Home")" class="nav-link">Giới Thiệu</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link">Hãng Xe</a></li>
                             <li class="nav-item"><a href="@Url.Action("Index", "News")" class="nav-link">Tin Tức</a></li>
 							<li class="nav-item"><a href="@Url.Action("Index", "Contact")" class="nav-link">Liên Hệ</a></li>
                             <li class="nav-item"><a href="@Url.Action("Login", "Account")" class="nav-link">Đăng Nhập</a></li>
-						</ul>
-					</div>
-                    
-				</div>
-            
-			</nav>
-		</header>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </nav>
+        </header>
+    }
+    
     <main>
        @RenderBody()
     </main> 
