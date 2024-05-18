@@ -24,7 +24,7 @@ namespace WebPBL3.Models
         public string WardName { get; set; }
 
         public District District { get; set; }
-        public int? DistrictID { get; set; }
+        public int DistrictID { get; set; }
 
     }
 }

@@ -6,7 +6,6 @@ namespace WebPBL3.DTO.Staff
 {
     public class GetStaffDTO
     {
-        [Key]
         public string? StaffID { get; set; }
 
         public string? FullName { get; set; }

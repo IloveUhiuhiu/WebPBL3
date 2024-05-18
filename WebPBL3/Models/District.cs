@@ -26,7 +26,7 @@ namespace WebPBL3.Models
         public string DistrictName { get; set; }
 
         public Province Province { get; set; }
-        public int? ProvinceID { get; set; }
+        public int ProvinceID { get; set; }
 
         public List<Ward> Wards { get; set; }
 

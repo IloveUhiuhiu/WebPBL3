@@ -52,29 +52,29 @@ namespace WebPBL3.Controllers
 
             }
 
-//            List<UserDto> users = _db.Users.Include(a => a.Account).Include(w => w.Ward).Where(u => (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).Select(u => new UserDto
-//            { 
-//				AccountID = u.AccountID,
-//		        Email = u.Account.Email,
-//		        Password = u.Account.Password,
-//		        Status = u.Account.Status,
-		    
-//		        RoleID = 3,
-//		        UserID = u.UserID,
-//		        FullName = u.FullName,
-//		        PhoneNumber =u.PhoneNumber,
-//		        IdentityCard =u.IdentityCard,
+            List<UserDto> users = _db.Users.Include(a => a.Account).Include(w => w.Ward).Where(u => (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).Select(u => new UserDto
+            {
+                AccountID = u.AccountID,
+                Email = u.Account.Email,
+                Password = u.Account.Password,
+                Status = u.Account.Status,
 
-//		        Gender =u.Gender,
-//		        BirthDate =u.BirthDate,
-//		        Address =u.Address,
-//		        Photo = u.Photo,
-//		        WardID =u.WardID,
-//		        WardName =u.Ward.WardName,
-//		        DistrictName = u.Ward.District.DistrictName,
-//		        ProvinceName = u.Ward.District.Province.ProvinceName,
+                RoleID = 3,
+                UserID = u.UserID,
+                FullName = u.FullName,
+                PhoneNumber = u.PhoneNumber,
+                IdentityCard = u.IdentityCard,
 
-			}).ToList();
+                Gender = u.Gender,
+                BirthDate = u.BirthDate,
+                Address = u.Address,
+                Photo = u.Photo,
+                WardID = u.WardID,
+                WardName = u.Ward.WardName,
+                DistrictName = u.Ward.District.DistrictName,
+                ProvinceName = u.Ward.District.Province.ProvinceName,
+
+            }).ToList();
             var total = users.Count;
             var totalPage = (total + limits - 1) / limits;
             if (page < 1) page = 1;
@@ -94,18 +94,18 @@ namespace WebPBL3.Controllers
         // GET
         public IActionResult Create()
         {
-            
-//            return View();
-//        }
-//        // POST
-//        [HttpPost]
-//        public async Task<IActionResult> Create(UserDto user, IFormFile? uploadimage)
-//        {
-//            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-//            {
-//                Console.WriteLine($"Error: {error.ErrorMessage}");
-//            }
-//            if (ModelState.IsValid)
+
+            return View();
+        }
+        // POST
+        [HttpPost]
+        public async Task<IActionResult> Create(UserDto user, IFormFile? uploadimage)
+        {
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine($"Error: {error.ErrorMessage}");
+            }
+            if (ModelState.IsValid)
 
             {   
                 // Account
@@ -163,19 +163,19 @@ namespace WebPBL3.Controllers
                     WardID = user.WardID,
                     AccountID = user.AccountID,
 
-//                });
+                });
 
-//                await _db.SaveChangesAsync();
-//                if (uploadimage != null && uploadimage.Length > 0 )
-//                {
-//                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", user.Photo);
-//                    using (var fileStream = new FileStream(_path, FileMode.Create))
-//                    {
-//                        await uploadimage.CopyToAsync(fileStream);
+                await _db.SaveChangesAsync();
+                if (uploadimage != null && uploadimage.Length > 0)
+                {
+                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", user.Photo);
+                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    {
+                        await uploadimage.CopyToAsync(fileStream);
 
-//                    }
-//                }
-//                return RedirectToAction("UserListTable");
+                    }
+                }
+                return RedirectToAction("UserListTable");
 
             }
             return View(user);
@@ -278,13 +278,13 @@ namespace WebPBL3.Controllers
                 return NotFound();
             }
             User? user = _db.Users.Find(id);
-            
-//            if (user == null)
-//            {
-//                return NotFound();
-//            }
 
-            Account account = _db.Accounts.Where(a => a.AccountID == user.AccountID).FirstOrDefault();
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        Account account = _db.Accounts.Where(a => a.AccountID == user.AccountID).FirstOrDefault();
             string wardName = string.Empty, districtName = string.Empty, provinceName = string.Empty;
             Ward ward = _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefault();
             if (ward != null)

@@ -39,28 +39,25 @@
                 </div>
                 <div class="col-6 mb-2">
                     <label>Địa chỉ</label>
-                    <input placeholder="Số nhà, đường" class="form-control" id="street">
+                    <input placeholder="Số nhà, đường" class="form-control" id="street" asp-for="Address">
                 </div>
                 <div class="col-6 mb-2">
                     <label>&nbsp;</label>
                     <div>
-                        <select class="form-select form-control" id="city">
+                        <select class="form-select form-control" id="city" asp-for="ProvinceID">
                             <option value="" selected>Tỉnh thành</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-6 mb-2">
-                    <select class="form-select form-control" id="district">
+                    <select class="form-select form-control" id="district" asp-for="DistrictID">
                         <option value="" selected>Quận huyện</option>
                     </select>
                 </div>
                 <div class="col-6 mb-2">
-                    <select class="form-select form-control" id="ward">
+                    <select class="form-select form-control" id="ward" asp-for="WardID">
                         <option value="" selected>Xã phường</option>
                     </select>
-                </div>
-                <div>
-                    <input id="address" asp-for="Address" value="@Model?.Address" hidden/>
                 </div>
                 <div class="col-12 mt-3">
                     <h4>Thêm sản phẩm</h4>
@@ -162,13 +159,13 @@
 </div>
 
 <script>
+    
     var cities = document.getElementById("city");
     var districts = document.getElementById("district");
     var wards = document.getElementById("ward");
     var address = document.getElementById("address");
     var street = document.getElementById("street");
     function submitForm(action) {
-        address.value = street.value + "-" + cities.value + "-" + districts.value + "-" + wards.value;
         document.getElementById('myForm').action = action;
         document.getElementById('myForm').submit();
     }
@@ -187,10 +184,30 @@
             })
         })
     async function getData() {
-        const url = "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json"
         try {
-            const response = await fetch(url);
+            const response = await fetch("/Order/GetProvince");
             const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getDistrict(id) {
+        try {
+            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getWard(id) {
+        try {
+            const response = await fetch(`/Order/GetWard/${id}`);
+            const data = await response.json();
+            console.log(data);
             return data;
         } catch (error) {
             alert('Loi fetch api: ', error);
@@ -199,53 +216,42 @@
     async function renderCities() {
         const res = await getData();
         res.forEach(city => {
-            cities.options[cities.options.length] = new Option(city.Name, city.Id);
+            cities.options[cities.options.length] = new Option(city.provinceName, city.provinceID);
         });
-        cities.onchange = function () {
-            if (this.value !== "") {
-                const selectedCity = res.find(city => city.Id === this.value);
-                if (selectedCity && selectedCity.Districts) {
-                    selectedCity.Districts.forEach(district => {
-                        districts.options[districts.options.length] = new Option(district.Name, district.Id);
-                    });
-                }
-            }
-        };
-        districts.onchange = function () {
-            if (this.value !== "") {
-                const dataDistincts = res.find(city => city.Id === cities.value).Districts;
-                const selectedDistrict = dataDistincts.find(district => district.Id === this.value);
-                if (selectedDistrict && selectedDistrict.Wards) {
-                    selectedDistrict.Wards.forEach(ward => {
-                        wards.options[wards.options.length] = new Option(ward.Name,ward.Id);
-                    });
-                }
-            }
+        if('@Model.ProvinceID'&&'@Model.ProvinceID'!=='0'){
+            cities.value = @Model.ProvinceID;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+        }
+        cities.addEventListener('change', async () => {
+            districts.options.length = 1;
+            wards.options.length = 1;
+            const listDistrict = await getDistrict(cities.value);
+               listDistrict.forEach(district => {
+                    districts.options[districts.options.length] = new Option(district.name, district.id);
+              });
+        })
+        districts.addEventListener('change', async () => {
+            wards.options.length = 1;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+        })
+        if('@Model.DistrictID'!=='0'){
+            districts.value = @Model.DistrictID;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+        }
+        if ('@Model.WardID' !== '0') {
+            wards.value = @Model.WardID;
         }
     }
-    
-    async function extractAddress(addr){
-        await renderCities();
-        const arr = addr.split('-');
-        console.log(arr);
-        if (arr[0] !== "") { 
-            street.value = arr[0];
-        }
-        if (arr[1] != "" &&arr[1] !== undefined) {
-            cities.value = arr[1].toString();
-            console.log("cities.value= " + arr[1].toString());
-            cities.dispatchEvent(new Event('change'));
-        }
-        if (arr[2] != "" && arr[2] !== undefined) {
-            districts.value = arr[2].toString();
-            districts.dispatchEvent(new Event('change'));
-        }
-        if (arr[3] != "" && arr[3] !== undefined) {
-            wards.value = arr[3].toString();
-        }
-    }
-    extractAddress(address.value);
-
+    renderCities();
     document.getElementById("txtSearch").addEventListener("keydown", function (event) {
         event.preventDefault();
         if (event.keyCode === 13) {

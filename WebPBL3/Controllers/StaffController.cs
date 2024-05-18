@@ -221,16 +221,16 @@ namespace WebPBL3.Controllers
             }
             await _db.SaveChangesAsync();
 
-//            return RedirectToAction("listStaffs");
-//        }
+            return RedirectToAction("listStaffs");
+        }
 
-//        public IActionResult Details(string? id)
-//        {
-//            if (String.IsNullOrEmpty(id))
-//            {
-//                return NotFound();
-//            }
-//            Staff? staff = _db.Staffs.Find(id);
+        public IActionResult Details(string? id)
+        {
+            if (String.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+            Staff? staff = _db.Staffs.Find(id);
 
             if (staff == null)
             {
@@ -400,28 +400,28 @@ namespace WebPBL3.Controllers
                     Salary = s.Salary
                 });
 
-//            if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(searchField))
-//            {
-//                switch (searchField)
-//                {
-//                    case "FullName":
-//                        staffQuery = staffQuery.Where(s => s.FullName.Contains(searchTerm));
-//                        break;
-//                    case "IdentityCard":
-//                        staffQuery = staffQuery.Where(s => s.IdentityCard.Contains(searchTerm));
-//                        break;
-//                    case "PhoneNumber":
-//                        staffQuery = staffQuery.Where(s => s.PhoneNumber.Contains(searchTerm));
-//                        break;
-//                    case "Address":
-//                        staffQuery = staffQuery.Where(s => s.Address.Contains(searchTerm));
-//                        break;
-//                }
-//            }
+            if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(searchField))
+            {
+                switch (searchField)
+                {
+                    case "FullName":
+                        staffQuery = staffQuery.Where(s => s.FullName.Contains(searchTerm));
+                        break;
+                    case "IdentityCard":
+                        staffQuery = staffQuery.Where(s => s.IdentityCard.Contains(searchTerm));
+                        break;
+                    case "PhoneNumber":
+                        staffQuery = staffQuery.Where(s => s.PhoneNumber.Contains(searchTerm));
+                        break;
+                    case "Address":
+                        staffQuery = staffQuery.Where(s => s.Address.Contains(searchTerm));
+                        break;
+                }
+            }
 
-//            var staffDTOs = staffQuery.ToList();
-//            return View("listStaffs", staffDTOs);
-//        }
+            var staffDTOs = staffQuery.ToList();
+            return View("listStaffs", staffDTOs);
+        }
 
-//    }
-//}
+    }
+}

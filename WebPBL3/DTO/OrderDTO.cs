@@ -20,6 +20,9 @@ namespace WebPBL3.DTO
         [Display(Name = "Địa chỉ")]
         [StringLength(maximumLength: 200, ErrorMessage = "Địa chỉ quá dài")]
         public string? Address { get; set; }
+        public int WardID {  get; set; }
+        public int DistrictID {  get; set; }
+        public int ProvinceID { get; set; }
 
         [Required]
         [Display(Name = "Ngày tạo đơn hàng")]

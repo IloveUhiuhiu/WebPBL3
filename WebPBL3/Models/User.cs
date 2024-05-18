@@ -15,7 +15,8 @@ namespace WebPBL3.Models
             IdentityCard = string.Empty;
             Address = string.Empty;
             Photo = string.Empty;
-            //WardID = 0;
+            
+            //WardID = null;
         }
 
         [Key]
@@ -46,7 +47,8 @@ namespace WebPBL3.Models
         [Display(Name = "Địa chỉ")]
         [StringLength(maximumLength: 200, ErrorMessage = "Địa chỉ quá dài")]
         public string? Address { get; set; }
-
+        public int? WardID { get; set; }
+        public Ward? Ward { get; set; }
 
         [Display(Name = "Ảnh")]
         public string? Photo { get; set; } = "";
