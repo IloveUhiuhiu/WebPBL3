@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +7,7 @@ using Microsoft.VisualStudio.TextTemplating;
 using Newtonsoft.Json;
 using System;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
 using WebPBL3.Models;
 
 
@@ -22,15 +24,112 @@ namespace WebPBL3.Controllers
             _environment = environment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchTerm = "")
         {
-            ViewBag.HideHeader = false;
+			ViewBag.HideHeader = false;
+			ViewBag.SearchTerm = searchTerm;
+
+            var makes = await _db.Makes.ToListAsync();
+            var origins = await _db.Cars.Select(c => c.Origin).Distinct().ToListAsync();
+            var colors = await _db.Cars.Select(c => c.Color).Distinct().ToListAsync();
+            var fuels = await _db.Cars.Select(c => c.FuelConsumption).Distinct().ToListAsync();
+            var seats = await _db.Cars.Select(c => c.Seat).Distinct().ToListAsync();
+
+            // Đưa danh sách vào ViewBag
+            ViewBag.Makes = new SelectList(makes, "MakeID", "MakeName");
+            ViewBag.Origins = new SelectList(origins);
+            ViewBag.Colors = new SelectList(colors);
+            ViewBag.Fuels = new SelectList(fuels);
+            ViewBag.Seats = new SelectList(seats);
+
             return View();
         }
-        public IActionResult Detail()
+
+        public ActionResult Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9)
         {
-            ViewBag.HideHeader = false;
-            return View();
+			var item = _db.Cars
+		    .Include(c => c.Make)
+		    .Where(c => !c.Flag) // Lọc những xe không bị gắn cờ
+		    .ToList();
+            if (!string.IsNullOrEmpty(txtSearch))
+            {
+                item = item.Where(car => car.CarName.Contains(txtSearch)).ToList();
+            }
+            if (!string.IsNullOrEmpty(makeName))
+            {
+                item = item.Where(c => c.Make.MakeName == makeName).ToList();
+            }
+			if (!string.IsNullOrEmpty(origin))
+			{
+				item = item.Where(c => c.Origin == origin).ToList();
+			}
+			if (!string.IsNullOrEmpty(color))
+			{
+				item = item.Where(c => c.Color == color).ToList();
+			}
+			if (!string.IsNullOrEmpty(seat) && int.TryParse(seat, out int seatNumber))
+			{
+				item = item.Where(c => c.Seat == seatNumber).ToList();
+			}
+            int totalCount = item.Count();
+            var cars = item.Skip((page-1) * perPage)
+                .Take(perPage)
+                .Select(i => new List<string>
+            {
+                i.CarID,
+                i.Photo,
+                i.Price.ToString(),
+                i.CarName
+            }) ;
+            int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
+            return Json(new { Data = cars, TotalPages = totalPages });
+		}
+
+		public IActionResult Detail(string id)
+        {
+			ViewBag.HideHeader = false;
+			if (String.IsNullOrEmpty(id))
+			{
+				return NotFound();
+			}
+			Car? c = _db.Cars.Find(id);
+
+			if (c == null)
+			{
+				return NotFound();
+			}
+			var makeName = _db.Makes.Where(m => m.MakeID == c.MakeID).FirstOrDefault().MakeName;
+			CarDto carDtoFromDb = new CarDto
+			{
+				CarID = c.CarID,
+				CarName = c.CarName,
+				Photo = c.Photo,
+
+				Capacity = c.Capacity,
+				FuelConsumption = c.FuelConsumption,
+				Color = c.Color,
+
+				Description = c.Description,
+				Dimension = c.Dimension,
+				Engine = c.Engine,
+
+				Origin = c.Origin,
+				Price = c.Price,
+				Quantity = c.Quantity,
+
+				Seat = c.Seat,
+				Topspeed = c.Topspeed,
+				Year = c.Year,
+
+				MakeID = c.MakeID,
+				MakeName = makeName,
+
+			};
+            var relatedCars = _db.Cars
+                        .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID)
+                        .ToList();
+            ViewBag.RelatedCars = relatedCars;
+            return View(carDtoFromDb);
         }
         public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
         {

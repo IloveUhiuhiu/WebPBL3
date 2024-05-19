@@ -1,4 +1,4 @@
-﻿@model WebPBL3.DTO.Staff.AddStaffDTO
+﻿@model WebPBL3.Models.AddStaffDTO
 @using WebPBL3.Models
 @using Newtonsoft.Json
 @{
@@ -83,7 +83,7 @@
                             <!-- Form Group (location)-->
                             <div class="col-md-6">
                                 <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
-                                <input asp-for="BirthDate" class="form-control" />
+                                <input asp-for="BirthDate" class="form-control" type="date" />
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                         </div>
@@ -269,53 +269,4 @@
         xhr.send();
     }
 
-
-    // var citis = document.getElementById("city");
-    // var districts = document.getElementById("district");
-    // var wards = document.getElementById("ward");
-    // var Parameter = {
-    //     url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
-    //     method: "GET",
-    //     responseType: "application/json",
-    // };
-    // var promise = axios(Parameter);
-    // promise.then(function (result) {
-    //     renderCity(result.data);
-    // });
-    // function renderCity(data) {
-    //     for (const x of data) {
-    //         citis.options[citis.options.length] = new Option(x.Name, x.Name); // Thay đổi x.Id thành x.Name
-    //     }
-    //     citis.onchange = function () {
-    //         district.length = 1;
-    //         ward.length = 1;
-    //         if (this.value != "") {
-    //             const result = data.filter(n => n.Name === this.value); // Thay đổi n.Id thành n.Name
-
-    //             for (const k of result[0].Districts) {
-    //                 district.options[district.options.length] = new Option(k.Name, k.Name); // Thay đổi k.Id thành k.Name
-    //             }
-    //         }
-    //     };
-    //     district.onchange = function () {
-    //         ward.length = 1;
-    //         const dataCity = data.filter((n) => n.Name === citis.value); // Thay đổi n.Id thành n.Name
-    //         if (this.value != "") {
-    //             const dataWards = dataCity[0].Districts.filter(n => n.Name === this.value)[0].Wards; // Thay đổi n.Id thành n.Name
-
-    //             for (const w of dataWards) {
-    //                 wards.options[wards.options.length] = new Option(w.Name, w.Name); // Thay đổi w.Id thành w.Name
-    //             }
-    //         }
-    //     };
-    //     wards.onchange = function () {
-    //         if (this.value != "") {
-    //             document.getElementById("ProvinceName").value = citis.value; // Gán tên tỉnh cho ProvinceName
-    //             document.getElementById("DistrictName").value = district.value; // Gán tên huyện cho DistrictName
-    //             document.getElementById("WardName").value = this.value; // Gán tên xã cho WardName
-    //         }
-    //     };
-    // }
-
-
-</script>
+ </script>

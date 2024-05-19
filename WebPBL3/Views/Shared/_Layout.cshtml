@@ -4,7 +4,8 @@
   <head>
 
 	<title>DragonCar</title>
-    <link href="~/images/logo.png" rel="icon" />
+	
+    <link href="~/images/dragoncar.png" rel="icon" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -25,18 +26,20 @@
 	<link href="~/css/site.css" rel="stylesheet" /> 
 	<link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/tintuc.css" rel="stylesheet" />
+    <link href="~/css/nice-select.css" rel="stylesheet" />
     @RenderSection("NewStyles", required: false)
     @RenderSection("AboutStyles",required:false)
     @RenderSection("ContactStyles",required: false)
+    @RenderSection("CarStyles", required: false)
   </head>
   <body>
       <!--Header-->
     @if (ViewBag.HideHeader != null && !(bool)ViewBag.HideHeader)
     {
         <header>
-            <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+            <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar  ftco-navbar-light" id="ftco-navbar">
                 <div class="container">
-                    <a class="navbar-brand" href="index.html">Dragon<span>Car</span></a>
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">Dragon<span>Car</span></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa-solid fa-bars"></i>Menu
                     </button>
@@ -47,7 +50,10 @@
                             <li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link">Hãng Xe</a></li>
                             <li class="nav-item"><a href="@Url.Action("Index", "News")" class="nav-link">Tin Tức</a></li>
 							<li class="nav-item"><a href="@Url.Action("Index", "Contact")" class="nav-link">Liên Hệ</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Login", "Account")" class="nav-link">Đăng Nhập</a></li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Login", "Account")" style="background-color: darkred; color: white; padding: 10px 20px; text-decoration: none; display: inline-block;border-radius: 5px;" class="nav-link">Đăng nhập</a>
+                            </li>
+                            
                         </ul>
                     </div>
 

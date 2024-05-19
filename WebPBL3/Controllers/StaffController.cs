@@ -14,8 +14,8 @@ namespace WebPBL3.Controllers
     public class StaffController : Controller
     {
         private ApplicationDbContext _db;
-        private int pageSize = 10;
-        private readonly IWebHostEnvironment environment;
+		private int limits = 10;
+		private readonly IWebHostEnvironment environment;
         public StaffController(ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
@@ -37,22 +37,19 @@ namespace WebPBL3.Controllers
                                  BirthDate = user.BirthDate,
                                  Address = user.Address,
                                  Position = staff.Position,
-                                 Salary = staff.Salary
+                                 Salary = staff.Salary,
+                                 Status = account.Status
                              }).OrderBy(staff => staff.FullName)
-                       .Skip((page - 1) * pageSize)
-                       .Take(pageSize)
-                       .ToList();
-
-            int totalStaffs = _db.Staffs.Count();
-            int totalPages = (totalStaffs + pageSize - 1) / pageSize;
-
-            if (totalPages == 0) totalPages = 1;
-
-            ViewBag.Staffs = staffDTOs;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
-
-            return View(staffDTOs);
+                            .ToList();
+			var total = staffDTOs.Count;
+			var totalPage = (total + limits - 1) / limits;
+			if (page < 1) page = 1;
+			if (page > totalPage) page = totalPage;
+			ViewBag.totalRecord = total;
+			ViewBag.totalPage = totalPage;
+			ViewBag.currentPage = page;
+			staffDTOs = staffDTOs.Skip((page - 1) * limits).Take(limits).ToList();
+			return View(staffDTOs);
         }
 
         public async Task<int> GetWardIDAsync(string wardName, string districtName, string provinceName)
@@ -290,9 +287,9 @@ namespace WebPBL3.Controllers
                 Address = user.Address,
                 Position = staff.Position,
                 Salary = staff.Salary,
-                ProvinceName = province.ProvinceName,
-                DistrictName = district.DistrictName,
-                WardName = ward.WardName,
+                ProvinceName = province.ProvinceID.ToString(),
+                DistrictName = district.DistrictID.ToString(),
+                WardName = ward.WardID.ToString(),
                 // Thêm các thông tin khác cần thiết
             };
             ViewData["Photo"] = user.Photo;
@@ -323,18 +320,15 @@ namespace WebPBL3.Controllers
                     {
                         staffDTO.Photo.CopyTo(stream);
                     }
-                    string oldImageFullPath = environment.WebRootPath + "/upload/staff/" + user.Photo;
-                    System.IO.File.Delete(oldImageFullPath);
-                }
-                else
-                {
-                    newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                    newFilename += Path.GetExtension(staffDTO.Photo!.FileName);
-                    string imageFullPath = environment.WebRootPath + "/upload/staff/" + newFilename;
-                    using (var stream = System.IO.File.Create(imageFullPath))
+                    if (!string.IsNullOrEmpty(user.Photo))
                     {
-                        staffDTO.Photo.CopyTo(stream);
+                        string oldImageFullPath = environment.WebRootPath + "/upload/staff/" + user.Photo;
+                        if (System.IO.File.Exists(oldImageFullPath))
+                        {
+                            System.IO.File.Delete(oldImageFullPath);
+                        }
                     }
+                    user.Photo = newFilename;
                 }          
                 staff.Position = staffDTO.Position;
                 staff.Salary = (int)staffDTO.Salary;
@@ -345,7 +339,7 @@ namespace WebPBL3.Controllers
                 user.IdentityCard = staffDTO.IdentityCard;
                 user.Gender = staffDTO.Gender;
                 user.BirthDate = staffDTO.BirthDate;
-                user.Photo = newFilename;
+                
                 try
                 {
                     _db.Accounts.Update(account);
@@ -381,8 +375,9 @@ namespace WebPBL3.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, err);
             }
         }
-        public IActionResult Search(string searchTerm, string searchField)
+        public IActionResult Search(string searchTerm, string searchField, int page = 1)
         {
+            page = page < 1 ? 1 : page;
             IQueryable<GetStaffDTO> staffQuery = _db.Staffs
                 .Include(s => s.User)
                 .Include(s => s.User.Account)
@@ -418,10 +413,47 @@ namespace WebPBL3.Controllers
                         break;
                 }
             }
+            var staffs = staffQuery.ToList();
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.SearchField = searchField;
 
-            var staffDTOs = staffQuery.ToList();
+            var total = staffs.Count;
+            var totalPage = (total + limits - 1) / limits;
+            if (page < 1) page = 1;
+            if (page > totalPage) page = totalPage;
+            int offset = (page - 1) * limits;
+            if (offset < 0) offset = 0;
+            ViewBag.totalRecord = total;
+            ViewBag.totalPage = totalPage;
+            ViewBag.currentPage = page;
+
+            var staffDTOs = staffQuery
+                .OrderBy(staff => staff.FullName)
+                .Skip(offset)
+                .Take(limits)
+                .ToList();
+
             return View("listStaffs", staffDTOs);
         }
+        [HttpPost]
+		[HttpPost]
+		public async Task<IActionResult> IsActive(string id)
+		{
+			var staff = await _db.Staffs.FindAsync(id);
+			if (staff != null)
+			{
+                var user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == staff.UserID);
+                var account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
+                account.Status = !account.Status;
+                _db.Accounts.Update(account);
+                await _db.SaveChangesAsync();
 
-    }
+                return Json(new { success = true , isActive = account.Status});
+            }
+            return Json(new { success = false });
+        }
+
+
+
+	}
 }
