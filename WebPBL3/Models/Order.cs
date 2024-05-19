@@ -27,7 +27,7 @@ namespace WebPBL3.Models
 
         [Required(ErrorMessage = "Tổng thanh toán không thể trống")]
         [Display(Name = "Tổng thanh toán")]
-        public int Totalprice { get; set; }
+        public double Totalprice { get; set; }
 
         [Required(ErrorMessage = "Trạng thái thanh toán không thể trống")]
         [Display(Name = "Trạng thái thanh toán")]

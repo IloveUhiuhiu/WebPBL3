@@ -7,7 +7,6 @@ namespace WebPBL3.DTO.Staff
     using System.Web;
     public partial class AddStaffDTO
     {
-        [Key]
         public string? StaffID { get; set; }
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }

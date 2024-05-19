@@ -22,7 +22,7 @@ namespace WebPBL3.Controllers
             ViewBag.staffTotal = staffs.Count;
             ViewBag.carTotal = cars.Count;
             ViewBag.userTotal = users.Count;
-            int revenueTotal = 0;
+            double revenueTotal = 0;
             
             foreach (Order order in orders)
             {   
@@ -46,7 +46,7 @@ namespace WebPBL3.Controllers
             ViewBag.carTotal = cars.Count;
             ViewBag.userTotal = users.Count;
             ViewBag.makes = makes;
-            int revenueTotal = 0;
+            double revenueTotal = 0;
 
             foreach (Order order in orders)
             {
@@ -69,7 +69,7 @@ namespace WebPBL3.Controllers
             List<int> revenueCar = new List<int>();
             foreach (var car in cars)
             {
-                int Total = 0;
+                double Total = 0;
                 foreach (var order in orders)
                 {
                     foreach (var detailOrder in order.DetailOrders)
