@@ -8,7 +8,6 @@ namespace WebPBL3.Models
         public DetailOrder()
         {
             DetailOrderID = OrderID = CarID = string.Empty;
-            Quantity = Price = 0;
         }
 
         [Key]
@@ -24,7 +23,7 @@ namespace WebPBL3.Models
 
         [Required(ErrorMessage = "Giá bán tại thời điểm đó không thể trống")]
         [Display(Name = "Giá bán tại thời điểm đó")]
-        public int Price { get; set; }
+        public double Price { get; set; }
 
         public Order Order { get; set; }
         public string OrderID { get; set; }

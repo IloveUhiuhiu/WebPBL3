@@ -1,0 +1,176 @@
+﻿@model Order;
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "_AdminLayout"; 
+    Order order = ViewBag.Order;
+    var details = ViewBag.ListDetail as List<DetailOrder>;
+    int count = 1;
+}
+<div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="invoice-title">
+                            @if(order.Status=="Đã thanh toán"){
+                            <h4 class="float-end">
+                                <span class="badge bg-success font-size-12 ms-2">Đã thanh toán</span>
+                            </h4>
+                        }
+                        else
+                        {
+                            <h4 class="float-end">
+                                <span class="badge bg-danger font-size-12 ms-2">Chưa thanh toán</span>
+                            </h4>
+                        }
+                        <div class="mb-4">
+                                <h2 class="mb-1 text-danger">Showroom DragonCar</h2>
+                            </div>
+                            <div class=" ">
+                                <p class="mb-1">Liên Chiểu, Đà Nẵng</p>
+                                <p class="mb-1"><i class="uil uil-envelope-alt me-1"></i>dragoncar@gmail.com</p>
+                                <p><i class="uil uil-phone me-1"></i> 012-345-6789</p>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class=" ">
+                                    <h4 class="mb-3">Thông tin khách hàng</h4>
+                                    <p class="mb-1"><span class="fw-bolder">Họ và tên khách hàng: </span> @order.User.FullName
+                                    </p>
+                                    <p class="mb-1"><span class="fw-bolder">Địa chỉ: </span> @order.User.Address</p>
+                                    <p class="mb-1"><span class="fw-bolder">Email: </span> @order.User.Account.Email</p>
+                                    <p class="mb-1"><span class="fw-bolder">Số điện thoại: </span> @order.User.PhoneNumber</p>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-sm-6">
+                                <div class="  text-sm-end">
+                                    <div>
+                                        <h5 class="font-size-15 mb-1">Mã hóa đơn:</h5>
+                                        <p>@order.OrderID</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <h5 class="font-size-15 mb-1">Ngày mua hàng:</h5>
+                                        <p>@order.Date</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <h5 class="font-size-15 mb-1">Mã nhân viên:</h5>
+                                        <p>@order.StaffID</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <!-- end row -->
+
+                        <div class="py-2">
+                            <h4>Thông tin đơn hàng</h4>
+
+                            <div class="table-responsive">
+                                <table class="table align-middle table-nowrap table-centered mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 70px;">STT</th>
+                                            <th>Tên xe</th>
+                                            <th>Giá xe</th>
+                                            <th>Số lượng</th>
+                                            <th class="text-end" style="width: 120px;">Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach(var deatilOrder in details)
+                                    {
+                                        <tr>
+                                            <th scope="row">@(count++)</th>
+                                            <td>
+                                                <div>
+                                                    <h5 class="text-truncate font-size-14 mb-1">@deatilOrder.Car.CarName</h5>
+                                                    <p class="  mb-0">@deatilOrder.Car.Color</p>
+                                                </div>
+                                            </td>
+                                            <td>@deatilOrder.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                            <td>@deatilOrder.Quantity</td>
+                                            <td class="text-end">@((deatilOrder.Price * deatilOrder.Quantity).ToString("C", new System.Globalization.CultureInfo("vi-VN")))</td>
+                                        </tr>
+                                    }
+                                        <tr>
+                                            <th scope="row" colspan="4" class="text-end">Tổng tiền</th>
+                                            <td class="border-0 text-end">
+                                            <h4 class="m-0 fw-semibold">@order.Totalprice.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</h4>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end col -->
+            <div class="col-lg-12 text-center"><button class="btn btn-danger">Quay lại</button></div>
+        </div>
+    </div>
+<script>
+    async function getData() {
+        const url = "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json"
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.Name, city.Id);
+        });
+        cities.onchange = function () {
+            if (this.value !== "") {
+                const selectedCity = res.find(city => city.Id === this.value);
+                if (selectedCity && selectedCity.Districts) {
+                    selectedCity.Districts.forEach(district => {
+                        districts.options[districts.options.length] = new Option(district.Name, district.Id);
+                    });
+                }
+            }
+        };
+        districts.onchange = function () {
+            if (this.value !== "") {
+                const dataDistincts = res.find(city => city.Id === cities.value).Districts;
+                const selectedDistrict = dataDistincts.find(district => district.Id === this.value);
+                if (selectedDistrict && selectedDistrict.Wards) {
+                    selectedDistrict.Wards.forEach(ward => {
+                        wards.options[wards.options.length] = new Option(ward.Name,ward.Id);
+                    });
+                }
+            }
+        }
+    }
+
+    async function extractAddress(addr){
+        await renderCities();
+        const arr = addr.split('-');
+        console.log(arr);
+        if (arr[0] !== "") {
+            street.value = arr[0];
+        }
+        if (arr[1] != "" &&arr[1] !== undefined) {
+            cities.value = arr[1].toString();
+            console.log("cities.value= " + arr[1].toString());
+            cities.dispatchEvent(new Event('change'));
+        }
+        if (arr[2] != "" && arr[2] !== undefined) {
+            districts.value = arr[2].toString();
+            districts.dispatchEvent(new Event('change'));
+        }
+        if (arr[3] != "" && arr[3] !== undefined) {
+            wards.value = arr[3].toString();
+        }
+    }
+
+</script>

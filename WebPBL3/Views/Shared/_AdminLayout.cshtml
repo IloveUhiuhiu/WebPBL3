@@ -60,6 +60,12 @@
         .ck.ck-editor__editable_inline > :last-child{
             color: black;
             height: 300px;
+            font-size: 25px;
+        }
+
+        .ck-content p {
+            color: black;
+            font-size: 25px;
         }
     </style>
 </head>
@@ -97,8 +103,8 @@
                             <a href="~/Staff/listStaffs"><i class="fa fa-diamond purple_color"></i> <span>Quản lý nhân viên</span></a>
 
                         </li>
-                        <li><a href="@Url.Action("Create", "User")"><i class="fa-solid fa-user orange_color"></i> <span>Quản lý khách hàng</span></a></li>
-                        <li><a href="charts.html"><i class="fa-solid fa-file-invoice green_color"></i> <span>Quản lý bán hàng</span></a></li>
+                        <li><a href="@Url.Action("UserListTable", "User")"><i class="fa-solid fa-user orange_color"></i> <span>Quản lý khách hàng</span></a></li>
+                        <li><a href="@Url.Action("Index", "Order")"><i class="fa-solid fa-file-invoice green_color"></i> <span>Quản lý bán hàng</span></a></li>
                         <li>
                             <a href="#apps" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <i class="fa-solid fa-chart-line yellow_color"></i> <span>Quản lý thống kê</span></a>
@@ -116,7 +122,7 @@
                             <a href="~/News/ListNews"><i class="fa fa-diamond purple_color"></i> <span>Quản lý tin tức</span></a>
      
                         </li>
-                        <li><a href="tables.html"><i class="fa-solid fa-comment purple_color2"></i> <span>Quản lý feedbacks</span></a></li>
+                        <li><a href="@Url.Action("ListFeedback", "Contact")"><i class="fa-solid fa-comment purple_color2"></i> <span>Quản lý feedbacks</span></a></li>
                       
                         <li >
                             <a href="#additional_page" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-clone yellow_color"></i> <span>Thông tin cá nhân</span></a>
@@ -202,7 +208,7 @@
         ClassicEditor
             .create(document.querySelector('#inputNoiDung'), {
                 ckfinder: {
-                    uploadUrl: '/api/imageupload'
+                    uploadUrl: '/News/Upload/'
                 }
             })
             .then(editor => {

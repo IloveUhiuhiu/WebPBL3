@@ -32,16 +32,12 @@ namespace WebPBL3.Controllers
                 {
                     var fileName =  Path.GetFileName(file.FileName); 
                     var fullPath = Path.Combine(pathToSave, fileName);
-                    Console.WriteLine(fullPath);
-                    Console.WriteLine(fileName);
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
-
+                    Console.WriteLine(fullPath);
                     var imageUrl = fullPath.Replace("\\", "/"); // URL của hình ảnh
-
-                    Console.WriteLine(imageUrl);
                     return Ok(new { imageUrl }); // Trả về URL của hình ảnh
                 }
                 else
