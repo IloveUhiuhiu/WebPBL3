@@ -1102,7 +1102,7 @@ a[data-toggle="collapse"] {
 }
 
 .counter_section {
-    min-height: auto;
+    height: 200px;
     display: block;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     border: 0px solid #e7e7e7;

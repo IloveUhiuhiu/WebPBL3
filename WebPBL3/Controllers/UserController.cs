@@ -143,13 +143,20 @@ namespace WebPBL3.Controllers
                 }
                 var useridTxt = "KH" + userid.ToString().PadLeft(6, '0');
                 user.UserID = useridTxt;
-                if (uploadimage != null)
+                if (user.Photo.IsNullOrEmpty()) user.Photo = "userKH000000.jpg";
+                else
                 {
                     int index = uploadimage.FileName.IndexOf('.');
                     string _FileName = "user" + user.UserID + "." + uploadimage.FileName.Substring(index + 1);
                     user.Photo = _FileName;
                 }
-                if (user.Photo.IsNullOrEmpty()) user.Photo = "userKH000000.jpg";
+
+                string _path = Path.Combine(_environment.WebRootPath, "upload\\user", user.Photo);
+                using (var fileStream = new FileStream(_path, FileMode.Create))
+                {
+                    uploadimage.CopyTo(fileStream);
+
+                }
                 _db.Users.Add(new User
                 {
                     UserID = user.UserID,
@@ -166,15 +173,7 @@ namespace WebPBL3.Controllers
                 });
 
                 await _db.SaveChangesAsync();
-                if (uploadimage != null && uploadimage.Length > 0 )
-                {
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", user.Photo);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
-                }
+                
                 return RedirectToAction("UserListTable");
 
             }
@@ -236,7 +235,7 @@ namespace WebPBL3.Controllers
                     Console.WriteLine(_path);
                     using (var fileStream = new FileStream(_path, FileMode.Create))
                     {
-                        await uploadimage.CopyToAsync(fileStream);
+                        uploadimage.CopyTo(fileStream);
 
                     }
                 }
