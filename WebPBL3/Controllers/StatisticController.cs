@@ -40,7 +40,7 @@ namespace WebPBL3.Controllers
             ViewBag.staffTotal = _db.Staffs.Count();
             ViewBag.feedbackTotal = _db.Feedbacks.Count();
 
-            List<Order> orders = await _db.Orders
+           List<Order> orders = await _db.Orders
                 .Include(o => o.DetailOrders)
                 .ThenInclude(deo => deo.Car)
                 .ThenInclude(c => c.Make)
@@ -49,9 +49,9 @@ namespace WebPBL3.Controllers
                 .ToListAsync();
 
             Dictionary<int, int> quantityMake = new Dictionary<int, int>();
-            Dictionary<int, int> revenueMake = new Dictionary<int, int>();
+            Dictionary<int, double> revenueMake = new Dictionary<int, double>();
             Dictionary<string, int> quantityMonth = new Dictionary<string, int>();
-            Dictionary<string, int> revenueMonth = new Dictionary<string, int>();
+            Dictionary<string,double> revenueMonth = new Dictionary<string, double>();
 
             foreach (var order in orders)
             {
@@ -92,7 +92,7 @@ namespace WebPBL3.Controllers
                 {
                     MakeName = make.MakeName,
                     Quantity = quantityMake.ContainsKey(make.MakeID) ? quantityMake[make.MakeID] : 0,
-                    Revenue = revenueMake.ContainsKey(make.MakeID) ? revenueMake[make.MakeID] / 1000000000.0 : 0
+                    Revenue = revenueMake.ContainsKey(make.MakeID) ? revenueMake[make.MakeID] / 1000000000 : 0
                 });
             }
 
@@ -106,7 +106,7 @@ namespace WebPBL3.Controllers
                 {
                     Month = timeKey,
                     Quantity = quantityMonth.ContainsKey(timeKey) ? quantityMonth[timeKey] : 0,
-                    Revenue = revenueMonth.ContainsKey(timeKey) ? revenueMonth[timeKey]/1000000000.0 : 0
+                    Revenue = revenueMonth.ContainsKey(timeKey) ? revenueMonth[timeKey]/1000000000 : 0
                 });
                 startTime = startTime.AddMonths(1);
             }

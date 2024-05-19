@@ -16,6 +16,7 @@ namespace WebPBL3.Controllers
         }
         public IActionResult Index()
         {
+            ViewBag.HideHeader = false;
             return View();
         }
         [HttpPost]
