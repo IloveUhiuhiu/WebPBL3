@@ -11,6 +11,7 @@ namespace WebPBL3.Controllers
     {
         private ApplicationDbContext _db;
         private IWebHostEnvironment _environment;
+        private int limits = 10;
         public NewsController(ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
@@ -22,7 +23,7 @@ namespace WebPBL3.Controllers
             ViewBag.HideHeader = false;
             return View(list);
         }
-        public IActionResult ListNews()
+        public IActionResult ListNews(int newid = 0, string searchtxt = "", int page = 1)
         {
             List<NewsDto> news = _db.NewS.Include(s => s.Staff).ThenInclude(u => u.User).Select(n => new NewsDto
             {
@@ -37,6 +38,16 @@ namespace WebPBL3.Controllers
                 FullName = n.Staff.User.FullName,
 
             }).ToList();
+            var total = news.Count;
+            var totalPage = (total + limits - 1) / limits;
+            if (page < 1) page = 1;
+            if (page > totalPage) page = totalPage;
+            ViewBag.totalRecord = total;
+            ViewBag.totalPage = totalPage;
+            ViewBag.currentPage = page;
+            ViewBag.searchtxt = searchtxt;
+            ViewBag.newid = newid;
+            news = news.Skip((page - 1) * limits).Take(limits).ToList();
             int cnt = 1;
             foreach (var n in news)
             {
@@ -65,9 +76,12 @@ namespace WebPBL3.Controllers
                 }
                 var newsidTxt = newsid.ToString().PadLeft(6, '0');
                 news.NewsID = newsidTxt;
-                int index = uploadimage.FileName.IndexOf('.');
-                string _FileName = "new" + news.NewsID + "." + uploadimage.FileName.Substring(index + 1);
-                news.Photo = _FileName;
+                string FILENAME = "";
+                if (TempData["UploadedFileName"] != null)
+                {
+                    FILENAME = TempData["UploadedFileName"].ToString();
+                }
+                news.Photo = FILENAME;
                 _db.NewS.Add(new News
                 {
                     NewsID = news.NewsID,
@@ -78,19 +92,8 @@ namespace WebPBL3.Controllers
                     UpdateAt = null,
                     StaffID = "NV000001",
                 }) ;
-
                 await _db.SaveChangesAsync();
-                if (uploadimage != null && uploadimage.Length > 0)
-                {
-                    string _path = Path.Combine(_environment.WebRootPath, "images", _FileName);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
-                }
                 return RedirectToAction("ListNews");
-
             }
             return View(news);
         }
@@ -229,7 +232,25 @@ namespace WebPBL3.Controllers
             }
             return RedirectToAction("ListNews");
         }
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile upload)
+        {
+            if (upload == null || upload.Length == 0)
+            {
+                return BadRequest("File is empty."); 
+            }
 
+            var fileName = Path.GetFileName(upload.FileName);
+            var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
+            TempData["UploadedFileName"] = fileName;
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await upload.CopyToAsync(stream);
+            }
+            var url = $"{Request.Scheme}://{Request.Host}/images/{fileName}";
+            return Json(new { uploaded = true, url });
+        }
     }
 }
        

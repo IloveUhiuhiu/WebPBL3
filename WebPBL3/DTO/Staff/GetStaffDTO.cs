@@ -25,6 +25,7 @@ namespace WebPBL3.DTO.Staff
 
         public string? Position { get; set; }
         public int? Salary { get; set; }
+        public bool Status { get; set; }
         public string? UserID { get; set; }
         public string? AccountID { get; set; }
         public int? WardID { get; set; }
