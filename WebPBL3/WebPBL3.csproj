@@ -10,6 +10,10 @@
     <None Include="wwwroot\admin_images\.DS_Store" />
     <None Include="wwwroot\admin_images\layout_img\.DS_Store" />
     <None Include="wwwroot\admin_modules\.DS_Store" />
+    <None Include="wwwroot\fonts\.DS_Store" />
+    <None Include="wwwroot\fonts\flaticon\.DS_Store" />
+    <None Include="wwwroot\fonts\flaticon\font\.DS_Store" />
+    <None Include="wwwroot\fonts\ionicons\fonts\.DS_Store" />
     <None Include="wwwroot\images\.DS_Store" />
   </ItemGroup>
 

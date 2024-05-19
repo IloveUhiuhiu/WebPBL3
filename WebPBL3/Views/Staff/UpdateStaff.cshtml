@@ -1,4 +1,4 @@
-﻿@model WebPBL3.DTO.Staff.AddStaffDTO
+﻿@model WebPBL3.Models.AddStaffDTO
 
 
 @{
@@ -89,7 +89,7 @@
                             <!-- Form Group (location)-->
                             <div class="col-md-6">
                                 <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
-                                <input asp-for="BirthDate" class="form-control" />
+                                <input asp-for="BirthDate" class="form-control" type="date" />
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                         </div>
@@ -99,7 +99,6 @@
                                 <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
                                 <select id="city" asp-for="ProvinceName" class="form-control">
                                     <option value="">--Chọn tên tỉnh(Thành phố)--</option>
-                                    <option value="@Model.ProvinceName" selected>@Model.ProvinceName</option>
                                 </select>
                                 <span asp-validation-for="ProvinceName" class="text-danger"></span>
                             </div>
@@ -109,7 +108,6 @@
 
                                 <select id="district" asp-for="DistrictName" class="form-control">
                                     <option value="">--Chọn tên quận(huyện)--</option>
-                                    <option value="@Model.DistrictName" selected>@Model.DistrictName</option>
                                 </select>
                                 <span asp-validation-for="DistrictName" class="text-danger"></span>
                             </div>
@@ -120,8 +118,7 @@
                                 <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
 
                                 <select id="ward" asp-for="WardName" class="form-control">
-                                    <option value="">--Chọn tên xã(phường)--</option>
-                                    <option value="@Model.WardName" selected>@Model.WardName</option>
+                                    <option value="" selected>WardName</option>
                                 </select>
                                 <span asp-validation-for="WardName" class="text-danger"></span>
                             </div>
