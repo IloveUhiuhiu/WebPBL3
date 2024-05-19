@@ -79,7 +79,7 @@
 
 html,
 body {
-    color: #898989;
+    color: rgb(31, 27, 27);
     font-size: 14px;
     font-family: 'Poppins', sans-serif;
     line-height: normal;
@@ -357,7 +357,6 @@ h4 {
     text-transform: none;
     margin-bottom: 15px;
 }
-
 h5 {
     font-size: 15px;
     font-weight: 700;
@@ -366,13 +365,6 @@ h5 {
     line-height: normal;
     color: #000;
 }
-
-p {
-    color: #58718a;
-    font-size: 14px;
-    line-height: 21px;
-}
-
 button,
 input,
 select,
@@ -384,13 +376,11 @@ option {
 a#submit {
     z-index: 1;
 }
-
 a:hover,
 a:focus {
     color: #2a3a4b;
     text-decoration: none;
 }
-
 .span1,
 .span2,
 .span3,
@@ -2942,7 +2932,7 @@ ul.inbox-pagination li {
 }
 
 .table thead th {
-    font-weight: 400;
+    font-weight: 600;
 }
 
 .table-hover tbody tr.unread:hover,

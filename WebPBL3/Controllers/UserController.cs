@@ -53,28 +53,28 @@ namespace WebPBL3.Controllers
             }
 
             List<UserDto> users = _db.Users.Include(a => a.Account).Include(w => w.Ward).Where(u => (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).Select(u => new UserDto
-            { 
-				AccountID = u.AccountID,
-		        Email = u.Account.Email,
-		        Password = u.Account.Password,
-		        Status = u.Account.Status,
-		    
-		        RoleID = 3,
-		        UserID = u.UserID,
-		        FullName = u.FullName,
-		        PhoneNumber =u.PhoneNumber,
-		        IdentityCard =u.IdentityCard,
+            {
+                AccountID = u.AccountID,
+                Email = u.Account.Email,
+                Password = u.Account.Password,
+                Status = u.Account.Status,
 
-		        Gender =u.Gender,
-		        BirthDate =u.BirthDate,
-		        Address =u.Address,
-		        Photo = u.Photo,
-		        WardID =u.WardID,
-		        WardName =u.Ward.WardName,
-		        DistrictName = u.Ward.District.DistrictName,
-		        ProvinceName = u.Ward.District.Province.ProvinceName,
+                RoleID = 3,
+                UserID = u.UserID,
+                FullName = u.FullName,
+                PhoneNumber = u.PhoneNumber,
+                IdentityCard = u.IdentityCard,
 
-			}).ToList();
+                Gender = u.Gender,
+                BirthDate = u.BirthDate,
+                Address = u.Address,
+                Photo = u.Photo,
+                WardID = u.WardID,
+                WardName = u.Ward.WardName,
+                DistrictName = u.Ward.District.DistrictName,
+                ProvinceName = u.Ward.District.Province.ProvinceName,
+
+            }).ToList();
             var total = users.Count;
             var totalPage = (total + limits - 1) / limits;
             if (page < 1) page = 1;
@@ -94,7 +94,7 @@ namespace WebPBL3.Controllers
         // GET
         public IActionResult Create()
         {
-            
+
             return View();
         }
         // POST
@@ -277,13 +277,13 @@ namespace WebPBL3.Controllers
                 return NotFound();
             }
             User? user = _db.Users.Find(id);
-            
-            if (user == null)
-            {
-                return NotFound();
-            }
 
-            Account account = _db.Accounts.Where(a => a.AccountID == user.AccountID).FirstOrDefault();
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        Account account = _db.Accounts.Where(a => a.AccountID == user.AccountID).FirstOrDefault();
             string wardName = string.Empty, districtName = string.Empty, provinceName = string.Empty;
             Ward ward = _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefault();
             if (ward != null)

@@ -323,10 +323,19 @@ namespace WebPBL3.Controllers
                     {
                         staffDTO.Photo.CopyTo(stream);
                     }
-                    string oldImageFullPath = environment.WebRootPath + "/upload/staff" + user.Photo;
+                    string oldImageFullPath = environment.WebRootPath + "/upload/staff/" + user.Photo;
                     System.IO.File.Delete(oldImageFullPath);
                 }
-                
+                else
+                {
+                    newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFilename += Path.GetExtension(staffDTO.Photo!.FileName);
+                    string imageFullPath = environment.WebRootPath + "/upload/staff/" + newFilename;
+                    using (var stream = System.IO.File.Create(imageFullPath))
+                    {
+                        staffDTO.Photo.CopyTo(stream);
+                    }
+                }          
                 staff.Position = staffDTO.Position;
                 staff.Salary = (int)staffDTO.Salary;
                 user.FullName = staffDTO.FullName;

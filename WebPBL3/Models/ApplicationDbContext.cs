@@ -48,7 +48,7 @@ namespace WebPBL3.Models
             });
             modelBuilder.Entity<User>(entity =>
             {
-               
+
 
                 entity.HasOne(u => u.Ward)
                 .WithMany()
@@ -72,7 +72,6 @@ namespace WebPBL3.Models
                 .WithOne(s => s.Staff)
                 .HasForeignKey(s => s.StaffID)
                 .OnDelete(DeleteBehavior.NoAction);
-
                 entity.HasOne(a => a.User)
                 .WithOne(u => u.Staff)
                 .HasForeignKey<Staff>(s => s.UserID)
@@ -124,9 +123,7 @@ namespace WebPBL3.Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<Make> Makes { get; set; }
         public DbSet<Staff> Staffs { get; set; }
-        public DbSet<WebPBL3.DTO.Staff.GetStaffDTO> GetStaffDTO { get; set; } = default!;
-        public DbSet<WebPBL3.DTO.Staff.AddStaffDTO> AddStaffDTO { get; set; } = default!;
-        public DbSet<WebPBL3.DTO.Staff.UpdateStaffDTO> UpdateStaffDTO { get; set; } = default!;
+        
 
 
 
