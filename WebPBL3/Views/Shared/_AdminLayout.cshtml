@@ -60,6 +60,12 @@
         .ck.ck-editor__editable_inline > :last-child{
             color: black;
             height: 300px;
+            font-size: 25px;
+        }
+
+        .ck-content p {
+            color: black;
+            font-size: 25px;
         }
     </style>
 </head>
@@ -202,7 +208,7 @@
         ClassicEditor
             .create(document.querySelector('#inputNoiDung'), {
                 ckfinder: {
-                    uploadUrl: '/api/imageupload'
+                    uploadUrl: '/News/Upload/'
                 }
             })
             .then(editor => {

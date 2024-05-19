@@ -24,10 +24,12 @@ namespace WebPBL3.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.HideHeader = false;
             return View();
         }
         public IActionResult Detail()
         {
+            ViewBag.HideHeader = false;
             return View();
         }
         public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
