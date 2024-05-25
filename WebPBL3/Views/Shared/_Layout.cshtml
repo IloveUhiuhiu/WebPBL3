@@ -4,7 +4,8 @@
   <head>
 
 	<title>DragonCar</title>
-    <link href="~/images/logo.png" rel="icon" />
+	
+    <link href="~/images/dragoncar.png" rel="icon" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -25,9 +26,11 @@
 	<link href="~/css/site.css" rel="stylesheet" /> 
 	<link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/tintuc.css" rel="stylesheet" />
+    <link href="~/css/nice-select.css" rel="stylesheet" />
     @RenderSection("NewStyles", required: false)
     @RenderSection("AboutStyles",required:false)
     @RenderSection("ContactStyles",required: false)
+    @RenderSection("CarStyles", required: false)
   </head>
   <body>
       <!--Header-->
@@ -36,7 +39,7 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar ftco-navbar-light" id="ftco-navbar">
                 <div class="container">
-                    <a class="navbar-brand" href="index.html">Dragon<span>Car</span></a>
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">Dragon<span>Car</span></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa-solid fa-bars"></i>Menu
                     </button>

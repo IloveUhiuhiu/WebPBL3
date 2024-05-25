@@ -36,9 +36,11 @@
 						<!-- Profile picture image-->
                         <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Model.Photo" alt="" style=" width: 200px;height:200px;">
                         <!-- Profile picture help block-->
-                        <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage">
+                        <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none;">
                         <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-
+                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: gray; color: white;">
+                            <i class="fa-solid fa-pen-to-square"></i> Cập nhật ảnh
+                        </button>
                         <!-- Profile picture upload button-->
 
                     </div>
@@ -102,7 +104,7 @@
                             <!-- Form Group (location)-->
                             <div class="col-md-6">
                                 <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
-                                <input asp-for="BirthDate" class="form-control" />
+                                <input asp-for="BirthDate" class="form-control" type="date" />
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                         </div>
@@ -178,10 +180,14 @@
     </form>
 </div>
 <script>
+    
+    
     // Get the file input element and the image element
     const fileInput = document.getElementById('uploadimage');
     const profileImage = document.getElementById('profileimage');
-
+    document.getElementById('choosePhotoButton').addEventListener('click', function () {
+        document.getElementById('uploadimage').click();
+    });
     // Add an event listener to the file input element
     fileInput.addEventListener('change', function (event) {
         // Check if a file is selected

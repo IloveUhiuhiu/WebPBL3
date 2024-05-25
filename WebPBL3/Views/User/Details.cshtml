@@ -86,11 +86,11 @@
 
                             </div>
                             <!-- Form Group (location)-->
-                            <div class="col-md-6">
+                        <div class="col-md-6">
                                 <label class="control-label">Ngày sinh</label>
-                                <div class="form-control">@Model.BirthDate </div> 
-                                
-                            </div>
+                            <div class="form-control">@string.Format("{0:dd/MM/yyyy}", Model.BirthDate) </div>
+
+                        </div>
                         </div>
                         <div class="row gx-3 mb-3">
                             
