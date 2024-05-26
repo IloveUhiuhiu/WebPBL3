@@ -5,7 +5,8 @@
     Layout = "_AdminLayout";
     int page = ViewBag.currentPage;
     int total = ViewBag.totalPage;
-    string searchtxt = ViewBag.searchtxt;  
+    string searchtxt = ViewBag.searchtxt;
+    int count = 0;
 }
 
 <div class="card shadow border-0 mt-4">
@@ -27,7 +28,7 @@
                     </div>
                
             </div>
-            <div class="col-6 text-end" style="text-align: right;">
+            <div class="col-8 text-end" style="text-align: right;">
                 <a asp-controller="User" asp-action="Create" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>  Thêm khách hàng
                 </a>
@@ -69,7 +70,7 @@
                 @foreach (var obj in Model.OrderBy(u => u.UserID))
                 {
                     <tr>
-                        <td>@obj.STT</td>
+                        <td>@(++count)</td>
                         <td>@obj.UserID</td>
                         <td>
                             @obj.FullName
@@ -121,30 +122,31 @@
                                     <i class="fa-solid fa-trash"></i>
                                     Xóa
                                 </a>
+                                
 
+                                <!-- Modal HTML -->
                                 <div id="myModal-@obj.UserID" class="modal fade">
-                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div class="modal-dialog modal-dialog-centered modal-confirm">
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <div class="icon-box" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                            <div class="modal-header flex-column">
+                                                <div class="icon-box">
+                                                    <i class="material-icons">&#xE5CD;</i>
                                                 </div>
-                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <h4 class="modal-title w-100">Xác nhận</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
-                                            <div class="modal-body">
+                                            <div class="modal-body" style="color: black">
                                                 <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
                                             </div>
-                                            <div class="modal-footer">
-                                                <a asp-controller="User" asp-action="Delete" asp-route-id="@obj.UserID" class="btn btn-danger">
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                <a asp-controller="User" asp-action="Delete" asp-route-id="@obj.UserID" class="btn btn-danger" style="color:white; line-height: 30px">
                                                     Xác nhận
                                                 </a>
-                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
-
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                
 
                             </div>
 
@@ -197,15 +199,6 @@
             window.location.href = url;
         }
     });
-    @* document.addEventListener("DOMContentLoaded", function () {
-        // Lấy tham chiếu đến ô nhập liệu
-        var searchInput = document.getElementById("txtSearch");
-
-        // Đặt con trỏ (cursor) vào cuối giá trị của ô nhập liệu
-        if (searchInput) {
-        searchInput.focus(); // Tập trung vào ô nhập liệu
-        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // Đặt con trỏ ở cuối giá trị
-        }
-        }); *@
+    
 </script>
 

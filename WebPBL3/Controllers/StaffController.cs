@@ -112,7 +112,7 @@ namespace WebPBL3.Controllers
                         {
                             AccountID = accidTxt,
                             Email = staffDTO.Email,
-                            Password = "123456",
+                            Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                             RoleID = newRoleID,
                             Status = false,
                         };

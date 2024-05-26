@@ -11,8 +11,11 @@ namespace WebPBL3.DTO
         [Required(ErrorMessage = "Email không thể trống")]
         public string Email { get; set; }
         [Display(Name = "Tiêu đề")]
+
+
         [Required(ErrorMessage = "Tiêu đề không thể trống")]
         public string Title { get; set; }
+
 
         [Display(Name = "Nội dung")]
         [Required(ErrorMessage = "Nội dung không thể trống")]
