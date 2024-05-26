@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using WebPBL3.DTO;
 using WebPBL3.Models;
@@ -50,17 +51,28 @@ namespace WebPBL3.Controllers
                     };
                     _context.Feedbacks.Add(fe);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Home");
                 }
-                return RedirectToAction("Index", "Home");
+                else
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                
             }
             else
             {
                 return View();
             }  
         }
-        public IActionResult ListFeedback()
+        public IActionResult ListFeedback(DateTime? date=null,String title="")
         {
-            List<Feedback> feedbacks = _context.Feedbacks.ToList();
+            List<Feedback> feedbacks =
+                _context.Feedbacks
+                .Where(f => (date==null||f.CreateAt.Date==date)
+                            &&(title.IsNullOrEmpty()||f.Title.Contains(title)))
+                .ToList();
+            ViewBag.DateMessage = date?.ToString("yyyy-MM-dd"); ;
+            ViewBag.TitleMessage = title;
             return View(feedbacks);
         }
         public async Task<IActionResult> DeleteFeedback(string id)
@@ -72,6 +84,18 @@ namespace WebPBL3.Controllers
             }
             await _context.SaveChangesAsync();
             return RedirectToAction("ListFeedback");
+        }
+
+        public async Task<JsonResult> getFeedbackById(string id)
+        {
+            var feedback= _context.Feedbacks.FirstOrDefault(u=>u.FeedbackID== id);
+            if(feedback != null)
+            {
+                feedback.Status = "Đã xem";
+                _context.Feedbacks.Update(feedback);
+                await _context.SaveChangesAsync();
+            }
+            return new JsonResult(feedback);
         }
     }
 }

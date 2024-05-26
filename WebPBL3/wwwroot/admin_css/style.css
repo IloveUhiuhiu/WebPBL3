@@ -3569,6 +3569,54 @@ table.projects tr td:first-child {
     .modal-3 a.active, .modal-3 a:active {
         background-color: #37B247;
     }
+.modal-message {
+    position: fixed;
+    display: none;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.3); 
+}
+.modal-content-message {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 550px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: slide-in 0.3s ease-out;
+}
+.modal-header-message {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc; 
+    margin-bottom: 30px;
+}
 
+.modal-header-mesage h2 {
+        margin: 0;
+}
+.message-item{
+    margin-top: 15px;
+    font-size: 18px;
+}
+.message-item p{
+    border-bottom: solid 1px black;
+}
+@keyframes slide-in {
+    from {
+        transform: translateY(-20%);
+        opacity: 0;
+    }
 
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 

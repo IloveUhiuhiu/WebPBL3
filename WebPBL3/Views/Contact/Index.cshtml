@@ -11,7 +11,7 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h3 class="fw-bold text-uppercase mb-5">Liên hệ với chúng tôi</h3>
+            <h3 class="fw-bold text-uppercase mb-5" style="font-size: 30px">Liên hệ với chúng tôi</h3>
         </div>
         <div class="row g-4">
             <div class="col-12">
@@ -45,22 +45,25 @@
             <div class="col-md-6">
                 <div class="wow fadeInUp" data-wow-delay="0.2s">
                     <p class="mb-4">Liên hệ với chúng tôi nếu bạn có bất kì thắc mắc nào!</p>
-                    <div asp-validation-summary="All" class="text-danger"></div>
                     <form method="post" id="formC">
                         <div class="row g-3">
-                            <div class="col-6 mb-2">
+                            <div class="col-6 mb-2 form-group">
+                                <span asp-validation-for="FullName" class="text-danger d-block"></span>
                                 <input type="text" class="form-control" asp-for="FullName" placeholder="Họ và tên">
                             </div>
-                            <div class="col-6">
+                            <div class="col-6 mb-2 form-group">
+                                <span asp-validation-for="Email" class="text-danger d-block"></span>
                                 <input type="email" class="form-control" asp-for="Email" placeholder="Địa chỉ email">
                             </div>
-                            <div class="col-12 mb-2">
+                            <div class="col-12 mb-2 form-group">
+                                <span asp-validation-for="Title" class="text-danger d-block"></span>
                                 <input type="text" class="form-control" asp-for="Title" placeholder="Chủ đề" />
                             </div>
-                            <div class="col-12 mb-2">
+                            <div class="col-12 mb-2 form-group">
+                                <span asp-validation-for="Content" class="text-danger d-block"></span>
                                 <textarea class="form-control" placeholder="Tin nhắn" asp-for="Content" style="height: 100px" rows="4"></textarea>
                             </div>
-                            <div class="product-rating" style="padding-left: 15px;">
+                            <div class="product-rating form-group" style="padding-left: 15px;">
                                 <span class="fs-5">Đánh giá: </span>
                                 <i class="fa-solid fa-star" id="star"></i>
                                 <i class="fa-solid fa-star" id="star"></i>
