@@ -7,7 +7,7 @@ namespace WebPBL3.Models
     using System.Web;
     public partial class AddStaffDTO
     {
-        [Required]
+        
         public string? StaffID { get; set; }
 
         [Required(ErrorMessage = "Họ và Tên là bắt buộc.")]

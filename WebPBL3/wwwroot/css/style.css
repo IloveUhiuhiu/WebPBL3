@@ -8954,7 +8954,7 @@ a {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   -ms-border-radius: 3px;
-  border-radius: 3px;
+  border-radius: 5px;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
   font-size: 15px; }
@@ -8966,7 +8966,7 @@ a {
     color: #fff !important; }
     .btn.btn-primary:hover {
         border: 1px solid #1089ff;
-        transform: scale(1.5,1.5);
+        transform: scale(1.2,1.2);
         transition: 0.5s;
         background: transparent;
         color: #1089ff;

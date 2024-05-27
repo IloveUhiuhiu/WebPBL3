@@ -1,18 +1,18 @@
 ﻿@using WebPBL3.Models
 @using Newtonsoft.Json
-@model WebPBL3.Models.CarDto
+@model WebPBL3.DTO.CarDto
 
 
 @{
 
-
+    ViewData["Title"] = "Thêm ô tô";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var makesJson = TempData["makes"] as string;
     TempData.Keep("makes");
     var makes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Make>>(makesJson);
 }
-
-
+<br />
+<h4 style="font-size:30px;font-weight: bold;">Thêm Ô tô</h4>
 <hr />
 
 
