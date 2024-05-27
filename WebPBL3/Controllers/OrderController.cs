@@ -81,9 +81,9 @@ namespace WebPBL3.Controllers
                     PhoneNumber = u.PhoneNumber,
                     Email = existEmail,
                     Address = u.Address,
-                    WardID = u.WardID ?? 0,
-                    ProvinceID = u.Ward.District.ProvinceID,
-                    DistrictID = u.Ward.DistrictID
+                    WardID = u.WardID??0,
+                    ProvinceID = u.Ward!= null ? u.Ward.District.ProvinceID : 0,
+                    DistrictID = u.Ward != null ? u.Ward.DistrictID : 0,
                 };
                 string orderDTOJson = JsonConvert.SerializeObject(orderDTO);
                 TempData["orderDTO"] = orderDTOJson;
@@ -92,36 +92,38 @@ namespace WebPBL3.Controllers
             return RedirectToAction("Creat");
         }
         [HttpPost]
-        public IActionResult AddItem(OrderDTO orderDTO,string CarID, int quantity)
+        public IActionResult AddItem([FromBody] Items item)
         {
-            var car = _context.Cars.Find(CarID);
+            var car = _context.Cars.Find(item.carID);
             if (car == null)
             {
-                return NotFound();
+                return NotFound("Mã xe không tồn tại");
             }
-            Items item = new Items
+            if (car.Quantity < item.quantity)
             {
-                CarID = car.CarID,
-                quantity = quantity,
-                CarName = car.CarName,
-                price = car.Price
-            };
-            orderDTO.items.Add(item);
-            string orderDTOJson = JsonConvert.SerializeObject(orderDTO);
-            TempData["orderDTO"] = orderDTOJson;
-            return RedirectToAction("Creat");
+                return BadRequest("Số lượng xe không đủ");
+            }
+            item.carName = car.CarName;
+            item.price = car.Price;
+            item.color = car.Color;
+            Console.WriteLine(Json(item));
+            return Json(item);   
         }
+        //[HttpPost]
+        //public IActionResult DeleteItem(OrderDTO orderDTO, string delItemId)
+        //{
+        //    orderDTO.items.RemoveAll(item => item.carID == delItemId);
+        //    string orderDTOJson = JsonConvert.SerializeObject(orderDTO);
+        //    TempData["orderDTO"] = orderDTOJson;
+        //    return RedirectToAction("Creat");
+        //}
         [HttpPost]
-        public IActionResult DeleteItem(OrderDTO orderDTO, string delItemId)
+        public async Task<IActionResult> Creat(OrderDTO orderDTO)
         {
-            orderDTO.items.RemoveAll(item => item.CarID == delItemId);
-            string orderDTOJson = JsonConvert.SerializeObject(orderDTO);
-            TempData["orderDTO"] = orderDTOJson;
-            return RedirectToAction("Creat");
-        }
-        [HttpPost]
-        public async Task<IActionResult> Create(OrderDTO orderDTO)
-        {
+            if (!ModelState.IsValid)
+            {
+                return View(orderDTO);
+            }
             User? u = _context.Users
                 .Include(a => a.Account)
                 .FirstOrDefault(u => u.Account.Email == orderDTO.Email);
@@ -130,18 +132,32 @@ namespace WebPBL3.Controllers
                 .FirstOrDefault(u=>u.User.Account.Email== HttpContext.User.FindFirstValue(ClaimTypes.Name));
             if(u == null)
             {
+                var account_id = 1;
+                var lastAccount = _context.Accounts.OrderByDescending(a => a.AccountID).FirstOrDefault();
+                if (lastAccount != null)
+                {
+                    account_id = Convert.ToInt32(lastAccount.AccountID) + 1;
+                }
+                var accountID= account_id.ToString().PadLeft(8, '0');
                 Account a = new Account
                 {
                     Email = orderDTO.Email,
-                    AccountID = Guid.NewGuid().ToString().Substring(0, 10),
+                    AccountID = accountID,
                     Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     Status = true,
                     RoleID = 1,
                 };
                 _context.Accounts.Add(a);
+                var user_id = 1;
+                var lastUser = _context.Users.OrderByDescending(u => u.UserID).FirstOrDefault();
+                if (lastUser != null)
+                {
+                    user_id = Convert.ToInt32(lastUser.UserID.Substring(2)) + 1;
+                }
+                var userID = "KH" + user_id.ToString().PadLeft(6, '0');
                 u = new User
                 {
-                    UserID = Guid.NewGuid().ToString().Substring(0, 10),
+                    UserID =userID,
                     FullName = orderDTO.FullName,
                     Address = orderDTO.Address,
                     IdentityCard = orderDTO.IdentityCard,
@@ -186,8 +202,10 @@ namespace WebPBL3.Controllers
                     Quantity = item.quantity,
                     Price = item.price,
                     OrderID = order.OrderID,
-                    CarID = item.CarID
+                    CarID = item.carID
                 };
+                var c=_context.Cars.Find(item.carID);
+                c.Quantity -= item.quantity;
                 _context.DetailOrders.Add(detailOrder);
             }
 
@@ -215,7 +233,7 @@ namespace WebPBL3.Controllers
         {
             Order? order = _context.Orders
                 .Include(u => u.User.Account)
-                .Include(st => st.Staff)
+                .Include(st => st.Staff.User.Account)
                 .FirstOrDefault(o => o.OrderID == id);
             if (order == null)
             {
@@ -225,9 +243,32 @@ namespace WebPBL3.Controllers
                      .Include(c => c.Car)
                      .Where(o => o.OrderID == id)
                      .ToList();
-            ViewBag.Order = order;
-            ViewBag.ListDetail = details;
-            return View();
+            DetailOrderDTO detailOrderDTO = new DetailOrderDTO
+            {
+                OrderId = order.OrderID,
+                CustomerName = order.User.FullName,
+                Address = order.User.Address,
+                EmailCustomer = order.User.Account.Email,
+                Phone = order.User.PhoneNumber,
+                StaffId = order.Staff.StaffID,
+                StaffName = order.Staff.User.FullName,
+                EmailStaff = order.Staff.User.Account.Email,
+                PurchaseDate=order.Date,
+                Status = order.Status,
+                ToTalPrice=order.Totalprice
+            };
+            foreach (var item in details)
+            {
+                detailOrderDTO.items.Add(new Items
+                {
+                    carID= item.CarID,
+                    carName=item.Car.CarName,
+                    color=item.Car.Color,
+                    price=item.Price,
+                    quantity=item.Quantity,
+                });
+            }
+            return View(detailOrderDTO);
         }
         public async Task<IActionResult> DeleteOrder(string id)
         {

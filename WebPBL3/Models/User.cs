@@ -15,8 +15,6 @@ namespace WebPBL3.Models
             IdentityCard = string.Empty;
             Address = string.Empty;
             Photo = string.Empty;
-            
-            //WardID = null;
         }
 
         [Key]

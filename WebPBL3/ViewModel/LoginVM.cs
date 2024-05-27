@@ -6,12 +6,12 @@ namespace WebPBL3.ViewModel
     {
         [Display(Name = "Email")]
         [StringLength(maximumLength: 50)]
-        [Required(ErrorMessage = "Bạn phải nhập email")]
+        [Required(ErrorMessage = "Bạn chưa nhập địa chỉ email")]
         public string Email { get; set; }
 
         [Display(Name = "Mật khẩu")]
         [StringLength(maximumLength: 50)]
-        [Required(ErrorMessage = "Bạn phải nhập password")]
+        [Required(ErrorMessage = "Bạn chưa nhập mật khẩu")]
         public string Password { get; set; }
     }
 }

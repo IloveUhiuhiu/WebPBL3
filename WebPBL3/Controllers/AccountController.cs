@@ -62,6 +62,11 @@ namespace WebPBL3.Controllers
                 return View();
             }
         }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
         public IActionResult Register()
         {
             return View();
@@ -83,18 +88,32 @@ namespace WebPBL3.Controllers
                     return View();
                 }
                 Role role = await _db.Roles.FirstOrDefaultAsync(r => r.RoleName == "User");
+                var account_id = 1;
+                var lastAccount = _db.Accounts.OrderByDescending(a => a.AccountID).FirstOrDefault();
+                if (lastAccount != null)
+                {
+                    account_id = Convert.ToInt32(lastAccount.AccountID) + 1;
+                }
+                var accountID = account_id.ToString().PadLeft(8, '0');
                 var newAccount = new Account
                 {
-                    AccountID = Guid.NewGuid().ToString().Substring(0, 10),
+                    AccountID = accountID,
                     Email = model.Email,
                     Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     Status = true,
                     RoleID = role.RoleID,
                 };
                 _db.Accounts.Add(newAccount);
+                var user_id = 1;
+                var lastUser = _db.Users.OrderByDescending(u => u.UserID).FirstOrDefault();
+                if (lastUser != null)
+                {
+                    user_id = Convert.ToInt32(lastUser.UserID.Substring(2)) + 1;
+                }
+                var userID = "KH" + user_id.ToString().PadLeft(6, '0');
                 var user = new User
                 {
-                    UserID = Guid.NewGuid().ToString().Substring(0, 10),
+                    UserID = userID,
                     AccountID = newAccount.AccountID
                 };
                 _db.Users.Add(user);
@@ -103,6 +122,7 @@ namespace WebPBL3.Controllers
             }
             return View();
         }
+        
         public IActionResult Denied()
         {
             return View();
@@ -119,12 +139,13 @@ namespace WebPBL3.Controllers
             {
                 string otp = GenerateOTP();
                 HttpContext.Session.SetString("OTP",otp);
+                HttpContext.Session.SetString("Email", email);
                 string message = "Mã OTP: " + otp;
                 existAccount.Password= BCrypt.Net.BCrypt.HashPassword(otp);
                 _db.Accounts.Update(existAccount);
                 await _db.SaveChangesAsync();
                 await SendMailGoogleSmtp(email, "Thiết lập mật khẩu mới", message);
-                return RedirectToAction("setupNewPassword", new { email = email });
+                return RedirectToAction("setupNewPassword");
             }
             else
             {
@@ -163,14 +184,13 @@ namespace WebPBL3.Controllers
             }
             return result;
         }
-        public IActionResult setupNewPassword(string  email)
+        public IActionResult setupNewPassword()
         {
-            ViewBag.Email = email;
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> setupNewPassword(string otp, string password,
-            string retypepassword,string email)
+            string retypepassword)
         {
             if (password != retypepassword)
             {
@@ -183,6 +203,7 @@ namespace WebPBL3.Controllers
                 TempData["Error"] = "Mã OTP không hợp lệ";
                 return View();
             }
+            var email = HttpContext.Session.GetString("Email");
             if (email == null)
             {
                 TempData["Error"] = "Xảy ra lỗi khi truyền dữ liệu. Vui lòng thao tác lại";
