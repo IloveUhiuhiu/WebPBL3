@@ -239,6 +239,7 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
+            Ward w = _context.Wards.Include(w => w.District.Province).FirstOrDefault(w => w.WardID == order.User.WardID);
             var details = _context.DetailOrders
                      .Include(c => c.Car)
                      .Where(o => o.OrderID == id)
@@ -247,7 +248,7 @@ namespace WebPBL3.Controllers
             {
                 OrderId = order.OrderID,
                 CustomerName = order.User.FullName,
-                Address = order.User.Address,
+                Address = order.User.Address+", "+w.WardName+", "+w.District.DistrictName+", "+w.District.Province.ProvinceName,
                 EmailCustomer = order.User.Account.Email,
                 Phone = order.User.PhoneNumber,
                 StaffId = order.Staff.StaffID,
