@@ -1,51 +1,37 @@
 ﻿@model WebPBL3.ViewModel.RegisterVM;
 
-<section class="vh-100 bg-image"
-         style="background-image: url('https://cand.com.vn/Files/Image/hientk/2018/10/27/0977f0df-53cd-488a-a87a-a969b3423cec.jpg');">
-    <div class="mask d-flex align-items-center h-100 gradient-custom-3" style="background-color: rgba(0, 0, 0, 0.6);">
-        <div class="container h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                    <div class="card" style="border-radius: 15px;">
-                        <div class="card-body p-5">
-                            <h3 class="text-uppercase text-center mb-4">Đăng ký</h3>
-                            <form method="post" asp-action="Register">
-                                @if (TempData["Error"] != null)
-                                {
-                                    <div class="text-danger">
-                                        <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
-                                    </div>
-                                }
-                                <!-- Email input -->
-                                <div class="form-group">
-                                    <label for="email" asp-for="Email">Email:</label>
-                                    <span asp-validation-for="Email" class="text-danger d-block"></span>
-                                    <input type="email" asp-for="Email" class="form-control" id="email">
-                                </div>
-                                <!-- Password input -->
-                                <div class="form-group">
-                                    <label for="pwd" asp-for="Password">Mật khẩu:</label>
-                                    <span asp-validation-for="Password" class="text-danger d-block"></span>
-                                    <input type="password" asp-for="Password" class="form-control" id="pwd">
-                                </div>
-                                <!-- Retyped Password input -->
-                                <div class="form-group">
-                                    <label for="pwd" asp-for="RetypePassword">Nhập lại mật khẩu:</label>
-                                    <span asp-validation-for="RetypePassword" class="text-danger d-block"></span>
-                                    <input type="password" class="form-control" id="pwd" asp-for="RetypePassword">
-                                </div>
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-success btn-block">Đăng ký</button>
-                                </div>
-                                <p class="text-center text-muted mt-4 mb-0">
-                                    Bạn đã có tài khoản? <a href="@Url.Action("Login", "Account")"
-                                                            class="fw-bold text-body"><u>Dăng nhập</u></a>
-                                </p>
-                            </form>
-                        </div>
-                    </div>
+<div class="login-context">
+    <div class="login-container">
+        <img src="/images/vector-logo.png" alt="Showroom Logo" class="car-logo">
+        <h2 style="text-align: center">Đăng ký tài khoản</h2>
+        <form method="post" asp-action="Register">
+            @if (TempData["Error"] != null)
+            {
+                <div class="text-danger">
+                    <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
                 </div>
+            }
+            <div class="form-group">
+                <label for="email" asp-for="Email">Email:</label>
+                <span asp-validation-for="Email" class="text-danger d-block"></span>
+                <input type="email" class="form-control" id="email" asp-for="Email" placeholder="Nhập địa chỉ email của bạn">
             </div>
+            <div class="form-group">
+                <label for="pwd" asp-for="Password">Mật khẩu:</label>
+                <span asp-validation-for="Password" class="text-danger d-block"></span>
+                <input type="password" class="form-control" id="pwd" asp-for="Password" placeholder="Nhập mật khẩu của bạn">
+            </div>
+            <div class="form-group">
+                <label for="pwd" asp-for="RetypePassword">Nhập lại mật khẩu:</label>
+                <span asp-validation-for="RetypePassword" class="text-danger d-block"></span>
+                <input type="password" class="form-control" id="pwd" asp-for="RetypePassword" placeholder="Nhập lại mật khẩu">
+            </div>
+            <button type="submit" class="btn btn-custom btn-block mt-4">Đăng ký</button>
+        </form>
+        <div class="footer">
+            <p>
+                Bạn đã có tài khoản? <a href="@Url.Action("Login", "Account")">Đăng nhập</a>
+            </p>
         </div>
     </div>
-</section>
+</div>

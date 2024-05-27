@@ -1,75 +1,80 @@
-﻿@model Order;
+﻿@model WebPBL3.DTO.DetailOrderDTO;
 @{
     ViewData["Title"] = "Chi tiết đơn hàng";
     Layout = "_AdminLayout"; 
-    Order order = ViewBag.Order;
-    var details = ViewBag.ListDetail as List<DetailOrder>;
     int count = 1;
 }
 <div class="container">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="invoice-title">
-                            @if(order.Status=="Đã thanh toán"){
+            <div class="text-center">
+                <h2 class="text-white py-2">Chi tiết hóa đơn</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="invoice-title">
+                        @if (@Model.Status == "Đã thanh toán")
+                        {
                             <h4 class="float-end">
-                                <span class="badge bg-success font-size-12 ms-2">Đã thanh toán</span>
+                                <span class="badge bg-success font-size-12 ms-2 p-2">Đã thanh toán</span>
                             </h4>
                         }
                         else
                         {
                             <h4 class="float-end">
-                                <span class="badge bg-danger font-size-12 ms-2">Chưa thanh toán</span>
+                                <span class="badge bg-danger font-size-12 p-3 ms-2">Chưa thanh toán</span>
                             </h4>
                         }
                         <div class="mb-4">
-                                <h2 class="mb-1 text-danger">Showroom DragonCar</h2>
+                            <h2 class="mb-1 text-danger">Showroom DragonCar</h2>
+                        </div>
+                        <div class="fs-5">
+                            <p class="mb-1">
+                                <i class="fa-solid fa-location-dot pr-2 text-danger"></i>Liên Chiểu, Đà Nẵng
+                            </p>
+                            <p class="mb-1"><i class="fa-solid fa-envelope pr-2 text-danger"></i>dragoncar@gmail.com</p>
+                            <p><i class="fa-solid fa-phone pr-2 text-danger"></i> 012-345-6789</p>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="fs-5 ">
+                                <h4 class="mb-2">Thông tin khách hàng</h4>
+                                <p class="mb-1" style="line-height: 1.6">
+                                    <span class="fw-bolder">Họ và tên khách hàng: </span>
+                                    @Model.CustomerName
+                                </p>
+                                <p class="mb-1"><span class="fw-bolder">Địa chỉ: </span> @Model.Address</p>
+                                <p class="mb-1"><span class="fw-bolder">Email: </span> @Model.EmailCustomer</p>
+                                <p class="mb-1">
+                                    <span class="fw-bolder">Số điện thoại: </span> @Model.Phone
+                                </p>
                             </div>
-                            <div class=" ">
-                                <p class="mb-1">Liên Chiểu, Đà Nẵng</p>
-                                <p class="mb-1"><i class="uil uil-envelope-alt me-1"></i>dragoncar@gmail.com</p>
-                                <p><i class="uil uil-phone me-1"></i> 012-345-6789</p>
+                            <div class="fs-5 mt-3">
+                                <h4 class="mb-2">Thông tin nhân viên</h4>
+                                <p class="mb-1" style="line-height: 1.6">
+                                    <span class="fw-bolder">Mã nhân viên: </span> @Model.StaffId
+                                </p>
+                                <p class="mb-1">
+                                    <span class="fw-bolder">Họ và tên nhân viên: </span> @Model.StaffName
+                                </p>
+                                <p class="mb-1"><span class="fw-bolder">Email: </span> @Model.EmailStaff</p>
                             </div>
                         </div>
-
-                        <hr class="my-4">
-
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class=" ">
-                                    <h4 class="mb-3">Thông tin khách hàng</h4>
-                                    <p class="mb-1"><span class="fw-bolder">Họ và tên khách hàng: </span> @order.User.FullName
-                                    </p>
-                                    <p class="mb-1"><span class="fw-bolder">Địa chỉ: </span> @order.User.Address</p>
-                                    <p class="mb-1"><span class="fw-bolder">Email: </span> @order.User.Account.Email</p>
-                                    <p class="mb-1"><span class="fw-bolder">Số điện thoại: </span> @order.User.PhoneNumber</p>
-                                </div>
-                            </div>
-                            <!-- end col -->
-                            <div class="col-sm-6">
-                                <div class="  text-sm-end">
-                                    <div>
-                                        <h5 class="font-size-15 mb-1">Mã hóa đơn:</h5>
-                                        <p>@order.OrderID</p>
-                                    </div>
-                                    <div class="mt-4">
-                                        <h5 class="font-size-15 mb-1">Ngày mua hàng:</h5>
-                                        <p>@order.Date</p>
-                                    </div>
-                                    <div class="mt-4">
-                                        <h5 class="font-size-15 mb-1">Mã nhân viên:</h5>
-                                        <p>@order.StaffID</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end col -->
-                        </div>
-                        <!-- end row -->
-
-                        <div class="py-2">
-                            <h4>Thông tin đơn hàng</h4>
-
+                        <div class="col-sm-6 fs-5" style="border-left: solid 1px; line-height: 1.6">
+                            <h4 class="mb-2">Thông tin đơn hàng</h4>
+                            <p class="mb-1"><span class="fw-bolder">Mã háo đơn: </span> @Model.OrderId</p>
+                            <p class="mb-1">
+                                <span class="fw-bolder">Ngày mua hàng: </span>
+                                @Model.PurchaseDate.ToString("dd/MM/yyyy")
+                            </p>
                             <div class="table-responsive">
                                 <table class="table align-middle table-nowrap table-centered mb-0">
                                     <thead>
@@ -82,26 +87,37 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach(var deatilOrder in details)
-                                    {
+                                        @foreach (var item in Model.items)
+                                        {
+                                            <tr>
+                                                <th scope="row">@(count++)</th>
+                                                <td>
+                                                    <div>
+                                                        <h5 class="text-truncate font-size-14 mb-1">
+                                                            @item.carName
+                                                        </h5>
+                                                        <p class="mb-0">@item.color</p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @item.price.ToString("C", new
+                                                             System.Globalization.CultureInfo("vi-VN"))
+                                                </td>
+                                                <td>@item.quantity</td>
+                                                <td class="text-end">
+                                                    @((item.price *
+                                                        item.quantity).ToString("C", new
+                                                        System.Globalization.CultureInfo("vi-VN")))
+                                                </td>
+                                            </tr>
+                                        }
                                         <tr>
-                                            <th scope="row">@(count++)</th>
-                                            <td>
-                                                <div>
-                                                    <h5 class="text-truncate font-size-14 mb-1">@deatilOrder.Car.CarName</h5>
-                                                    <p class="  mb-0">@deatilOrder.Car.Color</p>
-                                                </div>
-                                            </td>
-                                            <td>@deatilOrder.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</td>
-                                            <td>@deatilOrder.Quantity</td>
-                                            <td class="text-end">@((deatilOrder.Price * deatilOrder.Quantity).ToString("C", new System.Globalization.CultureInfo("vi-VN")))</td>
-                                        </tr>
-                                    }
-                                        <tr>
-                                            <th scope="row" colspan="4" class="text-end">Tổng tiền</th>
-                                            <td class="border-0 text-end">
-                                            <h4 class="m-0 fw-semibold">@order.Totalprice.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</h4>
-                                            </td>
+                                            <th scope="row" colspan="5" class="text-end">
+                                                Tổng tiền:
+                                                <span class="m-0 fw-semibold">
+                                                    @Model.ToTalPrice.ToString("C", new
+                                                             System.Globalization.CultureInfo("vi-VN"))
+                                                </span>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -109,10 +125,16 @@
                         </div>
                     </div>
                 </div>
-            </div><!-- end col -->
-            <div class="col-lg-12 text-center"><button class="btn btn-danger">Quay lại</button></div>
+            </div>
+        </div><!-- end col -->
+        <div class="col-lg-12 text-center">
+            <a asp-action="Index" asp-controller="Order" class="btn btn-danger">
+                Quay
+                lại
+            </a>
         </div>
     </div>
+</div>
 <script>
     async function getData() {
         const url = "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json"
@@ -145,21 +167,21 @@
                 const selectedDistrict = dataDistincts.find(district => district.Id === this.value);
                 if (selectedDistrict && selectedDistrict.Wards) {
                     selectedDistrict.Wards.forEach(ward => {
-                        wards.options[wards.options.length] = new Option(ward.Name,ward.Id);
+                        wards.options[wards.options.length] = new Option(ward.Name, ward.Id);
                     });
                 }
             }
         }
     }
 
-    async function extractAddress(addr){
+    async function extractAddress(addr) {
         await renderCities();
         const arr = addr.split('-');
         console.log(arr);
         if (arr[0] !== "") {
             street.value = arr[0];
         }
-        if (arr[1] != "" &&arr[1] !== undefined) {
+        if (arr[1] != "" && arr[1] !== undefined) {
             cities.value = arr[1].toString();
             console.log("cities.value= " + arr[1].toString());
             cities.dispatchEvent(new Event('change'));

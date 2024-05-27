@@ -90,7 +90,7 @@ namespace WebPBL3.Controllers
                     Photo = news.Photo,
                     CreateAt = DateTime.Now,
                     UpdateAt = null,
-                    StaffID = "1",
+                    StaffID = "NV000001",
                 }) ;
                 await _db.SaveChangesAsync();
                 return RedirectToAction("ListNews");
