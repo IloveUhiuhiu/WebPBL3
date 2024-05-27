@@ -45,7 +45,7 @@ namespace WebPBL3.Controllers
             return View();
         }
 
-        public IActionResult Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9)
+        public ActionResult Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9, string sortBy = "")
         {
 			var item = _db.Cars
 		    .Include(c => c.Make)
@@ -53,7 +53,7 @@ namespace WebPBL3.Controllers
 		    .ToList();
             if (!string.IsNullOrEmpty(txtSearch))
             {
-                item = item.Where(car => car.CarName.Contains(txtSearch)).ToList();
+                item = item.Where(car => car.CarName.ToLower().Contains(txtSearch.ToLower())).ToList();
             }
             if (!string.IsNullOrEmpty(makeName))
             {
@@ -71,6 +71,34 @@ namespace WebPBL3.Controllers
 			{
 				item = item.Where(c => c.Seat == seatNumber).ToList();
 			}
+            switch(sortBy)
+            {
+                case "Price":
+                    item = item.OrderBy(p => p.Price).ToList();
+                    break;
+                case "bestSelling":
+                    var orders = _db.Orders
+                        .Include(o => o.DetailOrders)
+                        .ThenInclude(deo => deo.Car)
+                        .Where(o => o.Status == "Đã thanh toán")
+                        .ToList();
+                    Dictionary<string, int> quantity = new Dictionary<string, int>();
+                    foreach (var order in orders)
+                    {
+                        foreach (var detailOrder in order.DetailOrders)
+                        {
+                            if (!quantity.ContainsKey(detailOrder.Car.CarID))
+                            {
+                                quantity[detailOrder.Car.CarID] = 0;
+                            }
+                            quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
+                        }
+                    }
+                    var sortedDict = quantity.OrderBy(q => q.Value).Take(4).ToList();
+                    var bestSellingCarIds = sortedDict.Select(x => x.Key);
+                    item = item.Where(c => bestSellingCarIds.Contains(c.CarID)).ToList();
+                    break;
+            }
             int totalCount = item.Count();
             var cars = item.Skip((page-1) * perPage)
                 .Take(perPage)
@@ -126,7 +154,7 @@ namespace WebPBL3.Controllers
 
 			};
             var relatedCars = _db.Cars
-                        .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID)
+                        .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID && !car.Flag)
                         .ToList();
             ViewBag.RelatedCars = relatedCars;
             return View(carDtoFromDb);

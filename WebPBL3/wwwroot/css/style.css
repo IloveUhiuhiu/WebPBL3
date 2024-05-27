@@ -8533,37 +8533,38 @@ a {
   @media (max-width: 991.98px) {
     .ftco-navbar-light .navbar-nav {
       padding-bottom: 10px; } }
-  .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
+  .ftco-navbar-light .navbar-nav .nav-item .nav-link {
     font-size: 18px;
     padding-top: .9rem;
     padding-bottom: .9rem;
     padding-left: 20px;
+    padding-right: 20px;
     color: #fff;
     font-weight: 400;
     opacity: 1 !important; }
-    .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:hover {
+    .ftco-navbar-light .navbar-nav .nav-item .nav-link:hover {
       color: darkred; }
     @media (max-width: 991.98px) {
-      .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
+      .ftco-navbar-light .navbar-nav .nav-item .nav-link {
         padding-left: 0;
         padding-right: 0;
         padding-bottom: 0;
         color: #fff; } }
-  .ftco-navbar-light .navbar-nav > .nav-item .dropdown-menu {
+  .ftco-navbar-light .navbar-nav .nav-item .dropdown-menu {
     border: none;
     background: #fff;
     -webkit-box-shadow: 0px 10px 34px -20px rgba(0, 0, 0, 0.41);
     -moz-box-shadow: 0px 10px 34px -20px rgba(0, 0, 0, 0.41);
     box-shadow: 0px 10px 34px -20px rgba(0, 0, 0, 0.41); }
-  .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator {
+  .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator {
     position: relative;
     margin-left: 20px;
     padding-left: 20px; }
     @media (max-width: 991.98px) {
-      .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator {
+      .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator {
         padding-left: 0;
         margin-left: 0; } }
-    .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator:before {
+    .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator:before {
       position: absolute;
       content: "";
       top: 10px;
@@ -8572,7 +8573,7 @@ a {
       width: 2px;
       background: rgba(255, 255, 255, 0.05); }
       @media (max-width: 991.98px) {
-        .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator:before {
+        .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator:before {
           display: none; } }
   .ftco-navbar-light .navbar-nav > .nav-item.cta > a {
     color: #fff;
@@ -9125,7 +9126,7 @@ a {
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 2px;
-  color: rgba(0, 0, 0, 0.4);
+  color:  rgb(0 0 0);
   display: block; }
 
 .nav-pills {
