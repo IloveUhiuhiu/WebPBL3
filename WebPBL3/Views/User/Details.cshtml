@@ -1,22 +1,12 @@
-﻿@using WebPBL3.Models
+﻿@using WebPBL3.DTO
 @using Newtonsoft.Json
-@model WebPBL3.Models.UserDto
+@model UserDto
 
 @{
 
     ViewData["Title"] = "Chi tiết khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    var wardsJson = TempData["wards"] as string;
-    TempData.Keep("wards");
-    var wards = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Ward>>(wardsJson);
-
-    var districtsJson = TempData["districts"] as string;
-    TempData.Keep("districts");
-    var districts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<District>>(districtsJson);
-
-    var provincesJson = TempData["provinces"] as string;
-    TempData.Keep("provinces");
-    var provinces = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Province>>(provincesJson);
+    
 }
 
 
