@@ -62,10 +62,18 @@
             height: 300px;
             font-size: 25px;
         }
-
         .ck-content p {
             color: black;
             font-size: 25px;
+        }
+        .ck.ck-editor__editable .image-inline img {
+          height: auto;
+          width: 1100px;
+        }
+
+        .ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
+            border-color: var(--ck-color-base-border);
+            height: 1000px;
         }
     </style>
 </head>
@@ -191,7 +199,7 @@
     <script src="~/admin_js/utils.js"></script>
     <script src="~/admin_js/analyser.js"></script>
     <!-- ckeditor -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+    @* <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
     <script>
         // Khởi tạo CKEditor
         ClassicEditor
@@ -216,7 +224,7 @@
                 console.error(error);
             });
           
-    </script>
+    </script> *@
     <!-- nice scrollbar -->
     <script src="~/admin_js/perfect-scrollbar.min.js"></script>
     <script>
