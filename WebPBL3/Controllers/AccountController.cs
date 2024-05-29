@@ -68,6 +68,11 @@ namespace WebPBL3.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM model)
         {
