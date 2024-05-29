@@ -6,17 +6,7 @@
 
     ViewData["Title"] = "Thêm khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    var wardsJson = TempData["wards"] as string;
-    TempData.Keep("wards");
-    var wards = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Ward>>(wardsJson);
-
-    var districtsJson = TempData["districts"] as string;
-    TempData.Keep("districts");
-    var districts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<District>>(districtsJson);
-
-    var provincesJson = TempData["provinces"] as string;
-    TempData.Keep("provinces");
-    var provinces = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Province>>(provincesJson);
+  
 
 }
 
@@ -110,37 +100,35 @@
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
-                                <select id="city" asp-for="ProvinceName" class="form-control">
-                                    <option value="">--Chọn tên tỉnh(Thành phố)--</option>
+                                <label class="control-label">Tên tỉnh(Thành phố)</label>
+                                <select id="city" class="form-control">
+                                    <option value="0">--Chọn tên tỉnh(Thành phố)--</option>
                                     
                                     <!-- Các option cho Province sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="ProvinceName" class="text-danger"></span>
+                                
                             </div>
                             <!-- Form Group (birthday)-->
                             <div class="col-md-6">
-                                <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
+                                <label class="control-label">Tên quận(huyện)</label>
                                 
-                                <select id="district" asp-for="DistrictName" class="form-control">
-                                    <option value="">--Chọn tên quận(huyện)--</option>
+                                <select id="district" class="form-control">
+                                    <option value="0">--Chọn tên quận(huyện)--</option>
                                     
                                     <!-- Các option cho District sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="DistrictName" class="text-danger"></span>
+                                
                             </div>
                         </div>
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
-                                
-                                <select id="ward" asp-for="WardName" class="form-control">
-                                    <option value="">--Chọn tên xã(phường)--</option>
-                                   
+                                <label class="control-label">Tên xã(phường)</label>
+                                <select id="ward" asp-for="WardID" class="form-control">
+                                    <option value="0">--Chọn tên xã(phường)--</option>
                                     <!-- Các option cho Ward sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="WardName" class="text-danger"></span>
+                                <span asp-validation-for="WardID" class="text-danger"></span>
                             </div>
                             <!-- Input field to store selected ward ID -->
                             <input type="hidden" id="WardID" name="WardID" />

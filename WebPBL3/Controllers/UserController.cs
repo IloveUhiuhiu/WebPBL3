@@ -35,9 +35,10 @@ namespace WebPBL3.Controllers
             List<UserDto> users =  await _db.Users
                 .Include(a => a.Account)
                 .Include(w => w.Ward)
-                .Where(u => (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).
+                .ThenInclude(d => d.District)
+                .Where(u => u.Account.RoleID == 3 &&  (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).
                 Select(u => new UserDto
-            {
+               {
                 AccountID = u.AccountID,
                 Email = u.Account.Email,
                 Password = u.Account.Password,
@@ -198,21 +199,17 @@ namespace WebPBL3.Controllers
                 return NotFound("Account is not found");
             }
 
-            string wardName = string.Empty, districtName = string.Empty, provinceName = string.Empty;
+            
             Ward? ward = await _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefaultAsync();
-
+            ViewBag.DistrictID = 0;
+            ViewBag.ProvinceID = 0;
             if (ward != null)
             {
-                wardName = ward.WardName;
                 District? district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
                 if (district != null)
                 {
-                    districtName = district.DistrictName;
-                    Province? province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
-                    if (province != null)
-                    {
-                        provinceName = province.ProvinceName;
-                    }
+                    ViewBag.DistrictID = district.DistrictID;
+                    ViewBag.ProvinceID = district.ProvinceID;
                 }
             }
             UserDto userDtoFromDb = new UserDto
@@ -228,9 +225,6 @@ namespace WebPBL3.Controllers
                 BirthDate = user.BirthDate,
                 Photo = user.Photo,
                 WardID = user.WardID,
-                WardName = wardName,
-                DistrictName = districtName,
-                ProvinceName = provinceName,
                 AccountID = user.AccountID,
 
             };

@@ -179,11 +179,18 @@
                             
                             <h3><span><i class="fa fa-comments-o"></i> Bảng doanh thu chi tiết</span></h3>
                             <div style="margin-left: auto;">
-                                <form id="myForm" method="post" asp-controller="Statistic" asp-action="SaveExcel">
+                                @* <form id="myForm" method="post" asp-controller="Statistic" asp-action="SaveExcel">
                                     <button style="border-radius: 5px;">
                                         <i class="fa-solid fa-file-export green_color" style="font-size:20px; height: 40px; line-height: 40px"></i> Xuất ra file Excel
                                     </button>
 
+                                    <input type="hidden" id="data" name="data" />
+                                </form> *@
+                                <form id="myForm" method="post" asp-controller="Statistic" asp-action="SaveExcel">
+                                    <button type="submit" class="btn" style="background-color:#03a158; padding: 5px 10px; display: inline-block;">
+                                        <img src="~/images/excel (1).png" style="width: 22px; height: 22px; vertical-align: middle;" />
+                                        <span style="vertical-align: middle;">Xuất file excel</span>
+                                    </button>
                                     <input type="hidden" id="data" name="data" />
                                 </form>
                             </div>

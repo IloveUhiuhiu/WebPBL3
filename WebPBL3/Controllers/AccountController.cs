@@ -119,11 +119,7 @@ namespace WebPBL3.Controllers
             }
             return View();
         }
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
+        
         public IActionResult Denied()
         {
             return View();
