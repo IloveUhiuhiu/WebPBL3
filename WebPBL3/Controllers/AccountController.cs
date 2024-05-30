@@ -15,9 +15,11 @@ namespace WebPBL3.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _db;
-        public AccountController(ApplicationDbContext db)
+        private IWebHostEnvironment _environment;
+        public AccountController(ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
+           _environment = environment;
         }
         public IActionResult Index()
         {
@@ -62,14 +64,14 @@ namespace WebPBL3.Controllers
                 return View();
             }
         }
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
-        }
         public IActionResult Register()
         {
             return View();
+        }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM model)
@@ -218,6 +220,104 @@ namespace WebPBL3.Controllers
                 return RedirectToAction("Login");
             }
             return View();
+        }
+        public IActionResult InforAccount()
+        {
+            string email = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            if (email == null)
+            {
+                return RedirectToAction("Login");
+            }
+            Account account = _db.Accounts.Include(a => a.User.Ward.District).FirstOrDefault(a => a.Email == email);
+            if (account == null)
+            {
+                return RedirectToAction("Login");
+            }
+            UserDto user = new UserDto
+            {
+                UserID=account.User.UserID,
+                Email = account.Email,
+                FullName = account.User.FullName,
+                PhoneNumber = account.User.PhoneNumber,
+                IdentityCard = account.User.IdentityCard,
+                Gender = account.User.Gender,
+                BirthDate = account.User.BirthDate,
+                Address = account.User.Address,
+                Photo = account.User.Photo,
+                WardID = account.User.Ward!=null ? account.User.WardID : 0,
+                ProvinceID= account.User.Ward != null ? account.User.Ward.District.ProvinceID : 0,
+                DistrictID =account.User.Ward != null ? account.User.Ward.DistrictID : 0
+            };
+            if (_db.Orders.Any(o => o.UserID == account.User.UserID))
+            {
+                ViewBag.Unchange = true;
+            }
+            else
+            {
+                ViewBag.Unchange = false;
+            }
+            
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InforAccount(UserDto userDto, IFormFile? uploadimage)
+        {
+            User user = _db.Users.Find(userDto.UserID);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.FullName = userDto.FullName;
+            user.PhoneNumber = userDto.PhoneNumber;
+            user.IdentityCard = userDto.IdentityCard;
+            user.Gender = userDto.Gender;
+            user.BirthDate = userDto.BirthDate;
+            if (!_db.Orders.Any(o => o.UserID == user.UserID))
+            {
+                user.Address = userDto.Address;
+                user.WardID = userDto.WardID;
+            } 
+            if (uploadimage != null && uploadimage.Length > 0)
+            {
+                string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(uploadimage.FileName);
+                user.Photo = fileName;
+                string _path = Path.Combine(_environment.WebRootPath, "upload\\user", fileName);
+                Console.WriteLine(_path);
+                using (var fileStream = new FileStream(_path, FileMode.Create))
+                {
+                    uploadimage.CopyTo(fileStream);
+                }
+            }
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string password, string newPassword, string retypePassword)
+        {
+            if (newPassword != retypePassword)
+            {
+                TempData["Error"] = "Mật khẩu nhập lại không khớp";
+                return View();
+            }
+            string email = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            Account account = _db.Accounts.FirstOrDefault(a => a.Email == email);
+            if (account == null)
+            {
+                return RedirectToAction("Login");
+            }
+            if(!BCrypt.Net.BCrypt.Verify(password, account.Password))
+            {
+                TempData["Error"] = "Mật khẩu không chính xác";
+                return View();
+            }
+            account.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            _db.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -26,11 +26,11 @@ namespace WebPBL3.DTO.Staff
         [Range(0, double.MaxValue, ErrorMessage = "Lương phải là số dương.")]
         public int Salary { get; set; }
         [Required(ErrorMessage = "Chưa chọn xã")]
-        public string WardName { get; set; }
+        public string? WardName { get; set; }
         [Required(ErrorMessage = "Chưa chọn huyện")]
-        public string DistrictName { get; set; }
+        public string? DistrictName { get; set; }
         [Required(ErrorMessage = "Chưa chọn tĩnh")]
-        public string ProvinceName { get; set; }
+        public string? ProvinceName { get; set; }
         [Required(ErrorMessage = "Email là bắt buộc.")]
         public string Email { get; set; }
         public string? Password { get; set; }
