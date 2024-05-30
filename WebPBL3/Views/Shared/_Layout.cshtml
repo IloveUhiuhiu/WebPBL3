@@ -61,7 +61,7 @@
                         </ul>
                         
                     </div>
-                <div class="collapse navbar-collapse" id="ftco-nav">
+                    <div class="collapse navbar-collapse" id="ftco-nav">
                     <ul class="navbar-nav ml-auto">
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -70,8 +70,7 @@
                                     <img class="img-responsive rounded-circle" src="~/admin_images/layout_img/user_img.jpg" alt="#" style="width: 65px;" />
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                                    <a class="dropdown-item" href="settings.html">Settings</a>
+                                    <a class="dropdown-item" href="@Url.Action("HistoryOrder","User")">Tài khoản</a>
                                     <a class="dropdown-item" href="@Url.Action("Logout", "Account")">
                                         <span>Log Out</span>
                                         <i class="fa fa-sign-out"></i>
@@ -80,7 +79,7 @@
                             </li>
                         }
                     </ul>
-                </div>
+                    </div>
                 </div>
                 
             </nav>

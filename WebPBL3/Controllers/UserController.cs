@@ -7,8 +7,10 @@ using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Numerics;
+using WebPBL3.DTO;
 using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
@@ -28,7 +30,7 @@ namespace WebPBL3.Controllers
             return View();
         }
         // GET
-        public async Task<IActionResult> UserListTable(string searchtxt = "", int page = 1)
+        public async Task<IActionResult> UserListTable(string searchtxt = "",int fieldsearch = 1, int page = 1)
         {
             
 
@@ -36,8 +38,12 @@ namespace WebPBL3.Controllers
                 .Include(a => a.Account)
                 .Include(w => w.Ward)
                 .ThenInclude(d => d.District)
-                .Where(u => u.Account.RoleID == 3 &&  (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).
-                Select(u => new UserDto
+                .Where(u => u.Account.RoleID == 3 &&  (searchtxt.IsNullOrEmpty() 
+                || (fieldsearch == 1 && u.FullName.Contains(searchtxt)) 
+                || (fieldsearch == 2 && u.PhoneNumber.Contains(searchtxt))
+                || (fieldsearch == 3 && u.Account.Email.Contains(searchtxt))
+                || (fieldsearch == 4 && u.IdentityCard.Contains(searchtxt))))
+                .Select(u => new UserDto
                {
                 AccountID = u.AccountID,
                 Email = u.Account.Email,
@@ -71,6 +77,7 @@ namespace WebPBL3.Controllers
             ViewBag.totalPage = totalPage;
             ViewBag.currentPage = page;
             ViewBag.searchtxt = searchtxt;
+            ViewBag.fieldsearch = fieldsearch;
             users = users.Skip((page - 1) * limits).Take(limits).ToList();
             
            
@@ -211,7 +218,8 @@ namespace WebPBL3.Controllers
                     ViewBag.DistrictID = district.DistrictID;
                     ViewBag.ProvinceID = district.ProvinceID;
                 }
-            }
+            } else user.WardID = 0;
+            
             UserDto userDtoFromDb = new UserDto
             {
                 UserID = user.UserID,
@@ -266,7 +274,7 @@ namespace WebPBL3.Controllers
                 user.Address = userdto.Address;
                 user.BirthDate = userdto.BirthDate;
                 user.Photo = userdto.Photo;
-                user.WardID = userdto.WardID;
+                user.WardID = (userdto.WardID>0?userdto.WardID:null);
 
 
                 try
@@ -377,6 +385,65 @@ namespace WebPBL3.Controllers
             }
             return RedirectToAction("UserListTable");
           
+        }
+
+        // [GET]
+        public async Task<IActionResult> HistoryOrder ()
+        {   
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest("Người dùng chưa đăng nhập");
+            }
+            string? email = User.Identity.Name;
+            Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
+
+            if (account == null)
+            {
+                return NotFound("Account is not found");
+
+            }
+
+
+            User? user = account.User;
+            
+            if (user == null)
+            {
+                return NotFound("User is not found");
+            }
+            List<Order> orders = await _db.Orders.Where (o => o.UserID == user.UserID)
+                .Include(o => o.DetailOrders)
+                .ThenInclude(d => d.Car).ThenInclude(c => c.Make).OrderByDescending( o => o.Date).ToListAsync();
+            
+            
+            List<HistoryOrderDto> historyOrders = new List<HistoryOrderDto>();
+
+            foreach (var item in  orders)
+            {
+                HistoryOrderDto historyOrder = new HistoryOrderDto
+                {
+                    Date = item.Date,
+                    Totalprice = item.Totalprice,
+                    Status = item.Status,
+                    OrderID = item.OrderID,
+                };
+                foreach (var itemDetailOrder in item.DetailOrders)
+                {
+                    historyOrder.Items.Add(new HistoryOrderItem
+                    {   
+                        
+                        CarID = itemDetailOrder.CarID,
+                        Photo = itemDetailOrder.Car.Photo,
+                        CarName = itemDetailOrder.Car.CarName,
+                        MakeName = itemDetailOrder.Car.Make.MakeName,
+                        Color = itemDetailOrder.Car.Color,
+                        Price = itemDetailOrder.Car.Price,
+                        Quantity = itemDetailOrder.Quantity
+                    });
+                }
+                historyOrders.Add(historyOrder);
+            }
+            //Console.WriteLine(historyOrders.Count);
+            return View(historyOrders);
         }
     }
 }

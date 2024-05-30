@@ -27,7 +27,7 @@
                         <!-- Profile picture help block-->
                         <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none;">
                         <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: gray; color: white;">
+                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: dodgerblue; color: white;">
                             <i class="fa-solid fa-pen-to-square"></i> Cập nhật ảnh
                         </button>
                         <!-- Profile picture upload button-->
@@ -218,6 +218,8 @@
         res.forEach(city => {
             cities.options[cities.options.length] = new Option(city.provinceName, city.provinceID);
         });
+        
+        
         if (@Model.WardID) {
             cities.value = @ViewBag.ProvinceID;
             
@@ -231,7 +233,7 @@
                 wards.options[wards.options.length] = new Option(ward.name, ward.id);
             });
             wards.value = @Model.WardID;
-        }
+        } 
         cities.addEventListener('change', async () => {
             districts.options.length = 1;
             wards.options.length = 1;
@@ -257,5 +259,6 @@
 
 
     }
+    
     renderCities();
 </script>

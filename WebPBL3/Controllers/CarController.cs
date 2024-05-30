@@ -228,6 +228,14 @@ namespace WebPBL3.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CarDto car, IFormFile uploadimage)
         {
+            foreach (var state in ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    Console.WriteLine($"Property: {state.Key}, Error: {error.ErrorMessage}");
+                }
+            }
+
             if (ModelState.IsValid)
             {   
                 // carid bằng 1 vì trường hợp tập rỗng

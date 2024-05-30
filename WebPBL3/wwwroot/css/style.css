@@ -8533,7 +8533,7 @@ a {
   @media (max-width: 991.98px) {
     .ftco-navbar-light .navbar-nav {
       padding-bottom: 10px; } }
-  .ftco-navbar-light .navbar-nav .nav-item .nav-link {
+.ftco-navbar-light .navbar-nav .nav-item .nav-link {
     font-size: 18px;
     padding-top: .9rem;
     padding-bottom: .9rem;
@@ -8541,7 +8541,9 @@ a {
     padding-right: 20px;
     color: #fff;
     font-weight: 400;
-    opacity: 1 !important; }
+    opacity: 1 !important;
+    width: 140px;
+}
     .ftco-navbar-light .navbar-nav .nav-item .nav-link:hover {
       color: darkred; }
     @media (max-width: 991.98px) {
@@ -10510,7 +10512,7 @@ textarea.form-control {
 .form-control {
     background: rgba(255, 255, 255, 0.2);
     border: none;
-    color: #fff;
+    
 }
 
     .form-control::placeholder {
