@@ -70,7 +70,14 @@
                                     <img class="img-responsive rounded-circle" src="~/admin_images/layout_img/user_img.jpg" alt="#" style="width: 65px;" />
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="@Url.Action("HistoryOrder","User")">Tài khoản</a>
+                                    <a class="dropdown-item" href="@Url.Action("InforAccount","Account")">Thông tin cá nhân</a>
+                                    <a class="dropdown-item" href="@Url.Action("ChangePassword","Account")">Thay đổi mật khẩu</a>
+                                    
+                                    @if (User.IsInRole("User"))
+                                    {
+                                        <a class="dropdown-item" href="@Url.Action("HistoryOrder","Account")">Lịch sử mua hàng</a>
+                                    }
+
                                     <a class="dropdown-item" href="@Url.Action("Logout", "Account")">
                                         <span>Log Out</span>
                                         <i class="fa fa-sign-out"></i>

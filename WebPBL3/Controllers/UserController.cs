@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.DiaSymReader;
@@ -15,6 +16,8 @@ using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]   
+    
     public class UserController : Controller
     {
         ApplicationDbContext _db;
@@ -143,19 +146,19 @@ namespace WebPBL3.Controllers
                 }
                 var useridTxt = "KH" + userid.ToString().PadLeft(6, '0');
                 user.UserID = useridTxt;
-                if (user.Photo.IsNullOrEmpty()) user.Photo = "userKH000000.jpg";
-                else
+                if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-                    string fileName = "user" + user.UserID + "." + uploadimage.FileName.Substring(index + 1);
-                    user.Photo = fileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", user.Photo);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    user.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
                     {
                         await uploadimage.CopyToAsync(fileStream);
 
                     }
                 }
+            
 
                 //Console.WriteLine("Ward: " + user.WardID);
                 try
@@ -253,19 +256,24 @@ namespace WebPBL3.Controllers
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-
-                    string fileName = "user" + userdto.UserID + "." + uploadimage.FileName.Substring(index + 1);
-                    userdto.Photo = fileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", fileName);
-                    Console.WriteLine(_path);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    if (!userdto.Photo.IsNullOrEmpty())
                     {
-                        uploadimage.CopyTo(fileStream);
+                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", userdto.Photo);
+                        if (System.IO.File.Exists(oldImageFullPath))
+                        {
+                            System.IO.File.Delete(oldImageFullPath);
+                        }
+                    }
+                    userdto.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
+                    {
+                        await uploadimage.CopyToAsync(fileStream);
 
                     }
                 }
-
 
                 user.FullName = userdto.FullName;
                 user.PhoneNumber = userdto.PhoneNumber;
@@ -387,63 +395,6 @@ namespace WebPBL3.Controllers
           
         }
 
-        // [GET]
-        public async Task<IActionResult> HistoryOrder ()
-        {   
-            if (!User.Identity.IsAuthenticated)
-            {
-                return BadRequest("Người dùng chưa đăng nhập");
-            }
-            string? email = User.Identity.Name;
-            Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
-
-            if (account == null)
-            {
-                return NotFound("Account is not found");
-
-            }
-
-
-            User? user = account.User;
-            
-            if (user == null)
-            {
-                return NotFound("User is not found");
-            }
-            List<Order> orders = await _db.Orders.Where (o => o.UserID == user.UserID)
-                .Include(o => o.DetailOrders)
-                .ThenInclude(d => d.Car).ThenInclude(c => c.Make).OrderByDescending( o => o.Date).ToListAsync();
-            
-            
-            List<HistoryOrderDto> historyOrders = new List<HistoryOrderDto>();
-
-            foreach (var item in  orders)
-            {
-                HistoryOrderDto historyOrder = new HistoryOrderDto
-                {
-                    Date = item.Date,
-                    Totalprice = item.Totalprice,
-                    Status = item.Status,
-                    OrderID = item.OrderID,
-                };
-                foreach (var itemDetailOrder in item.DetailOrders)
-                {
-                    historyOrder.Items.Add(new HistoryOrderItem
-                    {   
-                        
-                        CarID = itemDetailOrder.CarID,
-                        Photo = itemDetailOrder.Car.Photo,
-                        CarName = itemDetailOrder.Car.CarName,
-                        MakeName = itemDetailOrder.Car.Make.MakeName,
-                        Color = itemDetailOrder.Car.Color,
-                        Price = itemDetailOrder.Car.Price,
-                        Quantity = itemDetailOrder.Quantity
-                    });
-                }
-                historyOrders.Add(historyOrder);
-            }
-            //Console.WriteLine(historyOrders.Count);
-            return View(historyOrders);
-        }
+        
     }
 }

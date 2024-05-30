@@ -111,17 +111,18 @@
                         </td>
 
                         <td>
-                                @Html.DisplayFor(modelItem => obj.Address)
-                                @if (!string.IsNullOrEmpty(obj.WardName) && !string.IsNullOrEmpty(obj.DistrictName) && !string.IsNullOrEmpty(obj.ProvinceName))
+                            @{
+                                string Address = string.Empty;
+                                string address = !string.IsNullOrEmpty(obj.Address) ? obj.Address + "," : string.Empty;
+                                string wardname = !string.IsNullOrEmpty(obj.WardName) ? obj.WardName + "," : string.Empty;
+                                string districtname = !string.IsNullOrEmpty(obj.DistrictName) ? obj.DistrictName + "," : string.Empty;
+                                string provincename = !string.IsNullOrEmpty(obj.ProvinceName) ? obj.ProvinceName +"": string.Empty;
+                                if (!string.IsNullOrEmpty(wardname) && !string.IsNullOrEmpty(districtname) && !string.IsNullOrEmpty(provincename))
                                 {
-
-                                    @: ,
-                                    @Html.DisplayFor(modelItem => obj.WardName)
-                                    @: ,
-                                    @Html.DisplayFor(modelItem => obj.DistrictName)
-                                    @: ,
-                                    @Html.DisplayFor(modelItem => obj.ProvinceName)
+                                    Address = $"{address} {wardname} {districtname} {provincename}";
                                 }
+                            }
+                            @Address
                         </td>
                             
                      
@@ -218,8 +219,8 @@
         if (event.keyCode === 13) {
             // Lấy giá trị từ txtSearch
             var searchValue = this.value;
-          
-            var url = "/User/UserListTable?searchtxt=" + searchValue;
+            var fieldSearch = document.getElementById("fieldsearch").value;
+            var url = "/User/UserListTable?searchtxt=" + searchValue + "&fieldsearch=" + fieldSearch;
 
             // Chuyển hướng đến URL
             window.location.href = url;

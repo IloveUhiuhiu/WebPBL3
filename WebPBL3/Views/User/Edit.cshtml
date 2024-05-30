@@ -3,10 +3,13 @@
 @model UserDto
 
 @{
-
     ViewData["Title"] = "Cập nhật khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    
+    string Photo = "userkh000000.jpg";
+    if (!string.IsNullOrEmpty(Model.Photo))
+    {
+        Photo = Model.Photo;
+    }
 }
 
 
@@ -23,7 +26,7 @@
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-body text-center">
 						<!-- Profile picture image-->
-                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Model.Photo" alt="" style=" width: 200px;height:200px;">
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Photo" alt="" style=" width: 200px;height:200px;">
                         <!-- Profile picture help block-->
                         <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none;">
                         <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>

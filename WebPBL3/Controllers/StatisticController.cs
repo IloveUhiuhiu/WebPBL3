@@ -10,9 +10,11 @@ using static NuGet.Packaging.PackagingConstants;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]
     public class StatisticController : Controller
     {
         private readonly ApplicationDbContext _db;
