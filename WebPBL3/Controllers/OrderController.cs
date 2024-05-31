@@ -9,9 +9,11 @@ using System.Data;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;

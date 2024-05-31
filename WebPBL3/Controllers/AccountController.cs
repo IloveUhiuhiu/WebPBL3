@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using WebPBL3.DTO;
 using WebPBL3.Models;
 using WebPBL3.ViewModel;
 
@@ -323,6 +324,65 @@ namespace WebPBL3.Controllers
             account.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             _db.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
+        }
+        [Authorize(Policy = "User")]
+        // [GET]
+        public async Task<IActionResult> HistoryOrder()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest("Người dùng chưa đăng nhập");
+            }
+            string? email = User.Identity.Name;
+            Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
+
+            if (account == null)
+            {
+                return NotFound("Account is not found");
+
+            }
+
+
+            User? user = account.User;
+
+            if (user == null)
+            {
+                return NotFound("User is not found");
+            }
+            List<Order> orders = await _db.Orders.Where(o => o.UserID == user.UserID)
+                .Include(o => o.DetailOrders)
+                .ThenInclude(d => d.Car).ThenInclude(c => c.Make).OrderByDescending(o => o.Date).ToListAsync();
+
+
+            List<HistoryOrderDto> historyOrders = new List<HistoryOrderDto>();
+
+            foreach (var item in orders)
+            {
+                HistoryOrderDto historyOrder = new HistoryOrderDto
+                {
+                    Date = item.Date,
+                    Totalprice = item.Totalprice,
+                    Status = item.Status,
+                    OrderID = item.OrderID,
+                };
+                foreach (var itemDetailOrder in item.DetailOrders)
+                {
+                    historyOrder.Items.Add(new HistoryOrderItem
+                    {
+
+                        CarID = itemDetailOrder.CarID,
+                        Photo = itemDetailOrder.Car.Photo,
+                        CarName = itemDetailOrder.Car.CarName,
+                        MakeName = itemDetailOrder.Car.Make.MakeName,
+                        Color = itemDetailOrder.Car.Color,
+                        Price = itemDetailOrder.Car.Price,
+                        Quantity = itemDetailOrder.Quantity
+                    });
+                }
+                historyOrders.Add(historyOrder);
+            }
+            //Console.WriteLine(historyOrders.Count);
+            return View(historyOrders);
         }
     }
 }

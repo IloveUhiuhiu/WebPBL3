@@ -10,9 +10,11 @@ using static NuGet.Packaging.PackagingConstants;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]
     public class StatisticController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -25,6 +27,7 @@ namespace WebPBL3.Controllers
         
         public async Task<IActionResult> Index(DateOnly? _startTime = null, DateOnly? _endTime = null, string? maNV = null, string? maXe = null, string? hangXe = null)
         {
+            
             ViewBag._startTime = _startTime;
             ViewBag._endTime = _endTime;
             ViewBag.maNV = maNV;

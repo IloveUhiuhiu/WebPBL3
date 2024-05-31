@@ -9,10 +9,12 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin")]
     public class StaffController : Controller
     {
         private ApplicationDbContext _db;
