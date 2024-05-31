@@ -248,6 +248,11 @@ namespace WebPBL3.Controllers
                 ProvinceID= account.User.Ward != null ? account.User.Ward.District.ProvinceID : 0,
                 DistrictID =account.User.Ward != null ? account.User.Ward.DistrictID : 0
             };
+            if (account.RoleID == 2)
+            {
+                var staff = _db.Staffs.FirstOrDefault(s => s.UserID == account.User.UserID);
+                ViewBag.Staff = staff;
+            }
             if (_db.Orders.Any(o => o.UserID == account.User.UserID))
             {
                 ViewBag.Unchange = true;
