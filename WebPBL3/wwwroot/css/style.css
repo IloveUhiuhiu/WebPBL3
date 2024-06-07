@@ -73,7 +73,7 @@ a {
 }
 
 header {
-    width: 1480px;
+    /*width: 1480px;*/
     max-width: 100%;
     position: relative;
     z-index: 100;
@@ -8513,7 +8513,7 @@ a {
 
 .ftco-navbar-light {
     background: rgb(0 0 0 / 0%);
-    padding-top: 20px;
+   padding-top: 20px;
     padding-bottom: 20px;
     position: absolute;
     left: 0;

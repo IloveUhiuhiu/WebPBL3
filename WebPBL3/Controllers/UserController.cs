@@ -16,8 +16,8 @@ using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
 {
-    [Authorize(Policy = "Admin,Staff")]   
-    
+    [Authorize(Roles = "Admin, Staff")]
+
     public class UserController : Controller
     {
         ApplicationDbContext _db;
