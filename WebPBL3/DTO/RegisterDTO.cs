@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebPBL3.ViewModel
+namespace WebPBL3.DTO
 {
-    public class LoginVM
+    public class RegisterDTO
     {
         [Display(Name = "Email")]
         [StringLength(maximumLength: 50)]
@@ -13,5 +13,11 @@ namespace WebPBL3.ViewModel
         [StringLength(maximumLength: 50)]
         [Required(ErrorMessage = "Bạn chưa nhập mật khẩu")]
         public string Password { get; set; }
+
+        [Display(Name = "Nhập lại mật khẩu")]
+        [StringLength(maximumLength: 50)]
+        [Required(ErrorMessage = "Bạn chưa nhập mật khẩu nhập lại")]
+        public string RetypePassword { get; set; }
+
     }
 }

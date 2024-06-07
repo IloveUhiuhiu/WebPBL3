@@ -8,7 +8,6 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebPBL3.Controllers
 {
-    [Authorize(Policy = "Admin,Staff")]
     public class NewsController : Controller
     {
         private ApplicationDbContext _db;
@@ -60,7 +59,7 @@ namespace WebPBL3.Controllers
         }*/
 
 
-
+        [Authorize(Roles = "Admin, Staff")]
         public IActionResult ListNews(int newid = 0, string searchtxt = "", string exactDate = "", string startDate = "", string endDate = "", int page = 1)
         {
             var newsQuery = _db.NewS.Include(s => s.Staff)
@@ -134,11 +133,13 @@ namespace WebPBL3.Controllers
 
 
         //Get
+        [Authorize(Roles = "Admin, Staff")]
         public IActionResult Create() 
         { 
             return View();
         }
         //Post
+        [Authorize(Roles = "Admin, Staff")]
         [HttpPost]
         
         public async Task<IActionResult> Create(NewsDto news, IFormFile uploadimage)
@@ -174,7 +175,7 @@ namespace WebPBL3.Controllers
             }
             return View(news);
         }
-
+        [Authorize(Roles = "Admin, Staff")]
         public IActionResult Edit(string? id)
         {
             if (String.IsNullOrEmpty(id))
@@ -202,6 +203,7 @@ namespace WebPBL3.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Edit(NewsDto n, IFormFile? uploadimage, string? id)
         {
             if (!ModelState.IsValid)

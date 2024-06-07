@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
-    [Authorize(Policy = "Admin,Staff")]
+    [Authorize(Roles = "Admin,Staff")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,6 +53,7 @@ namespace WebPBL3.Controllers
             orders = orders.Skip((page - 1) * 10).Take(10).ToList();
             return View(orders);
         }
+        [Authorize(Roles = "Staff")]
         public IActionResult Creat() 
         {
             OrderDTO orderDTO;
@@ -119,6 +120,7 @@ namespace WebPBL3.Controllers
         //    TempData["orderDTO"] = orderDTOJson;
         //    return RedirectToAction("Creat");
         //}
+        [Authorize(Roles = "Staff")]
         [HttpPost]
         public async Task<IActionResult> Creat(OrderDTO orderDTO)
         {

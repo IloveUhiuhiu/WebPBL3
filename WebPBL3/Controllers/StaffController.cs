@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
-    [Authorize(Policy = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class StaffController : Controller
     {
         private ApplicationDbContext _db;

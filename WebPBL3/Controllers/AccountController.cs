@@ -9,7 +9,6 @@ using System.Net.Mail;
 using System.Security.Claims;
 using WebPBL3.DTO;
 using WebPBL3.Models;
-using WebPBL3.ViewModel;
 
 namespace WebPBL3.Controllers
 {
@@ -30,8 +29,9 @@ namespace WebPBL3.Controllers
         {
             return View();
         }
+
         [HttpPost]
-        public async Task<IActionResult> Login(LoginVM model)
+        public async Task<IActionResult> Login(LoginDTO model)
         {
             if (ModelState.IsValid)
             {
@@ -75,7 +75,7 @@ namespace WebPBL3.Controllers
             return RedirectToAction("Index", "Home");
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterVM model)
+        public async Task<IActionResult> Register(RegisterDTO model)
         {
             if (ModelState.IsValid)
             {
@@ -222,6 +222,7 @@ namespace WebPBL3.Controllers
             }
             return View();
         }
+        [Authorize]
         public IActionResult InforAccount()
         {
             string email = HttpContext.User.FindFirstValue(ClaimTypes.Name);
@@ -249,6 +250,11 @@ namespace WebPBL3.Controllers
                 ProvinceID= account.User.Ward != null ? account.User.Ward.District.ProvinceID : 0,
                 DistrictID =account.User.Ward != null ? account.User.Ward.DistrictID : 0
             };
+            if (account.RoleID == 2)
+            {
+                var staff = _db.Staffs.FirstOrDefault(s => s.UserID == account.User.UserID);
+                ViewBag.Staff = staff;
+            }
             if (_db.Orders.Any(o => o.UserID == account.User.UserID))
             {
                 ViewBag.Unchange = true;
@@ -260,7 +266,7 @@ namespace WebPBL3.Controllers
             
             return View(user);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> InforAccount(UserDto userDto, IFormFile? uploadimage)
         {
@@ -293,10 +299,12 @@ namespace WebPBL3.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> ChangePassword(string password, string newPassword, string retypePassword)
         {

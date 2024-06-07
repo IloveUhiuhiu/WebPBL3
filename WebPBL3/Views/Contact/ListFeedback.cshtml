@@ -83,10 +83,32 @@
                                     <i class="fa-solid fa-eye"></i>
                                     Xem
                                 </a>
-                                <a class="btn btn-danger" id="deleteButton" asp-controller="Contact" asp-action="DeleteFeedback" asp-route-id="@obj.FeedbackID">
+                                <a href="#myModal-@obj.FeedbackID" class="btn btn-danger" id="deleteButton" data-toggle="modal">
                                         <i class="fa-solid fa-trash"></i>
                                         Xóa
                                  </a>
+                                <div id="myModal-@obj.FeedbackID" class="modal fade">
+                                    <div class="modal-dialog modal-dialog-centered modal-confirm">
+                                        <div class="modal-content">
+                                            <div class="modal-header flex-column">
+                                                <div class="icon-box">
+                                                    <i class="material-icons">&#xE5CD;</i>
+                                                </div>
+                                                <h4 class="modal-title w-100">Xác nhận</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body" style="color: black">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
+                                            </div>
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                <a asp-controller="Contact" asp-action="DeleteFeedback" asp-route-id="@obj.FeedbackID" class="btn btn-danger" style="color:white; line-height: 30px">
+                                                    Xác nhận
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>

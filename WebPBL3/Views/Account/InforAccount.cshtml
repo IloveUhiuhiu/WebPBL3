@@ -46,6 +46,21 @@
                                 <input asp-for="Email" class="form-control infor-account" readonly/>
                             </div>
                         </div>
+                        @if (ViewBag.Staff != null)
+                        {
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-md-6">
+                                    <label class="control-label">Mã nhân viên</label>
+                                    <input value="@ViewBag.Staff.StaffID" class="form-control infor-account" readonly />
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="col-md-6">
+                                    <label class="control-label">Chức vụ</label>
+                                    <input value="@ViewBag.Staff.Position" class="form-control infor-account" readonly />
+                                </div>
+                            </div>
+                        }
                         <!-- Form Row        -->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (organization name)-->
@@ -137,7 +152,7 @@
     });
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('ftco-navbar').style.backgroundColor = 'black';
-        if(noChange=='True'){
+        if (noChange == 'True' || @Html.Raw(ViewBag.Staff != null ? "true" : "false")) {
             var inputs = document.querySelectorAll('.changeable');
             for (var i = 0; i < inputs.length; i++) {
                 inputs[i].readOnly = true;
@@ -147,7 +162,7 @@
 
     async function getData() {
         try {
-            const response = await fetch("/Order/GetProvince");
+            const response = await fetch("/Address/GetProvince");
             const data = await response.json();
             console.log(data);
             return data;
@@ -157,7 +172,7 @@
     }
     async function getDistrict(id) {
         try {
-            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const response = await fetch(`/Address/GetDistrict/${id}`);
             const data = await response.json();
             return data;
         } catch (error) {
@@ -166,7 +181,7 @@
     }
     async function getWard(id) {
         try {
-            const response = await fetch(`/Order/GetWard/${id}`);
+            const response = await fetch(`/Address/GetWard/${id}`);
             const data = await response.json();
             return data;
         } catch (error) {
