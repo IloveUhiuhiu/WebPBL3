@@ -29,6 +29,7 @@ namespace WebPBL3.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO model)
         {
