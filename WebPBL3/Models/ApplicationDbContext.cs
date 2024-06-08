@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using WebPBL3.Models;
-using WebPBL3.DTO.Staff;
 
 namespace WebPBL3.Models
 {

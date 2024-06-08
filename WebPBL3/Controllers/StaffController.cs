@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using WebPBL3.DTO.Staff;
 using WebPBL3.Models;
 using System.IO;
 using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using WebPBL3.DTO;
 
 
 namespace WebPBL3.Controllers
@@ -25,24 +25,26 @@ namespace WebPBL3.Controllers
         }
         public IActionResult listStaffs(int page = 1)
         {
-            var staffDTOs = (from staff in _db.Staffs
-                             join user in _db.Users on staff.UserID equals user.UserID
-                             join account in _db.Accounts on user.AccountID equals account.AccountID
-                             select new GetStaffDTO
-                             {
-                                 StaffID = staff.StaffID,
-                                 FullName = user.FullName,
-                                 Email = account.Email,
-                                 PhoneNumber = user.PhoneNumber,
-                                 IdentityCard = user.IdentityCard,
-                                 Gender = user.Gender,
-                                 BirthDate = user.BirthDate,
-                                 Address = user.Address,
-                                 Position = staff.Position,
-                                 Salary = staff.Salary,
-                                 Status = account.Status
-                             }).OrderBy(staff => staff.FullName)
-                            .ToList();
+            var staffDTOs = _db.Staffs
+            .Select(staff => new StaffDTO
+            {
+                StaffID = staff.StaffID,
+                FullName = staff.User.FullName,
+                Email = staff.User.Account.Email,
+                PhoneNumber = staff.User.PhoneNumber,
+                IdentityCard = staff.User.IdentityCard,
+                Gender = staff.User.Gender,
+                BirthDate = staff.User.BirthDate,
+                Address = staff.User.Address,
+                Position = staff.Position,
+                Salary = staff.Salary,
+                Status = staff.User.Account.Status,
+                WardName = staff.User.Ward.WardName,
+                ProvinceName = staff.User.Ward.District.Province.ProvinceName,
+                DistrictName = staff.User.Ward.District.DistrictName
+            })
+            .OrderBy(staff => staff.StaffID)
+            .ToList();
             if (staffDTOs.Any())
             {
                 ViewBag.staffs = staffDTOs;
@@ -58,16 +60,6 @@ namespace WebPBL3.Controllers
 			return View(staffDTOs);
         }
 
-        public async Task<int> GetWardIDAsync(string wardName, string districtName, string provinceName)
-        {
-            var ward = await _db.Wards
-                .Include(w => w.District)
-                    .ThenInclude(d => d.Province)
-                .FirstOrDefaultAsync(w => w.WardName.Contains(wardName) &&
-                                            w.District.DistrictName.Contains(districtName) &&
-                                            w.District.Province.ProvinceName.Contains(provinceName));
-            return ward.WardID;
-        }
         [HttpGet]
         public JsonResult GetProvince()
         {
@@ -91,7 +83,7 @@ namespace WebPBL3.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AddStaff(AddStaffDTO staffDTO)
+        public async Task<IActionResult> AddStaff(StaffDTO staffDTO)
         {
             if (ModelState.IsValid)
             {
@@ -146,7 +138,7 @@ namespace WebPBL3.Controllers
                             TempData["Error"] = "CCCD đã tồn tại";
                             return View(staffDTO);
                         }
-                        string newFilename = null;
+                        string? newFilename = null;
                         if (staffDTO.Photo != null)
                         {
                             newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff");
@@ -258,7 +250,7 @@ namespace WebPBL3.Controllers
             string? districtName = district?.DistrictName;
             string? provinceName = province?.ProvinceName;
             string? wardName = ward?.WardName;
-            AddStaffDTO staffDTO = new AddStaffDTO
+            StaffDTO staffDTO = new StaffDTO
             {
                 StaffID = staff.StaffID,
                 FullName = user.FullName,
@@ -316,7 +308,7 @@ namespace WebPBL3.Controllers
             int? districtID = district?.DistrictID;
             int? provinceID = province?.ProvinceID;
             int? wardID = ward?.WardID;
-            AddStaffDTO getstaffDTO = new AddStaffDTO
+            StaffDTO getstaffDTO = new StaffDTO
             {
                 StaffID = staff.StaffID,
                 FullName = user.FullName,
@@ -343,7 +335,7 @@ namespace WebPBL3.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UpdateStaff(AddStaffDTO staffDTO)
+        public async Task<ActionResult> UpdateStaff(StaffDTO staffDTO)
         {
             Staff? staff = await _db.Staffs.FindAsync(staffDTO.StaffID);
             if (staff == null)
@@ -354,7 +346,24 @@ namespace WebPBL3.Controllers
             if(user == null)
             {
                 return NotFound();
-            }    
+            }
+            Ward? ward = await _db.Wards.FirstOrDefaultAsync(w => w.WardID == user.WardID);
+            District? district = null;
+            Province? province = null;
+
+            if (ward != null)
+            {
+                district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
+                province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
+            }
+
+            // Kiểm tra nếu district hoặc province là null để tránh lỗi
+            string? districtName = district?.DistrictName;
+            string? provinceName = province?.ProvinceName;
+            string? wardName = ward?.WardName;
+            int? districtID = district?.DistrictID;
+            int? provinceID = province?.ProvinceID;
+            int? wardID = ward?.WardID;
             Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
             if(account == null)
             {
@@ -397,7 +406,7 @@ namespace WebPBL3.Controllers
                     _db.Accounts.Update(account);
                     _db.Users.Update(user);
                     _db.Staffs.Update(staff);
-                    _db.SaveChangesAsync();
+                    await _db.SaveChangesAsync();
                     return RedirectToAction("listStaffs");
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -406,6 +415,12 @@ namespace WebPBL3.Controllers
                 }
 
             }
+            ViewBag.ProvinceName = provinceName;
+            ViewBag.DistrictName = districtName;
+            ViewBag.WardName = wardName;
+            ViewBag.ProvinceID = provinceID;
+            ViewBag.DistrictID = districtID;
+            ViewBag.WardID = wardID;
             ViewData["Photo"] = user.Photo;
             return View(staffDTO);
         }
@@ -414,10 +429,13 @@ namespace WebPBL3.Controllers
         public IActionResult Search(string searchTerm, string searchField, int page = 1)
         {
             page = page < 1 ? 1 : page;
-            IQueryable<GetStaffDTO> staffQuery = _db.Staffs
+            IQueryable<StaffDTO> staffQuery = _db.Staffs
                 .Include(s => s.User)
+                .ThenInclude(u => u.Ward)
+                .ThenInclude(w => w.District)
+                .ThenInclude(d => d.Province)
                 .Include(s => s.User.Account)
-                .Select(s => new GetStaffDTO
+                .Select(s => new StaffDTO
                 {
                     StaffID = s.StaffID,
                     FullName = s.User.FullName,
@@ -428,7 +446,10 @@ namespace WebPBL3.Controllers
                     BirthDate = s.User.BirthDate,
                     Address = s.User.Address,
                     Position = s.Position,
-                    Salary = s.Salary
+                    Salary = s.Salary,
+                    ProvinceName = s.User.Ward.District.Province.ProvinceName,
+                    DistrictName = s.User.Ward.District.DistrictName,
+                    WardName = s.User.Ward.WardName
                 });
 
             if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(searchField))
@@ -468,7 +489,7 @@ namespace WebPBL3.Controllers
             ViewBag.currentPage = page;
 
             var staffDTOs = staffQuery
-                .OrderBy(staff => staff.FullName)
+                .OrderBy(staff => staff.StaffID)
                 .Skip(offset)
                 .Take(limits)
                 .ToList();
@@ -479,7 +500,7 @@ namespace WebPBL3.Controllers
         public IActionResult SaveExcel()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var staffTable = JsonConvert.DeserializeObject<List<GetStaffDTO>>(Request.Form["data"], new JsonSerializerSettings { MaxDepth = 10 });
+            var staffTable = JsonConvert.DeserializeObject<List<StaffDTO>>(Request.Form["data"], new JsonSerializerSettings { MaxDepth = 10 });
             if (staffTable == null || !staffTable.Any())
             {
                 TempData["Error"] = "Chưa có dữ liệu";

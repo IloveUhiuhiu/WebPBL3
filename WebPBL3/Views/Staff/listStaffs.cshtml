@@ -1,12 +1,13 @@
-﻿@model IEnumerable<WebPBL3.DTO.Staff.GetStaffDTO>
-@using WebPBL3.DTO.Staff;
+﻿@model IEnumerable<WebPBL3.DTO.StaffDTO>;
+@using WebPBL3.DTO;
+
 
 @{
     ViewData["Title"] = "Quản lý nhân viên";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int page = ViewBag.currentPage;
     int total = ViewBag.totalPage;
-    var staffs = ViewBag.staffs as List<GetStaffDTO>;
+    var staffs = ViewBag.staffs as List<StaffDTO>;
 }
 
 <div class="card shadow border-0 mt-4">
@@ -64,7 +65,7 @@
             
             <div class="col-3 text-end" style="text-align: center;">
                 <form id="myForm" method="post" asp-controller="Staff" asp-action="SaveExcel">
-                    <button type="submit" class="btn" style="border: 2px solid black; padding: 5px 10px; display: inline-block;">
+                    <button type="button" id="exportBtn" style="border: 2px solid black; padding: 5px 10px; display: inline-block;border-radius: 5px;">
                         <img src="~/images/excel (1).png" style="width: 22px; height: 22px; vertical-align: middle;" />
                         <span style="vertical-align: middle;">Xuất file excel</span>
                     </button>
@@ -179,7 +180,7 @@
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
                                             <div class="modal-body" style="color: black">
-                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
+                                                <p>Bạn có thực sự muốn xóa nhân viên này không? Quá trình này không thể hoàn tác.</p>
                                             </div>
                                             <div class="modal-footer justify-content-center">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -237,9 +238,31 @@
     }
 
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<div id="noDataModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header flex-column">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE5CD;</i>
+                </div>
+                <h4 class="modal-title w-100">Thông báo</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body" style="color: black">
+                <p>Không có dữ liệu để xuất.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section scripts
 {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById("searchTerm").addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
@@ -253,10 +276,10 @@
         });
 
         var staffs = @Html.Raw(Json.Serialize(staffs));
-        
+        console.log(staffs);
+        var data = [];
         if (staffs && staffs.length >0) {
             var staffCount = staffs.length;
-            var data = [];
             for (var i = 0; i < staffCount; i++) {
                 data.push({
                     StaffID: staffs[i].staffID,
@@ -265,7 +288,7 @@
                     PhoneNumber: staffs[i].phoneNumber,
                     IdentityCard: staffs[i].identityCard,
                     Email: staffs[i].email,
-                    Address: staffs[i].address,
+                    Address: `${staffs[i].address}, ${staffs[i].wardName}, ${staffs[i].districtName}, ${staffs[i].provinceName}`,
                     Position: staffs[i].position,
                     Salary: staffs[i].salary
                 });
@@ -275,6 +298,24 @@
         } else {
             console.log("Không có dữ liệu staffs.");
         }
+        document.getElementById("exportBtn").addEventListener("click", function () {
+            if (data.length === 0) {
+                $('#noDataModal').modal('show');
+            } else {
+                document.getElementById("myForm").submit();
+            }
+        });
+        $('#noDataModal').on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset();
+        });
+
+        $('#noDataModal button[data-dismiss="modal"]').on('click', function () {
+            $('#noDataModal').modal('hide');
+        });
+
+        $('#noDataModal .close').on('click', function () {
+            $('#noDataModal').modal('hide');
+        });
     </script>
 }
 
