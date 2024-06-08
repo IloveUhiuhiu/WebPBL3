@@ -222,15 +222,15 @@
         </div>
         <div class="row ftco-animate">
             <div class="col-md-12">
-                <div class="carousel-testimony owl-carousel ftco-owl">
+                <div class="carousel-car owl-carousel">
                     @foreach (var item in feedBacks)
                     {
-                        <div class="item">
+                        <div class="item" >
                             <div class="testimony-wrap rounded text-center py-4 pb-5">
                                 <div class="user-img mb-2" style="background-image: url(upload/user/@item.Photo)">
                                 </div>
-                                <div class="text pt-4">
-                                    <p class="mb-4">@item.Content</p>
+                                <div class="text pt-4" style="height: 350px">
+                                    <p class="mb-4" style="height: 200px">@item.Content</p>
                                     <p class="name">@item.FullName</p>
                                     <span class="position">@item.Title</span>
                                 </div>

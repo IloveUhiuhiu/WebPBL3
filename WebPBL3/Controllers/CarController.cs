@@ -128,7 +128,7 @@ namespace WebPBL3.Controllers
 				return NotFound();
 			}
 			var makeName = _db.Makes.Where(m => m.MakeID == c.MakeID).FirstOrDefault().MakeName;
-			CarDto carDtoFromDb = new CarDto
+			CarDTO CarDTOFromDb = new CarDTO
 			{
 				CarID = c.CarID,
 				CarName = c.CarName,
@@ -158,7 +158,7 @@ namespace WebPBL3.Controllers
                         .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID && !car.Flag)
                         .ToList();
             ViewBag.RelatedCars = relatedCars;
-            return View(carDtoFromDb);
+            return View(CarDTOFromDb);
         }
 
         [Authorize(Roles = "Admin, Staff")]
@@ -173,11 +173,11 @@ namespace WebPBL3.Controllers
                 TempData["makes"] = JsonConvert.SerializeObject(makes);
                 TempData.Keep("makes");
             }
-            List<CarDto> cars = await _db.Cars
+            List<CarDTO> cars = await _db.Cars
                 .Include(c => c.Make)
                 .OrderBy(c => c.CarID)
                 .Where(c => c.Flag == false && (makeid == 0||c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt)))
-                .Select(c => new CarDto
+                .Select(c => new CarDTO
             {
                 CarID = c.CarID,
                 CarName = c.CarName,
@@ -229,7 +229,7 @@ namespace WebPBL3.Controllers
         // [POST]
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Create(CarDto car, IFormFile uploadimage)
+        public async Task<IActionResult> Create(CarDTO car, IFormFile uploadimage)
         {
             foreach (var state in ModelState)
             {
@@ -324,7 +324,7 @@ namespace WebPBL3.Controllers
                 return NotFound("Car is not found");
             }
 
-            CarDto carDtoFromDb = new CarDto
+            CarDTO CarDTOFromDb = new CarDTO
             {
                 CarID = car.CarID,
                 CarName = car.CarName,
@@ -349,11 +349,11 @@ namespace WebPBL3.Controllers
                 MakeID = car.MakeID,
 
             };
-            return View(carDtoFromDb);
+            return View(CarDTOFromDb);
         }
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Edit(CarDto cardto,IFormFile? uploadimage)
+        public async Task<IActionResult> Edit(CarDTO cardto,IFormFile? uploadimage)
         {
             
             if (ModelState.IsValid)
@@ -422,7 +422,7 @@ namespace WebPBL3.Controllers
                 }
                 return RedirectToAction("CarListTable");
             }
-            return View(cardto);
+            return View(CarDTO);
 
         }
         [Authorize(Roles = "Admin, Staff")]
@@ -441,7 +441,7 @@ namespace WebPBL3.Controllers
             }
             Make? make = await _db.Makes.FirstOrDefaultAsync(m => m.MakeID == car.MakeID);
             
-            CarDto carDtoFromDb = new CarDto
+            CarDTO CarDTOFromDb = new CarDTO
             {
                 CarID = car.CarID,
                 CarName = car.CarName,
@@ -467,7 +467,7 @@ namespace WebPBL3.Controllers
                 MakeName = make.MakeName,
 
             };
-            return View(carDtoFromDb);
+            return View(CarDTOFromDb);
         }
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(string? id)
