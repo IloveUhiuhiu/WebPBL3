@@ -8,6 +8,7 @@ using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize]
     public class ContactController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +21,7 @@ namespace WebPBL3.Controllers
             ViewBag.HideHeader = false;
             return View();
         }
+        [Authorize(Roles ="User")]
         [HttpPost]
         public async Task<IActionResult> Index(FeedbackDTO feedback)
         {
@@ -64,6 +66,7 @@ namespace WebPBL3.Controllers
                 return View();
             }  
         }
+        [Authorize(Roles = "Admin,Staff")]
         public IActionResult ListFeedback(DateTime? date=null,String title="")
         {
             List<Feedback> feedbacks =
@@ -75,6 +78,7 @@ namespace WebPBL3.Controllers
             ViewBag.TitleMessage = title;
             return View(feedbacks);
         }
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> DeleteFeedback(string id)
         {
             Feedback o = _context.Feedbacks.FirstOrDefault(f => f.FeedbackID == id);
@@ -85,7 +89,7 @@ namespace WebPBL3.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("ListFeedback");
         }
-
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<JsonResult> getFeedbackById(string id)
         {
             var feedback= _context.Feedbacks.FirstOrDefault(u=>u.FeedbackID== id);

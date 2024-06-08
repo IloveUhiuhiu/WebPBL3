@@ -9,10 +9,12 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StaffController : Controller
     {
         private ApplicationDbContext _db;
@@ -245,21 +247,19 @@ namespace WebPBL3.Controllers
                 return NotFound();
             }
             Ward? ward = _db.Wards.FirstOrDefault(w => w.WardID == user.WardID);
-            if (ward == null)
+            District? district = null;
+            Province? province = null;
+
+            if (ward != null)
             {
-                return NotFound();
-            }
-            District? district = _db.Districts.FirstOrDefault(d => d.DistrictID == ward.DistrictID);
-            if (district == null)
-            {
-                return NotFound();
-            }
-            Province? province = _db.Provinces.FirstOrDefault(p => p.ProvinceID == district.ProvinceID);
-            if (province == null)
-            {
-                return NotFound();
+                district =  _db.Districts.FirstOrDefault(d => d.DistrictID == ward.DistrictID);
+                province =  _db.Provinces.FirstOrDefault(p => p.ProvinceID == district.ProvinceID);               
             }
 
+            // Kiểm tra nếu district hoặc province là null để tránh lỗi
+            string? districtName = district?.DistrictName;
+            string? provinceName = province?.ProvinceName;
+            string? wardName = ward?.WardName;
             AddStaffDTO staffDTO = new AddStaffDTO
             {
                 StaffID = staff.StaffID,
@@ -272,9 +272,9 @@ namespace WebPBL3.Controllers
                 Address = user.Address,
                 Position = staff.Position,
                 Salary = staff.Salary,
-                ProvinceName = province.ProvinceName,
-                DistrictName = district.DistrictName,
-                WardName = ward.WardName,
+                ProvinceName = districtName,
+                DistrictName = provinceName,
+                WardName = wardName,
             };
             ViewData["Photo"] = user.Photo;
             return View(staffDTO);
@@ -302,20 +302,22 @@ namespace WebPBL3.Controllers
                 return NotFound();
             }    
             Ward? ward = await _db.Wards.FirstOrDefaultAsync(w => w.WardID == user.WardID);
-            if(ward == null)
+            District? district = null;
+            Province? province = null;
+
+            if (ward != null)
             {
-                return NotFound();
-            }    
-            District? district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
-            if(district == null)
-            {
-                return NotFound();
-            }    
-            Province? province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
-            if (province == null)
-            {
-                return NotFound();
+                district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
+                province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
             }
+
+            // Kiểm tra nếu district hoặc province là null để tránh lỗi
+            string? districtName = district?.DistrictName;
+            string? provinceName = province?.ProvinceName;
+            string? wardName = ward?.WardName;
+            int? districtID = district?.DistrictID;
+            int? provinceID = province?.ProvinceID;
+            int? wardID = ward?.WardID;
             AddStaffDTO getstaffDTO = new AddStaffDTO
             {
                 StaffID = staff.StaffID,
@@ -328,19 +330,17 @@ namespace WebPBL3.Controllers
                 Address = user.Address,
                 Position = staff.Position,
                 Salary = staff.Salary,
-                ProvinceName = province.ProvinceName,
-                DistrictName = district.DistrictName,
-                WardName = ward.WardName,
-                // Thêm các thông tin khác cần thiết
+                ProvinceName = provinceName,
+                DistrictName = districtName,
+                WardName = wardName,
             };
-            ViewBag.ProvinceName = province.ProvinceName;
-            ViewBag.DistrictName = district.DistrictName;
-            ViewBag.WardName = ward.WardName;
-            ViewBag.ProvinceID = province.ProvinceID;
-            ViewBag.DistrictID = district.DistrictID;
-            ViewBag.WardID = ward.WardID;
+            ViewBag.ProvinceName = provinceName;
+            ViewBag.DistrictName = districtName;
+            ViewBag.WardName = wardName;
+            ViewBag.ProvinceID = provinceID;
+            ViewBag.DistrictID = districtID;
+            ViewBag.WardID = wardID;
             ViewData["Photo"] = user.Photo;
-            // Trả về view cập nhật với thông tin nhân viên đã được khởi tạo
             return View("UpdateStaff",getstaffDTO);
         }
 

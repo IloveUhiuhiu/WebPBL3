@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.DiaSymReader;
@@ -7,12 +8,16 @@ using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Numerics;
+using WebPBL3.DTO;
 using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Roles = "Admin, Staff")]
+
     public class UserController : Controller
     {
         ApplicationDbContext _db;
@@ -28,7 +33,7 @@ namespace WebPBL3.Controllers
             return View();
         }
         // GET
-        public async Task<IActionResult> UserListTable(string searchtxt = "", int page = 1)
+        public async Task<IActionResult> UserListTable(string searchtxt = "",int fieldsearch = 1, int page = 1)
         {
             
 
@@ -36,8 +41,12 @@ namespace WebPBL3.Controllers
                 .Include(a => a.Account)
                 .Include(w => w.Ward)
                 .ThenInclude(d => d.District)
-                .Where(u => u.Account.RoleID == 3 &&  (searchtxt.IsNullOrEmpty() || u.FullName.Contains(searchtxt))).
-                Select(u => new UserDto
+                .Where(u => u.Account.RoleID == 3 &&  (searchtxt.IsNullOrEmpty() 
+                || (fieldsearch == 1 && u.FullName.Contains(searchtxt)) 
+                || (fieldsearch == 2 && u.PhoneNumber.Contains(searchtxt))
+                || (fieldsearch == 3 && u.Account.Email.Contains(searchtxt))
+                || (fieldsearch == 4 && u.IdentityCard.Contains(searchtxt))))
+                .Select(u => new UserDto
                {
                 AccountID = u.AccountID,
                 Email = u.Account.Email,
@@ -71,6 +80,7 @@ namespace WebPBL3.Controllers
             ViewBag.totalPage = totalPage;
             ViewBag.currentPage = page;
             ViewBag.searchtxt = searchtxt;
+            ViewBag.fieldsearch = fieldsearch;
             users = users.Skip((page - 1) * limits).Take(limits).ToList();
             
            
@@ -136,19 +146,19 @@ namespace WebPBL3.Controllers
                 }
                 var useridTxt = "KH" + userid.ToString().PadLeft(6, '0');
                 user.UserID = useridTxt;
-                if (user.Photo.IsNullOrEmpty()) user.Photo = "userKH000000.jpg";
-                else
+                if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-                    string fileName = "user" + user.UserID + "." + uploadimage.FileName.Substring(index + 1);
-                    user.Photo = fileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", user.Photo);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    user.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
                     {
                         await uploadimage.CopyToAsync(fileStream);
 
                     }
                 }
+            
 
                 //Console.WriteLine("Ward: " + user.WardID);
                 try
@@ -211,7 +221,8 @@ namespace WebPBL3.Controllers
                     ViewBag.DistrictID = district.DistrictID;
                     ViewBag.ProvinceID = district.ProvinceID;
                 }
-            }
+            } else user.WardID = 0;
+            
             UserDto userDtoFromDb = new UserDto
             {
                 UserID = user.UserID,
@@ -245,19 +256,24 @@ namespace WebPBL3.Controllers
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-
-                    string fileName = "user" + userdto.UserID + "." + uploadimage.FileName.Substring(index + 1);
-                    userdto.Photo = fileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", fileName);
-                    Console.WriteLine(_path);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    if (!userdto.Photo.IsNullOrEmpty())
                     {
-                        uploadimage.CopyTo(fileStream);
+                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", userdto.Photo);
+                        if (System.IO.File.Exists(oldImageFullPath))
+                        {
+                            System.IO.File.Delete(oldImageFullPath);
+                        }
+                    }
+                    userdto.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
+                    {
+                        await uploadimage.CopyToAsync(fileStream);
 
                     }
                 }
-
 
                 user.FullName = userdto.FullName;
                 user.PhoneNumber = userdto.PhoneNumber;
@@ -266,7 +282,7 @@ namespace WebPBL3.Controllers
                 user.Address = userdto.Address;
                 user.BirthDate = userdto.BirthDate;
                 user.Photo = userdto.Photo;
-                user.WardID = userdto.WardID;
+                user.WardID = (userdto.WardID>0?userdto.WardID:null);
 
 
                 try
@@ -378,5 +394,7 @@ namespace WebPBL3.Controllers
             return RedirectToAction("UserListTable");
           
         }
+
+        
     }
 }
