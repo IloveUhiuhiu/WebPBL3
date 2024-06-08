@@ -86,7 +86,7 @@
                             <input id="car_quantity" name="quantity" class="form-control">
                         </div>
                         <div class="col-2">
-                            <button type="button" onclick="addNewItem()" @* onclick="submitForm('@Url.Action("AddItem", "Order")')" *@ class="btn btn-success mr-2">Thêm ô tô</button>
+                            <button type="button" onclick="addNewItem()" class="btn btn-success mr-2">Thêm ô tô</button>
                         </div>
                     </div>
             </div>
@@ -190,7 +190,7 @@
     }
     async function getData() {
         try {
-            const response = await fetch("/Order/GetProvince");
+            const response = await fetch("/Address/GetProvince");
             const data = await response.json();
             console.log(data);
             return data;
@@ -200,7 +200,7 @@
     }
     async function getDistrict(id) {
         try {
-            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const response = await fetch(`/Address/GetDistrict/${id}`);
             const data = await response.json();
             return data;
         } catch (error) {
@@ -209,7 +209,7 @@
     }
     async function getWard(id) {
         try {
-            const response = await fetch(`/Order/GetWard/${id}`);
+            const response = await fetch(`/Address/GetWard/${id}`);
             const data = await response.json();
             return data;
         } catch (error) {

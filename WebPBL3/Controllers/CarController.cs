@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Runtime.ConstrainedExecution;
 using WebPBL3.Models;
 using WebPBL3.DTO;
+using Microsoft.AspNetCore.Authorization;
 namespace WebPBL3.Controllers
 {
     public class CarController : Controller
@@ -162,7 +163,7 @@ namespace WebPBL3.Controllers
             return View(carDtoFromDb);
         }
 
-
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
         {
 
@@ -222,14 +223,24 @@ namespace WebPBL3.Controllers
             return View(cars);
         }
         // [GET]
+        [Authorize(Roles = "Admin, Staff")]
         public IActionResult Create()
         {
             return View();
         }
         // [POST]
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Create(CarDto car, IFormFile uploadimage)
         {
+            foreach (var state in ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    Console.WriteLine($"Property: {state.Key}, Error: {error.ErrorMessage}");
+                }
+            }
+
             if (ModelState.IsValid)
             {   
                 // carid bằng 1 vì trường hợp tập rỗng
@@ -244,10 +255,21 @@ namespace WebPBL3.Controllers
                 var caridTxt = "OT" + carid.ToString().PadLeft(6, '0');
                 car.CarID = caridTxt;
 
-                int index = uploadimage.FileName.IndexOf('.');
-                string fileName = "car" + car.CarID + "." + uploadimage.FileName.Substring(index + 1);
-                car.Photo = fileName;
+                
 
+                
+                if (uploadimage != null && uploadimage.Length > 0)
+                {
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    car.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
+                    {
+                        await uploadimage.CopyToAsync(fileStream);
+
+                    }
+                }
                 try
                 {
                     _db.Cars.Add(new Car
@@ -284,21 +306,13 @@ namespace WebPBL3.Controllers
                     return BadRequest("Error add car: " + ex.Message);
 
                 }
-                if (uploadimage != null && uploadimage.Length > 0)
-                {
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\car", fileName);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
-                }
                 return RedirectToAction("CarListTable");
 
             }
             return View(car);
 
         }
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Edit(string? id)
         {
             if (string.IsNullOrEmpty(id))
@@ -340,7 +354,7 @@ namespace WebPBL3.Controllers
             return View(carDtoFromDb);
         }
         [HttpPost]
-
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Edit(CarDto cardto,IFormFile? uploadimage)
         {
             
@@ -353,18 +367,25 @@ namespace WebPBL3.Controllers
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-                    
-                    string fileName = "car" + cardto.CarID + "." + uploadimage.FileName.Substring(index+1);
-                    cardto.Photo = fileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\car", fileName);
-                    
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    if (!car.Photo.IsNullOrEmpty())
+                    {
+                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", car.Photo);
+                        if (System.IO.File.Exists(oldImageFullPath))
+                        {
+                            System.IO.File.Delete(oldImageFullPath);
+                        }
+                    }
+                    cardto.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
                     {
                         await uploadimage.CopyToAsync(fileStream);
 
-					}
+                    }
                 }
+                
 
                 car.CarName = cardto.CarName;
                 car.Photo = cardto.Photo;
@@ -406,7 +427,7 @@ namespace WebPBL3.Controllers
             return View(cardto);
 
         }
-
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Details(string? id)
         {
             
@@ -450,7 +471,7 @@ namespace WebPBL3.Controllers
             };
             return View(carDtoFromDb);
         }
-        
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(string? id)
         {
             

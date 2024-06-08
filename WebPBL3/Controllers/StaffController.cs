@@ -13,6 +13,7 @@ using WebPBL3.DTO;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StaffController : Controller
     {
         private ApplicationDbContext _db;
