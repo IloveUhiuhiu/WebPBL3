@@ -138,7 +138,7 @@ namespace WebPBL3.Controllers
         
         public async Task<IActionResult> Create(NewsDto news, IFormFile uploadimage)
         {
-            if(!ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 var newsid = 1;
                 var lastNews = _db.NewS.OrderByDescending(n => n.NewsID).FirstOrDefault();
@@ -229,12 +229,27 @@ namespace WebPBL3.Controllers
                     news.Photo = FILENAME;
                 else
                     news.Photo = n.Photo;
+                // lấy staffid
+                if (!User.Identity.IsAuthenticated)
+                {
+                    return BadRequest("Người dùng chưa đăng nhập");
+                }
+                string? email = User.Identity.Name;
+                Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
+                if (account == null)
+                {
+                    return NotFound("Account is not found");
+                }
+                string userid = account.User.UserID;
+                Staff? staff = await _db.Staffs.FirstOrDefaultAsync(a => a.UserID == userid);
+                string staffid = staff.StaffID;
+
                 news.Title = n.Title;
                 news.Content = n.Content;
                 news.CreateAt = n.CreateAt;
                 news.UpdateAt = DateTime.Now;
-                news.UpdateBy = 1.ToString();
-                news.StaffID = 1.ToString();
+                news.UpdateBy = staffid;
+                news.StaffID = news.StaffID;
                 try
                 {
                     _db.NewS.Update(news);
