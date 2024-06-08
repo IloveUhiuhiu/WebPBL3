@@ -138,7 +138,7 @@ namespace WebPBL3.Controllers
         
         public async Task<IActionResult> Create(NewsDto news, IFormFile uploadimage)
         {
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 var newsid = 1;
                 var lastNews = _db.NewS.OrderByDescending(n => n.NewsID).FirstOrDefault();
