@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WebPBL3.Models;
 
-namespace WebPBL3.Models
+namespace WebPBL3.DTO
 {
-	public class UserDto
+	public class UserDTO
 	{	
-		
 		public string? AccountID { get; set; }
 
         [Display(Name = "Email")]

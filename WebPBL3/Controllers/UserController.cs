@@ -37,7 +37,7 @@ namespace WebPBL3.Controllers
         {
             
 
-            List<UserDto> users =  await _db.Users
+            List<UserDTO> users =  await _db.Users
                 .Include(a => a.Account)
                 .Include(w => w.Ward)
                 .ThenInclude(d => d.District)
@@ -46,7 +46,7 @@ namespace WebPBL3.Controllers
                 || (fieldsearch == 2 && u.PhoneNumber.Contains(searchtxt))
                 || (fieldsearch == 3 && u.Account.Email.Contains(searchtxt))
                 || (fieldsearch == 4 && u.IdentityCard.Contains(searchtxt))))
-                .Select(u => new UserDto
+                .Select(u => new UserDTO
                {
                 AccountID = u.AccountID,
                 Email = u.Account.Email,
@@ -94,7 +94,7 @@ namespace WebPBL3.Controllers
         }
         // POST
         [HttpPost]
-        public async Task<IActionResult> Create(UserDto user, IFormFile? uploadimage)
+        public async Task<IActionResult> Create(UserDTO user, IFormFile? uploadimage)
         {
             
             if (ModelState.IsValid)
@@ -223,7 +223,7 @@ namespace WebPBL3.Controllers
                 }
             } else user.WardID = 0;
             
-            UserDto userDtoFromDb = new UserDto
+            UserDTO UserDTOFromDb = new UserDTO
             {
                 UserID = user.UserID,
                 FullName = user.FullName,
@@ -239,17 +239,17 @@ namespace WebPBL3.Controllers
                 AccountID = user.AccountID,
 
             };
-            return View(userDtoFromDb);
+            return View(UserDTOFromDb);
         }
         
 
         // POST
         [HttpPost]
-        public async Task<IActionResult> Edit(UserDto userdto, IFormFile? uploadimage)
+        public async Task<IActionResult> Edit(UserDTO UserDTO, IFormFile? uploadimage)
         {
             if (ModelState.IsValid)
             {
-                User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == userdto.UserID);
+                User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == UserDTO.UserID);
                 if (user == null)
                 {
                     return NotFound("User is not found");
@@ -258,15 +258,15 @@ namespace WebPBL3.Controllers
                 {
                     string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                     newFileName += Path.GetExtension(uploadimage!.FileName);
-                    if (!userdto.Photo.IsNullOrEmpty())
+                    if (!UserDTO.Photo.IsNullOrEmpty())
                     {
-                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", userdto.Photo);
+                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", UserDTO.Photo);
                         if (System.IO.File.Exists(oldImageFullPath))
                         {
                             System.IO.File.Delete(oldImageFullPath);
                         }
                     }
-                    userdto.Photo = newFileName;
+                    UserDTO.Photo = newFileName;
                     string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
                     using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
                     {
@@ -275,14 +275,14 @@ namespace WebPBL3.Controllers
                     }
                 }
 
-                user.FullName = userdto.FullName;
-                user.PhoneNumber = userdto.PhoneNumber;
-                user.IdentityCard = userdto.IdentityCard;
-                user.Gender = userdto.Gender;
-                user.Address = userdto.Address;
-                user.BirthDate = userdto.BirthDate;
-                user.Photo = userdto.Photo;
-                user.WardID = (userdto.WardID>0?userdto.WardID:null);
+                user.FullName = UserDTO.FullName;
+                user.PhoneNumber = UserDTO.PhoneNumber;
+                user.IdentityCard = UserDTO.IdentityCard;
+                user.Gender = UserDTO.Gender;
+                user.Address = UserDTO.Address;
+                user.BirthDate = UserDTO.BirthDate;
+                user.Photo = UserDTO.Photo;
+                user.WardID = (UserDTO.WardID>0?UserDTO.WardID:null);
 
 
                 try
@@ -301,7 +301,7 @@ namespace WebPBL3.Controllers
 
                 return RedirectToAction("UserListTable");
             }
-            return View(userdto);
+            return View(UserDTO);
         }
         // GET
         public async Task<IActionResult> Details(string? id)
@@ -340,7 +340,7 @@ namespace WebPBL3.Controllers
                 }
             }
             
-            UserDto userFromDb = new UserDto
+            UserDTO userFromDb = new UserDTO
             {
                 UserID = user.AccountID,
                 FullName = user.FullName,
