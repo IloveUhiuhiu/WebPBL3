@@ -125,12 +125,6 @@ namespace WebPBL3.Controllers
             return View(paginatedNews);
         }
 
-
-
-
-
-
-
         //Get
         public IActionResult Create() 
         { 
