@@ -84,6 +84,10 @@ namespace WebPBL3.Controllers
                         .Where(o => o.Status == "Đã thanh toán")
                         .ToList();
                     Dictionary<string, int> quantity = new Dictionary<string, int>();
+                    foreach (var car in item)
+                    {
+                        quantity[car.CarID] = 0;
+                    }
                     foreach (var order in orders)
                     {
                         foreach (var detailOrder in order.DetailOrders)
@@ -95,9 +99,7 @@ namespace WebPBL3.Controllers
                             quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
                         }
                     }
-                    var sortedDict = quantity.OrderBy(q => q.Value).Take(4).ToList();
-                    var bestSellingCarIds = sortedDict.Select(x => x.Key);
-                    item = item.Where(c => bestSellingCarIds.Contains(c.CarID)).ToList();
+                    item = item.OrderByDescending(c => quantity[c.CarID]).ToList();
                     break;
             }
             int totalCount = item.Count();

@@ -22,7 +22,7 @@ ClassicEditor
     });*/
 
 CKEDITOR.ClassicEditor
-    .create(document.getElementById("inputNoiDung"), {
+    .create(document.querySelector('#inputNoiDung'), {
         ckfinder: {
             uploadUrl: '/News/Upload/'
         },
@@ -176,8 +176,19 @@ CKEDITOR.ClassicEditor
         ]
     })
     .then(editor => {
-        //test
-        console.log(FILEPATH);
+        editor.model.document.on('change:data', () => {
+            var data = editor.getData();
+            console.log(data);
+            var plainText = stripHtml(data);
+            console.log(plainText);
+            document.querySelector('#inputContent').value = plainText; // Gán dữ liệu từ CKEditor vào input hidden
+            
+        });
+        function stripHtml(html) {
+            var temporalDivElement = document.createElement("div");
+            temporalDivElement.innerHTML = html;
+            return temporalDivElement.textContent || temporalDivElement.innerText || "";
+        }
         if (FILEPATH) {
             const imgElement = `<img src="${FILEPATH}" alt="" /><br/>`;
             editor.model.change(writer => {
@@ -186,17 +197,19 @@ CKEDITOR.ClassicEditor
                 editor.model.insertContent(modelFragment, editor.model.document.selection);
             });
         }
-        editor.model.document.on('change:data', () => {
-            var data = editor.getData();
-            var plainText = stripHtml(data);
-            document.querySelector('#inputContent').value = plainText; // Gán dữ liệu từ CKEditor vào input hidden
-        });
-        function stripHtml(html) {
-            var temporalDivElement = document.createElement("div");
-            temporalDivElement.innerHTML = html;
-            return temporalDivElement.textContent || temporalDivElement.innerText || "";
-        }
     })
+    /*.then(editor => {
+                editor.model.document.on('change:data', () => {
+                    var data = editor.getData();
+                    var plainText = stripHtml(data);
+                    document.querySelector('#inputContent').value = plainText; // Gán dữ liệu từ CKEditor vào input hidden
+                });
+                function stripHtml(html) {
+                    var temporalDivElement = document.createElement("div");
+                    temporalDivElement.innerHTML = html;
+                    return temporalDivElement.textContent || temporalDivElement.innerText || "";
+                }
+            })*/
     .catch(error => {
         console.error(error);
     });

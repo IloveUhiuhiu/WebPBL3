@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 
-namespace WebPBL3.DTO.Staff
+namespace WebPBL3.DTO
 {
     using System.Web;
-    public partial class AddStaffDTO
+    public partial class StaffDTO
     {
         public string? StaffID { get; set; }
 

@@ -194,8 +194,7 @@ a {
     margin-bottom: 20px;
     margin-left: 567px;
 }
-
-    .pagination a {
+.pagination a {
         display: inline-block;
         padding: 3px 4px;
         background-color: #f0f0f0;
@@ -205,12 +204,12 @@ a {
         text-decoration: none;
         margin-right: 20px;
         
-    }
+}
 
-    .pagination a:hover {
+.pagination a:hover {
 background-color: #8C222A;
 transform: scale(1.1);
-    }
+}
 
 .pagination .prev,
 .pagination .next {
