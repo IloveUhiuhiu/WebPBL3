@@ -320,7 +320,5 @@
 	});
 	$('#time_pick').timepicker();
 
-
-
 })(jQuery);
 

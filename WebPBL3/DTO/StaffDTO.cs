@@ -33,9 +33,7 @@ namespace WebPBL3.DTO
         [Range(0, double.MaxValue, ErrorMessage = "Lương phải là số dương.")]
         public int Salary { get; set; }
         public string? WardName { get; set; }
-        [Required(ErrorMessage = "Chưa chọn huyện")]
         public string? DistrictName { get; set; }
-        [Required(ErrorMessage = "Chưa chọn tĩnh")]
         public string? ProvinceName { get; set; }
         [Required(ErrorMessage = "Email là bắt buộc.")]
         public string Email { get; set; } = string.Empty;
