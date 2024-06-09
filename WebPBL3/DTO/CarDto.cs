@@ -2,7 +2,7 @@
 
 namespace WebPBL3.DTO
 {
-    public class CarDto
+    public class CarDTO
     {
         public string? CarID { get; set; }
         [Required]

@@ -27,7 +27,7 @@ namespace WebPBL3.Controllers
         /*public IActionResult ListNews(int newid = 0, string searchtxt = "", int page = 1)
         {
 
-            List<NewsDto> news = _db.NewS.Include(s => s.Staff).ThenInclude(u => u.User).Select(n => new NewsDto
+            List<NewsDTO> news = _db.NewS.Include(s => s.Staff).ThenInclude(u => u.User).Select(n => new NewsDTO
             {
                 NewsID = n.NewsID,
                 Title = n.Title,
@@ -64,7 +64,7 @@ namespace WebPBL3.Controllers
         {
             var newsQuery = _db.NewS.Include(s => s.Staff)
                                     .ThenInclude(u => u.User)
-                                    .Select(n => new NewsDto
+                                    .Select(n => new NewsDTO
                                     {
                                         NewsID = n.NewsID,
                                         Title = n.Title,
@@ -136,7 +136,7 @@ namespace WebPBL3.Controllers
         [Authorize(Roles = "Admin, Staff")]
         [HttpPost]
         
-        public async Task<IActionResult> Create(NewsDto news, IFormFile uploadimage)
+        public async Task<IActionResult> Create(NewsDTO news, IFormFile uploadimage)
         {
             if(!ModelState.IsValid)
             {
@@ -154,6 +154,21 @@ namespace WebPBL3.Controllers
                     FILENAME = TempData["UploadedFileName"].ToString();
                 }
                 news.Photo = FILENAME;
+                // lấy staffid
+                if (!User.Identity.IsAuthenticated)
+                {
+                    return BadRequest("Người dùng chưa đăng nhập");
+                }
+                string? email = User.Identity.Name;
+                Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
+                if (account == null)
+                {
+                    return NotFound("Account is not found");
+                }
+                string userid = account.User.UserID;
+                Staff? staff = await _db.Staffs.FirstOrDefaultAsync(a => a.UserID == userid);
+                string staffid = staff.StaffID;
+
                 _db.NewS.Add(new News
                 {
                     NewsID = news.NewsID,
@@ -162,7 +177,7 @@ namespace WebPBL3.Controllers
                     Photo = news.Photo,
                     CreateAt = DateTime.Now,
                     UpdateAt = null,
-                    StaffID = "1",
+                    StaffID = staffid,
                 }) ;
                 await _db.SaveChangesAsync();
                 return RedirectToAction("ListNews");
@@ -181,7 +196,7 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            NewsDto newsDtoFromDb = new NewsDto
+            NewsDTO NewsDTOFromDb = new NewsDTO
             {
                 NewsID = news.NewsID,
                 Title = news.Title,
@@ -193,12 +208,12 @@ namespace WebPBL3.Controllers
             };
             var url = $"{Request.Scheme}://{Request.Host}/images/{news.Photo}";
             ViewBag.filePath = url;
-            return View(newsDtoFromDb);
+            return View(NewsDTOFromDb);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Edit(NewsDto n, IFormFile? uploadimage, string? id)
+        public async Task<IActionResult> Edit(NewsDTO n, IFormFile? uploadimage, string? id)
         {
             if (!ModelState.IsValid)
             {
@@ -214,12 +229,27 @@ namespace WebPBL3.Controllers
                     news.Photo = FILENAME;
                 else
                     news.Photo = n.Photo;
+                // lấy staffid
+                if (!User.Identity.IsAuthenticated)
+                {
+                    return BadRequest("Người dùng chưa đăng nhập");
+                }
+                string? email = User.Identity.Name;
+                Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
+                if (account == null)
+                {
+                    return NotFound("Account is not found");
+                }
+                string userid = account.User.UserID;
+                Staff? staff = await _db.Staffs.FirstOrDefaultAsync(a => a.UserID == userid);
+                string staffid = staff.StaffID;
+
                 news.Title = n.Title;
                 news.Content = n.Content;
                 news.CreateAt = n.CreateAt;
                 news.UpdateAt = DateTime.Now;
-                news.UpdateBy = 1.ToString();
-                news.StaffID = 1.ToString();
+                news.UpdateBy = staffid;
+                news.StaffID = news.StaffID;
                 try
                 {
                     _db.NewS.Update(news);
@@ -246,7 +276,7 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            NewsDto newsDtoFromDb = new NewsDto
+            NewsDTO NewsDTOFromDb = new NewsDTO
             {
                 NewsID = news.NewsID,
                 Title = news.Title,
@@ -259,7 +289,7 @@ namespace WebPBL3.Controllers
             List<News> _news=_db.NewS.ToList();
             ViewBag._news = _news;
             ViewBag.HideHeader = true;
-            return View(newsDtoFromDb);
+            return View(NewsDTOFromDb);
         }
         public async Task<IActionResult> Delete(string? id)
         {

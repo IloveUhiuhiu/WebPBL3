@@ -2,7 +2,7 @@
 
 namespace WebPBL3.DTO
 {
-    public class HistoryOrderDto
+    public class HistoryOrderDTO
     {
         [Display(Name = "Ngày tạo đơn hàng")]
         public DateTime Date { get; set; } = DateTime.Now;

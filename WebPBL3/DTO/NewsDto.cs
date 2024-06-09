@@ -3,7 +3,7 @@ using WebPBL3.Models;
 
 namespace WebPBL3.DTO
 {
-    public class NewsDto
+    public class NewsDTO
     {
         public int? STT;
         public string? NewsID { get; set; }

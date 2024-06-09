@@ -235,7 +235,7 @@ namespace WebPBL3.Controllers
             {
                 return RedirectToAction("Login");
             }
-            UserDto user = new UserDto
+            UserDTO user = new UserDTO
             {
                 UserID=account.User.UserID,
                 Email = account.Email,
@@ -268,22 +268,22 @@ namespace WebPBL3.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> InforAccount(UserDto userDto, IFormFile? uploadimage)
+        public async Task<IActionResult> InforAccount(UserDTO UserDTO, IFormFile? uploadimage)
         {
-            User user = _db.Users.Find(userDto.UserID);
+            User user = _db.Users.Find(UserDTO.UserID);
             if (user == null)
             {
                 return NotFound();
             }
-            user.FullName = userDto.FullName;
-            user.PhoneNumber = userDto.PhoneNumber;
-            user.IdentityCard = userDto.IdentityCard;
-            user.Gender = userDto.Gender;
-            user.BirthDate = userDto.BirthDate;
+            user.FullName = UserDTO.FullName;
+            user.PhoneNumber = UserDTO.PhoneNumber;
+            user.IdentityCard = UserDTO.IdentityCard;
+            user.Gender = UserDTO.Gender;
+            user.BirthDate = UserDTO.BirthDate;
             if (!_db.Orders.Any(o => o.UserID == user.UserID))
             {
-                user.Address = userDto.Address;
-                user.WardID = userDto.WardID;
+                user.Address = UserDTO.Address;
+                user.WardID = UserDTO.WardID;
             } 
             if (uploadimage != null && uploadimage.Length > 0)
             {
@@ -357,11 +357,11 @@ namespace WebPBL3.Controllers
                 .ThenInclude(d => d.Car).ThenInclude(c => c.Make).OrderByDescending(o => o.Date).ToListAsync();
 
 
-            List<HistoryOrderDto> historyOrders = new List<HistoryOrderDto>();
+            List<HistoryOrderDTO> historyOrders = new List<HistoryOrderDTO>();
 
             foreach (var item in orders)
             {
-                HistoryOrderDto historyOrder = new HistoryOrderDto
+                HistoryOrderDTO historyOrder = new HistoryOrderDTO
                 {
                     Date = item.Date,
                     Totalprice = item.Totalprice,

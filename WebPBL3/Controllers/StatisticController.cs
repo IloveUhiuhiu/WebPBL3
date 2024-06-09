@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    public class StatisticController : Controller
+	[Authorize(Roles = "Admin, Staff")]
+	public class StatisticController : Controller
     {
         private readonly ApplicationDbContext _db;
 
