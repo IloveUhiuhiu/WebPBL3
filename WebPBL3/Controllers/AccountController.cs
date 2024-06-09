@@ -296,7 +296,7 @@ namespace WebPBL3.Controllers
                     uploadimage.CopyTo(fileStream);
                 }
             }
-            await _db.SaveChangesAsync();
+			await _db.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
         [Authorize]
