@@ -80,10 +80,10 @@ namespace WebPBL3.Controllers
 
 
             List<News> _news = await _db.NewS.Include(n => n.Staff).ThenInclude( s => s.User).OrderByDescending(s => s.CreateAt).Take(3).ToListAsync();
-            List<NewsDto> news = new List<NewsDto>();
+            List<NewsDTO> news = new List<NewsDTO>();
             foreach (var item in _news)
             {
-                news.Add(new NewsDto
+                news.Add(new NewsDTO
                 {   
                     NewsID = item.NewsID,
                     Photo = item.Photo,

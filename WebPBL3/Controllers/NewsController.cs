@@ -27,7 +27,7 @@ namespace WebPBL3.Controllers
         /*public IActionResult ListNews(int newid = 0, string searchtxt = "", int page = 1)
         {
 
-            List<NewsDto> news = _db.NewS.Include(s => s.Staff).ThenInclude(u => u.User).Select(n => new NewsDto
+            List<NewsDTO> news = _db.NewS.Include(s => s.Staff).ThenInclude(u => u.User).Select(n => new NewsDTO
             {
                 NewsID = n.NewsID,
                 Title = n.Title,
@@ -64,7 +64,7 @@ namespace WebPBL3.Controllers
         {
             var newsQuery = _db.NewS.Include(s => s.Staff)
                                     .ThenInclude(u => u.User)
-                                    .Select(n => new NewsDto
+                                    .Select(n => new NewsDTO
                                     {
                                         NewsID = n.NewsID,
                                         Title = n.Title,
@@ -136,9 +136,9 @@ namespace WebPBL3.Controllers
         [Authorize(Roles = "Admin, Staff")]
         [HttpPost]
         
-        public async Task<IActionResult> Create(NewsDto news, IFormFile uploadimage)
+        public async Task<IActionResult> Create(NewsDTO news, IFormFile uploadimage)
         {
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 var newsid = 1;
                 var lastNews = _db.NewS.OrderByDescending(n => n.NewsID).FirstOrDefault();
@@ -196,7 +196,7 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            NewsDto newsDtoFromDb = new NewsDto
+            NewsDTO NewsDTOFromDb = new NewsDTO
             {
                 NewsID = news.NewsID,
                 Title = news.Title,
@@ -208,12 +208,12 @@ namespace WebPBL3.Controllers
             };
             var url = $"{Request.Scheme}://{Request.Host}/images/{news.Photo}";
             ViewBag.filePath = url;
-            return View(newsDtoFromDb);
+            return View(NewsDTOFromDb);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Edit(NewsDto n, IFormFile? uploadimage, string? id)
+        public async Task<IActionResult> Edit(NewsDTO n, IFormFile? uploadimage, string? id)
         {
             if (!ModelState.IsValid)
             {
@@ -276,7 +276,7 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            NewsDto newsDtoFromDb = new NewsDto
+            NewsDTO NewsDTOFromDb = new NewsDTO
             {
                 NewsID = news.NewsID,
                 Title = news.Title,
@@ -289,7 +289,7 @@ namespace WebPBL3.Controllers
             List<News> _news=_db.NewS.ToList();
             ViewBag._news = _news;
             ViewBag.HideHeader = true;
-            return View(newsDtoFromDb);
+            return View(NewsDTOFromDb);
         }
         public async Task<IActionResult> Delete(string? id)
         {
