@@ -23,7 +23,7 @@ namespace WebPBL3.Models
         [StringLength(maximumLength: 50)]
         public string WardName { get; set; }
 
-        public District District { get; set; }
+        public District? District { get; set; }
         public int DistrictID { get; set; }
 
     }

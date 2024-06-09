@@ -7,17 +7,17 @@ namespace WebPBL3.DTO
         [Display(Name = "Họ và tên ")]
         [Required(ErrorMessage = "Bạn chưa nhập họ và tên")]
         [StringLength(maximumLength: 50)]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [Display(Name = "Số điện thoại")]
         [StringLength(maximumLength: 15)]
         [Required(ErrorMessage = "Bạn chưa nhập số điện thoại")]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Display(Name = "Số CCCD")]
         [StringLength(maximumLength: 12, MinimumLength = 9, ErrorMessage = "CCCD phải tối thiểu 9 và tối đa 12 chữ số.")]
-        [Required(ErrorMessage ="Bạn chưa nhập số CCCD")]
-        public string IdentityCard { get; set; }
+        [Required(ErrorMessage = "Bạn chưa nhập số CCCD")]
+        public string IdentityCard { get; set; } = string.Empty;
 
         [Display(Name = "Địa chỉ")]
 
@@ -38,13 +38,13 @@ namespace WebPBL3.DTO
         public double Totalprice { get; set; }
 
         [Display(Name = "Trạng thái thanh toán")]
-        [Required(ErrorMessage ="Bạn chưa chọn trạng thái thanh toán")]
-        public string Status { get; set; }
+        [Required(ErrorMessage = "Bạn chưa chọn trạng thái thanh toán")]
+        public string Status { get; set; } = string.Empty;
 
         [Display(Name = "Email")]
         [StringLength(maximumLength: 50)]
-        [Required(ErrorMessage ="Bạn chưa nhập địa chỉ email")]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "Bạn chưa nhập địa chỉ email")]
+        public string Email { get; set; } = string.Empty;
         [MinLength(1, ErrorMessage = "Phải chọn mua ít nhất một ô tô")]
         public List<Items> items { get;set; }=new List<Items>();
     }
