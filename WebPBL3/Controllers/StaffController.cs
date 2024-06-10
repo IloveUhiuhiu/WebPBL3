@@ -11,6 +11,7 @@ using OfficeOpenXml;
 using WebPBL3.DTO;
 using Microsoft.AspNetCore.Authorization;
 using WebPBL3.Services;
+using System.Collections.Specialized;
 
 namespace WebPBL3.Controllers
 {
@@ -32,6 +33,7 @@ namespace WebPBL3.Controllers
             var staffDTOs = await _staffService.GetAllStaffs();
             int limits = 10; 
             var total = staffDTOs.Count();
+            //Console.WriteLine("Total: " + total);
             var totalPage = (total + limits - 1) / limits;
             if (page < 1) page = 1;
             if (page > totalPage) page = totalPage;

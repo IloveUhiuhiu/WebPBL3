@@ -6,6 +6,7 @@
     ViewData["Title"] = "Cập nhật khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     string Photo = "userkh000000.jpg";
+    
     if (!string.IsNullOrEmpty(Model.Photo))
     {
         Photo = Model.Photo;
@@ -225,7 +226,10 @@
         });
         
         
+
+
         if (@Model.WardID) {
+           
             cities.value = @Model.ProvinceID;
             
             const listDistrict = await getDistrict(cities.value);

@@ -1,4 +1,5 @@
-﻿using NuGet.Packaging.Signing;
+﻿using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging.Signing;
 using WebPBL3.DTO;
 using WebPBL3.Models;
 
@@ -17,8 +18,16 @@ namespace WebPBL3.Services
 
         Task<string> GenerateID();
 
-        Task<int> CountCars(int makeid, string searchtxt, int page);
+        Task<int> CountCars(int makeid, string searchtxt);
 
+        Task<IEnumerable<string>> GetOrigins();
+        Task<IEnumerable<string>> GetColors();
+        Task<IEnumerable<string>> GetFuelConsumption();
+        Task<IEnumerable<int>> GetSeats();
+
+        Task<IEnumerable<Car>> FilterCars(string txtSearch, string makeName, string origin, string color, string seat, int page, int perPage, string sortBy);
+
+        Task<IEnumerable<Car>> GetRelatedCars(Car car);
 
     }
 }

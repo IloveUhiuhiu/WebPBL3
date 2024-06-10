@@ -13,57 +13,57 @@ namespace WebPBL3.Services
             _db = db;
             _environment = environment;
         }
-        public Task<List<StaffDTO>> GetAllStaffs()
+        public async Task<List<StaffDTO>> GetAllStaffs()
         {
-            var staffs = (from staff in _db.Staffs
-                             join user in _db.Users on staff.UserID equals user.UserID
-                             join ward in _db.Wards on user.WardID equals ward.WardID
-                             join district in _db.Districts on ward.DistrictID equals district.DistrictID
-                             join province in _db.Provinces on district.ProvinceID equals province.ProvinceID
-                             join account in _db.Accounts on user.AccountID equals account.AccountID
-                             select new StaffDTO
-                             {
-                                 StaffID = staff.StaffID,
-                                 FullName = user.FullName,
-                                 Email = account.Email,
-                                 PhoneNumber = user.PhoneNumber,
-                                 IdentityCard = user.IdentityCard,
-                                 Gender = user.Gender,
-                                 BirthDate = user.BirthDate,
-                                 Address = user.Address,
-                                 Position = staff.Position,
-                                 Salary = staff.Salary,
-                                 Status = account.Status,
-                                 WardName = ward.WardName,
-                                 ProvinceName = province.ProvinceName,
-                                 DistrictName = district.DistrictName
-                             }).ToListAsync();
-            return staffs;
+            var staff = await _db.Staffs
+                .Include(s => s.User)
+                .ThenInclude(u => u.Ward)
+                .ThenInclude(w => w.District)
+                .ThenInclude(d => d.Province)
+                .Include(s => s.User.Account)
+                .Select(s => new StaffDTO
+                {
+                    StaffID = s.StaffID,
+                    FullName = s.User.FullName,
+                    Email = s.User.Account.Email,
+                    PhoneNumber = s.User.PhoneNumber,
+                    IdentityCard = s.User.IdentityCard,
+                    Gender = s.User.Gender,
+                    BirthDate = s.User.BirthDate,
+                    Address = s.User.Address,
+                    Position = s.Position,
+                    Salary = s.Salary,
+                    ProvinceName = s.User.Ward.District.Province.ProvinceName,
+                    DistrictName = s.User.Ward.District.DistrictName,
+                    WardName = s.User.Ward.WardName
+
+                }).ToListAsync();
+            return staff;
         }
         public async Task<IEnumerable<StaffDTO>> GetStaffsBySearch(string searchTerm, string searchField)
         {
-            var staffQuery = from staff in _db.Staffs
-                             join user in _db.Users on staff.UserID equals user.UserID
-                             join ward in _db.Wards on user.WardID equals ward.WardID
-                             join district in _db.Districts on ward.DistrictID equals district.DistrictID
-                             join province in _db.Provinces on district.ProvinceID equals province.ProvinceID
-                             join account in _db.Accounts on user.AccountID equals account.AccountID
-                             select new StaffDTO
-                             {
-                                 StaffID = staff.StaffID,
-                                 FullName = user.FullName,
-                                 Email = account.Email,
-                                 PhoneNumber = user.PhoneNumber,
-                                 IdentityCard = user.IdentityCard,
-                                 Gender = user.Gender,
-                                 BirthDate = user.BirthDate,
-                                 Address = user.Address,
-                                 Position = staff.Position,
-                                 Salary = staff.Salary,
-                                 ProvinceName = province.ProvinceName,
-                                 DistrictName = district.DistrictName,
-                                 WardName = ward.WardName
-                             };
+            IQueryable<StaffDTO> staffQuery = _db.Staffs
+            .Include(s => s.User)
+            .ThenInclude(u => u.Ward)
+            .ThenInclude(w => w.District)
+            .ThenInclude(d => d.Province)
+            .Include(s => s.User.Account)
+            .Select(s => new StaffDTO
+            {
+                StaffID = s.StaffID,
+                FullName = s.User.FullName,
+                Email = s.User.Account.Email,
+                PhoneNumber = s.User.PhoneNumber,
+                IdentityCard = s.User.IdentityCard,
+                Gender = s.User.Gender,
+                BirthDate = s.User.BirthDate,
+                Address = s.User.Address,
+                Position = s.Position,
+                Salary = s.Salary,
+                ProvinceName = s.User.Ward.District.Province.ProvinceName,
+                DistrictName = s.User.Ward.District.DistrictName,
+                WardName = s.User.Ward.WardName
+            });
 
             if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(searchField))
             {
@@ -85,6 +85,8 @@ namespace WebPBL3.Services
             }
             return staffQuery;
         }
+
+        
         public async Task<Staff> GetStaffById(string id)
         {
             try

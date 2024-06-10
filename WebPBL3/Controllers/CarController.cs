@@ -27,16 +27,16 @@ namespace WebPBL3.Controllers
             _photoService = photoService;
         }
 
-        /*public async Task<IActionResult> Index(string searchTerm = "")
+        public async Task<IActionResult> Index(string searchTerm = "")
         {
 			ViewBag.HideHeader = false;
 			ViewBag.SearchTerm = searchTerm;
 
-            var makes = await _db.Makes.ToListAsync();
-            var origins = await _db.Cars.Select(c => c.Origin).Distinct().ToListAsync();
-            var colors = await _db.Cars.Select(c => c.Color).Distinct().ToListAsync();
-            var fuels = await _db.Cars.Select(c => c.FuelConsumption).Distinct().ToListAsync();
-            var seats = await _db.Cars.Select(c => c.Seat).Distinct().ToListAsync();
+            var makes = await _carService.GetAllMakes();
+            var origins = await _carService.GetOrigins();
+            var colors = await _carService.GetColors();
+            var fuels = await _carService.GetFuelConsumption();
+            var seats = await _carService.GetSeats();
 
             // Đưa danh sách vào ViewBag
             ViewBag.Makes = new SelectList(makes, "MakeID", "MakeName");
@@ -47,63 +47,11 @@ namespace WebPBL3.Controllers
 
             return View();
         }
-
-        public ActionResult Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9, string sortBy = "")
+        
+        public async Task<ActionResult> Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9, string sortBy = "")
         {
-			var item = _db.Cars
-		    .Include(c => c.Make)
-		    .Where(c => !c.Flag) // Lọc những xe không bị gắn cờ
-		    .ToList();
-            if (!string.IsNullOrEmpty(txtSearch))
-            {
-                item = item.Where(car => car.CarName.ToLower().Contains(txtSearch.ToLower())).ToList();
-            }
-            if (!string.IsNullOrEmpty(makeName))
-            {
-                item = item.Where(c => c.Make.MakeName == makeName).ToList();
-            }
-			if (!string.IsNullOrEmpty(origin))
-			{
-				item = item.Where(c => c.Origin == origin).ToList();
-			}
-			if (!string.IsNullOrEmpty(color))
-			{
-				item = item.Where(c => c.Color == color).ToList();
-			}
-			if (!string.IsNullOrEmpty(seat) && int.TryParse(seat, out int seatNumber))
-			{
-				item = item.Where(c => c.Seat == seatNumber).ToList();
-			}
-            switch(sortBy)
-            {
-                case "Price":
-                    item = item.OrderBy(p => p.Price).ToList();
-                    break;
-                case "bestSelling":
-                    var orders = _db.Orders
-                        .Include(o => o.DetailOrders)
-                        .ThenInclude(deo => deo.Car)
-                        .Where(o => o.Status == "Đã thanh toán")
-                        .ToList();
-                    Dictionary<string, int> quantity = new Dictionary<string, int>();
-                    foreach (var car in item)
-                    {
-                        quantity[car.CarID] = 0;
-                    }
-                    foreach (var order in orders)
-                    {
-                        foreach (var detailOrder in order.DetailOrders)
-                        {
-                            if (!quantity.ContainsKey(detailOrder.Car.CarID))
-                            {
-                                quantity[detailOrder.Car.CarID] = 0;
-                            }
-                            quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
-                        }
-                    }
-                    item = item.OrderByDescending(c => quantity[c.CarID]).ToList();
-                    break;
-            }
+
+            var item = await _carService.FilterCars(txtSearch, makeName, origin, color, seat, page, perPage, sortBy);
             int totalCount = item.Count();
             var cars = item.Skip((page-1) * perPage)
                 .Take(perPage)
@@ -117,53 +65,26 @@ namespace WebPBL3.Controllers
             int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
             return Json(new { Data = cars, TotalPages = totalPages });
 		}
-
-		public IActionResult Detail(string id)
+        
+		public async Task<IActionResult> Detail(string id)
         {
 			ViewBag.HideHeader = false;
 			if (String.IsNullOrEmpty(id))
 			{
 				return NotFound();
 			}
-			Car? c = _db.Cars.Find(id);
+			Car? car = await _carService.GetCarById(id);
 
-			if (c == null)
+			if (car == null)
 			{
 				return NotFound();
 			}
-			var makeName = _db.Makes.Where(m => m.MakeID == c.MakeID).FirstOrDefault().MakeName;
-			CarDTO CarDTOFromDb = new CarDTO
-			{
-				CarID = c.CarID,
-				CarName = c.CarName,
-				Photo = c.Photo,
 
-				Capacity = c.Capacity,
-				FuelConsumption = c.FuelConsumption,
-				Color = c.Color,
-
-				Description = c.Description,
-				Dimension = c.Dimension,
-				Engine = c.Engine,
-
-				Origin = c.Origin,
-				Price = c.Price,
-				Quantity = c.Quantity,
-
-				Seat = c.Seat,
-				Topspeed = c.Topspeed,
-				Year = c.Year,
-
-				MakeID = c.MakeID,
-				MakeName = makeName,
-
-			};
-            var relatedCars = _db.Cars
-                        .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID && !car.Flag)
-                        .ToList();
-            ViewBag.RelatedCars = relatedCars;
+            CarDTO CarDTOFromDb =  _carService.ConvertToCarDTO(car);
+            
+            ViewBag.RelatedCars = await _carService.GetRelatedCars(car);
             return View(CarDTOFromDb);
-        }*/
+        }
 
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
@@ -178,13 +99,13 @@ namespace WebPBL3.Controllers
                 TempData.Keep("makes");
             }
 
-            int total = await _carService.CountCars(makeid, searchtxt, page);
+            int total = await _carService.CountCars(makeid, searchtxt);
             // tổng số trang
             var totalPage = (total + limits - 1) / limits;
             // sử dụng khi previous là 1
             if (page < 1) page = 1;
             // sử dụng khi next là totalPage 
-            if (page > totalPage) page = totalPage;
+            if (page > totalPage && totalPage > 0) page = totalPage;
             IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
             // tổng số sản phẩm
             

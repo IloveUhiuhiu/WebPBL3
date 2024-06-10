@@ -138,7 +138,7 @@ namespace WebPBL3.Services
                 Gender = user.Gender,
                 BirthDate = user.BirthDate,
                 Address = user.Address,
-                WardID = user.WardID,
+                WardID = user.WardID??0,
                 Photo = user.Photo,
                 AccountID = user.AccountID,
             };
