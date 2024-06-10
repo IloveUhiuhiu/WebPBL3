@@ -7,8 +7,6 @@ namespace WebPBL3.Services
     {
         public Task<string> GenerateID();
         public Task AddDefaultAccount(string email, int role);
-        
-
         public Task Login(string username, string password);
         public Task Register(RegisterDTO model);
         public Task ForgotPassword(string email);

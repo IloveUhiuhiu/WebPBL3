@@ -13,7 +13,6 @@ namespace WebPBL3.Services
 		User ConvertToUser(UserDTO UserDTO);
 		Task<UserDTO> ConvertToUserDTO(User user);
 		Task<UserDTO> ExtractEmail(string email);
-	}
 		Task<string> GenerateID();
 		Task<bool> CheckEmailExits(string email);
 		Task<int> CountUsers(string searchtxt, int fieldsearch, int page);

@@ -241,8 +241,6 @@ namespace WebPBL3.Services
                 DistrictID = u.Ward != null ? u.Ward.DistrictID : 0,
             };
         }
-    }
-}
         public async Task<int> CountUsers(string searchtxt, int fieldsearch, int page)
         {
             return await _db.Users

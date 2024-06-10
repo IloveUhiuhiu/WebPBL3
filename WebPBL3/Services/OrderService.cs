@@ -41,7 +41,7 @@ namespace WebPBL3.Services
                     AccountID = accountID,
                     Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     Status = true,
-                    RoleID = 1,
+                    RoleID = 3,
                 };
                 _context.Accounts.Add(a);
                 var user_id = 1;
