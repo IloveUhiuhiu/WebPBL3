@@ -22,11 +22,15 @@ namespace WebPBL3.Controllers
 		private int limits = 10;
 		private readonly IWebHostEnvironment environment;
         private readonly IStaffService _staffService;
-        public StaffController(ApplicationDbContext db, IWebHostEnvironment environment, IStaffService staffService)
+        IUserService _userService;
+        IAccountService _accountService;
+        public StaffController(ApplicationDbContext db, IWebHostEnvironment environment, IStaffService staffService, IUserService userService, IAccountService accountService)
         {
             _db = db;
             this.environment = environment;
             _staffService = staffService;
+            _userService = userService;
+            _accountService = accountService;
         }
         public async Task<IActionResult> listStaffs(int page = 1)
         {
@@ -80,32 +84,20 @@ namespace WebPBL3.Controllers
                     try
                     {
                         int newRoleID = 2;
-                        var accid = 1;
-                        var lastAcc = _db.Accounts.OrderByDescending(a => a.AccountID).FirstOrDefault();
-                        if (lastAcc != null)
-                        {
-                            accid = Convert.ToInt32(lastAcc.AccountID) + 1;
-                        }
-                        var accidTxt = accid.ToString().PadLeft(8, '0');
-                        var accWithEmail = _db.Accounts.FirstOrDefault(u => u.Email == staffDTO.Email);
-                        if (accWithEmail != null)
+                        var accidTxt = await _accountService.GenerateID();
+                        bool checkEmailExist = await _userService.CheckEmailExits(staffDTO.Email);
+                        if (checkEmailExist)
                         {
                             TempData["Error"] = "Email đã tồn tại";
                             return View(staffDTO);
                         }
                         staffDTO.AccountID = accidTxt;
                         var newAccount = _staffService.ConvertToAccount(staffDTO, newRoleID, BCrypt.Net.BCrypt.HashPassword("123456"));
-
                         _db.Accounts.Add(newAccount);
                         await _db.SaveChangesAsync();
 
-                        var userid = 1;
-                        var lastUser = _db.Users.OrderByDescending(u => u.UserID).FirstOrDefault();
-                        if (lastUser != null)
-                        {
-                            userid = Convert.ToInt32(lastUser.UserID.Substring(2)) + 1;
-                        }
-                        var useridTxt = "NV" + userid.ToString().PadLeft(6, '0');
+
+                        var useridTxt = await _userService.GenerateID();
                         staffDTO.UserID = useridTxt;
 
                         var accWithIdentityCard = _db.Users.FirstOrDefault(u => u.IdentityCard == staffDTO.IdentityCard);
@@ -114,28 +106,14 @@ namespace WebPBL3.Controllers
                             TempData["Error"] = "CCCD đã tồn tại";
                             return View(staffDTO);
                         }
-                        string? newFilename = null;
-                        if (staffDTO.Photo != null)
-                        {
-                            newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                            newFilename += Path.GetExtension(staffDTO.Photo!.FileName);
-                            string imageFullPath = environment.WebRootPath + "/upload/staff/" + newFilename;
-                            using (var stream = System.IO.File.Create(imageFullPath))
-                            {
-                                staffDTO.Photo.CopyTo(stream);
-                            }
-                        }
+
+                        string? newFilename = await _staffService.SaveStaffPhoto(staffDTO.Photo);
                         var newUser = _staffService.ConvertToUser(staffDTO, newFilename);
                         
                         _db.Users.Add(newUser);
                         await _db.SaveChangesAsync();
-                        var staffId = 1;
-                        var lastStaff = _db.Staffs.OrderByDescending(u => u.StaffID).FirstOrDefault();
-                        if (lastStaff != null)
-                        {
-                            staffId = Convert.ToInt32(lastStaff.StaffID.Substring(2)) + 1;
-                        }
-                        var staffTxt = "NV" + staffId.ToString().PadLeft(6, '0');
+
+                        var staffTxt = await _staffService.GenerateID();
                         staffDTO.StaffID = staffTxt;
 
                         var newStaff = _staffService.ConvertToStaff(staffDTO);
@@ -151,8 +129,6 @@ namespace WebPBL3.Controllers
                         var errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                         ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi thêm nhân viên: " + errorMessage);
                     }
-                    var provinces = _db.Provinces.ToList();
-                    ViewBag.Provinces = new SelectList(provinces, "ProvinceID", "ProvinceName");
                 }
             }
             return View(staffDTO);
@@ -190,38 +166,15 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            Staff? staff = _db.Staffs.Find(id);
-            if (staff == null)
+            FullStaffInfoDTO? staffInfo = await _staffService.GetStaffById(id);
+            if (staffInfo == null)
             {
                 return NotFound();
             }
-            User? user = _db.Users.FirstOrDefault(u => u.UserID == staff.UserID);
-            if(user == null)
-            {
-                return NotFound();
-            }    
-            Account? account = _db.Accounts.FirstOrDefault(a => a.AccountID == user.AccountID);
-            if (account == null)
-            {
-                return NotFound();
-            }
-            Ward? ward = _db.Wards.FirstOrDefault(w => w.WardID == user.WardID);
-            District? district = null;
-            Province? province = null;
 
-            if (ward != null)
-            {
-                district =  _db.Districts.FirstOrDefault(d => d.DistrictID == ward.DistrictID);
-                province =  _db.Provinces.FirstOrDefault(p => p.ProvinceID == district.ProvinceID);               
-            }
-
-            string? districtName = district?.DistrictName;
-            string? provinceName = province?.ProvinceName;
-            string? wardName = ward?.WardName;
-
-            StaffDTO staffDTO = await _staffService.ConvertToStaffDTO(staff, user, account);
-            ViewData["Photo"] = user.Photo;
-            return View(staffDTO);
+            StaffDTO getstaffDTO = await _staffService.ConvertToStaffDTO(staffInfo.Staff, staffInfo.User, staffInfo.Account);
+            ViewData["Photo"] = staffInfo.User.Photo;
+            return View(getstaffDTO);
         }
 
         public async Task<ActionResult> UpdateStaff(string? id)
@@ -230,47 +183,23 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-            Staff? staff = await _db.Staffs.FindAsync(id);
-            if (staff == null)
+
+            FullStaffInfoDTO? staffInfo = await _staffService.GetStaffById(id);
+            if (staffInfo == null)
             {
                 return NotFound();
             }
-            User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == staff.UserID);
-            if(user == null)
-            {
-                return NotFound();
-            }    
-            Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
-            if(account == null)
-            {
-                return NotFound();
-            }    
-            Ward? ward = await _db.Wards.FirstOrDefaultAsync(w => w.WardID == user.WardID);
-            District? district = null;
-            Province? province = null;
 
-            if (ward != null)
-            {
-                district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
-                province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
-            }
+            StaffDTO getstaffDTO = await _staffService.ConvertToStaffDTO(staffInfo.Staff, staffInfo.User, staffInfo.Account);
 
-            string? districtName = district?.DistrictName;
-            string? provinceName = province?.ProvinceName;
-            string? wardName = ward?.WardName;
-            int? districtID = district?.DistrictID;
-            int? provinceID = province?.ProvinceID;
-            int? wardID = ward?.WardID;
-            StaffDTO getstaffDTO = await _staffService.ConvertToStaffDTO(staff, user, account);
-
-            ViewBag.ProvinceName = provinceName;
-            ViewBag.DistrictName = districtName;
-            ViewBag.WardName = wardName;
-            ViewBag.ProvinceID = provinceID;
-            ViewBag.DistrictID = districtID;
-            ViewBag.WardID = wardID;
-            ViewData["Photo"] = user.Photo;
-            return View("UpdateStaff",getstaffDTO);
+            ViewBag.ProvinceName = staffInfo.ProvinceName;
+            ViewBag.DistrictName = staffInfo.DistrictName;
+            ViewBag.WardName = staffInfo.WardName;
+            ViewBag.ProvinceID = staffInfo.ProvinceID;
+            ViewBag.DistrictID = staffInfo.DistrictID;
+            ViewBag.WardID = staffInfo.WardID;
+            ViewData["Photo"] = staffInfo.User.Photo;
+            return View("UpdateStaff", getstaffDTO);
         }
 
         [HttpPost]

@@ -16,6 +16,7 @@ builder.Services.AddScoped<IStatisticService, StatisticService>();
 builder.Services.AddScoped<IAccountService,AccountService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -45,6 +46,8 @@ builder.Services.AddSession(option =>
 {
     option.IdleTimeout = TimeSpan.FromMinutes(3);
 });
+// Register the INewsService and NewsService
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

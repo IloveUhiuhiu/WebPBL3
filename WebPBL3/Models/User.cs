@@ -12,6 +12,7 @@ namespace WebPBL3.Models
             UserID = string.Empty;   
         }
 
+        public static object Identity { get; internal set; }
         [Key]
         [Display(Name = "Mã người dùng")]
         [StringLength(maximumLength: 10)]

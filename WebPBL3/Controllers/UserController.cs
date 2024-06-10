@@ -23,20 +23,20 @@ namespace WebPBL3.Controllers
     {
         IUserService _userService;
         IPhotoService _photoService;
-        
+
         private int limits = 10;
-        public UserController (IUserService userService, IPhotoService photoService)
+        public UserController(IUserService userService, IPhotoService photoService)
         {
             _photoService = photoService;
             _userService = userService;
-           
+
         }
         public IActionResult Index()
         {
             return View();
         }
         // GET
-        public async Task<IActionResult> UserListTable(string searchtxt = "",int fieldsearch = 1, int page = 1)
+        public async Task<IActionResult> UserListTable(string searchtxt = "", int fieldsearch = 1, int page = 1)
         {
 
             int total = await _userService.CountUsers(searchtxt, fieldsearch, page);
@@ -47,22 +47,22 @@ namespace WebPBL3.Controllers
             if (page > totalPage) page = totalPage;
             IEnumerable<UserDTO> users = await _userService.GetAllUsers(searchtxt, fieldsearch, page);
             // tổng số  người dùng
-            
+
             ViewBag.totalRecord = total;
             ViewBag.totalPage = totalPage;
             ViewBag.currentPage = page;
             ViewBag.searchtxt = searchtxt;
             ViewBag.fieldsearch = fieldsearch;
-            
-            
-           
+
+
+
             return View(users);
         }
-        
+
         // GET
         public IActionResult Create()
         {
-            
+
             return View();
         }
         // POST
@@ -70,40 +70,41 @@ namespace WebPBL3.Controllers
         public async Task<IActionResult> Create(UserDTO userdto, IFormFile? uploadimage)
         {
             if (ModelState.IsValid)
-            {   
-                
-                bool checkEmailExist =  await _userService.CheckEmailExits(userdto.Email);
+            {
+
+                bool checkEmailExist = await _userService.CheckEmailExits(userdto.Email);
                 if (checkEmailExist)
                 {
                     TempData["Error"] = "Email đã tồn tại";
                     return View(userdto);
                 }
-                
+
                 userdto.UserID = await _userService.GenerateID();
 
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    
-                    userdto.Photo = await _photoService.AddPhoto("user",uploadimage);
-                    
+
+                    userdto.Photo = await _photoService.AddPhoto("user", uploadimage);
+
                 }
                 try
                 {
                     userdto.RoleID = 3;
                     await _userService.AddUser(userdto);
 
-                } catch (DbUpdateException ex)
+                }
+                catch (DbUpdateException ex)
                 {
                     return BadRequest("Error add user: " + ex.Message);
-                }   
-                
+                }
+
                 return RedirectToAction("UserListTable");
 
             }
             return View(userdto);
         }
         // GET
-        public async Task<IActionResult> Edit(string ?id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -115,12 +116,12 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("User is not found");
             }
-            
+
             UserDTO userdtoFromDb = await _userService.ConvertToUserDTO(user);
             //Console.WriteLine(user.UserID);
             return View(userdtoFromDb);
         }
-        
+
 
         // POST
         [HttpPost]
@@ -137,7 +138,7 @@ namespace WebPBL3.Controllers
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    userdto.Photo = await _photoService.EditPhoto("user",uploadimage,userdto.Photo);
+                    userdto.Photo = await _photoService.EditPhoto("user", uploadimage, userdto.Photo);
                 }
                 Console.WriteLine("Account " + userdto.AccountID);
                 try
@@ -169,26 +170,26 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("User is not found");
             }
-            
+
             UserDTO userFromDb = await _userService.ConvertToUserDTO(user);
-            
+
             return View(userFromDb);
         }
         [HttpGet]
-        public async Task<IActionResult>  Delete(string ?id)
+        public async Task<IActionResult> Delete(string? id)
         {
             //Console.WriteLine(id);
             if (string.IsNullOrEmpty(id))
             {
                 return NotFound("Id is null");
             }
-            
-            User? user =  await _userService.GetUserById(id);
+
+            User? user = await _userService.GetUserById(id);
             if (user == null)
             {
                 return NotFound("User is not found");
             }
-            
+
             try
             {
                 await _userService.DeleteUser(user.AccountID);
@@ -200,9 +201,9 @@ namespace WebPBL3.Controllers
 
             }
             return RedirectToAction("UserListTable");
-          
+
         }
 
-        
+
     }
 }

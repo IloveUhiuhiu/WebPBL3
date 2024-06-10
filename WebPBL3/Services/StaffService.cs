@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using WebPBL3.DTO;
 using WebPBL3.Models;
 namespace WebPBL3.Services
@@ -7,11 +8,13 @@ namespace WebPBL3.Services
     public class StaffService : IStaffService
     {
         private readonly ApplicationDbContext _db;
-        private IWebHostEnvironment _environment;
-        public StaffService(ApplicationDbContext db, IWebHostEnvironment environment)
+        private IWebHostEnvironment environment;
+        IUserService _userService;
+        public StaffService(ApplicationDbContext db, IWebHostEnvironment environment, IUserService userService)
         {
             _db = db;
-            _environment = environment;
+            this.environment = environment;
+            _userService = userService; 
         }
         public async Task<List<StaffDTO>> GetAllStaffs()
         {
@@ -85,24 +88,59 @@ namespace WebPBL3.Services
             }
             return staffQuery;
         }
-
-        
-        public async Task<Staff> GetStaffById(string id)
+        public async Task<FullStaffInfoDTO> GetStaffById(string id)
         {
             try
             {
                 Staff? staff = await _db.Staffs.FirstOrDefaultAsync(u => u.StaffID == id);
-                return staff;
+                if (staff == null) return null;
+
+                User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == staff.UserID);
+                if (user == null) return null;
+
+                Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
+                if (account == null) return null;
+
+                Ward? ward = await _db.Wards.FirstOrDefaultAsync(w => w.WardID == user.WardID);
+                District? district = null;
+                Province? province = null;
+
+                if (ward != null)
+                {
+                    district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
+                    province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
+                }
+
+                string? districtName = district?.DistrictName;
+                string? provinceName = province?.ProvinceName;
+                string? wardName = ward?.WardName;
+                int? districtID = district?.DistrictID;
+                int? provinceID = province?.ProvinceID;
+                int? wardID = ward?.WardID;
+
+                return new FullStaffInfoDTO
+                {
+                    Staff = staff,
+                    User = user,
+                    Account = account,
+                    WardName = wardName,
+                    DistrictName = districtName,
+                    ProvinceName = provinceName,
+                    WardID = wardID,
+                    DistrictID = districtID,
+                    ProvinceID = provinceID
+                };
             }
             catch (Exception ex)
             {
                 throw new Exception("Lỗi xảy ra khi truy vấn người dùng: ", ex);
             }
         }
-        public async Task AddStaff(Staff staff)
+        public async Task AddStaff(StaffDTO staffDTO)
         {
             try
             {
+                Staff staff = ConvertToStaff(staffDTO);
                 _db.Staffs.Add(staff);
                 await _db.SaveChangesAsync();
             }
@@ -198,7 +236,30 @@ namespace WebPBL3.Services
                 throw new Exception("Lỗi trong khi chuyển đổi StaffDTO thành Staff: ", ex);
             }
         }
+        public async Task<string> GenerateID()
+        {
+            int staffId = 1;
+            Staff? lastUser = await _db.Staffs.OrderByDescending(u => u.StaffID).FirstOrDefaultAsync();
+            if (lastUser != null)
+            {
+                staffId = Convert.ToInt32(lastUser.StaffID.Substring(2)) + 1;
+            }
+            string staffIdTxt = "NV" + staffId.ToString().PadLeft(6, '0');
+            return staffIdTxt;
+        }
+        public async Task<bool> CheckIdentityCardExits(string? identityCard)
+        {
+            try
+            {
+                User? user = await _db.Users.FirstOrDefaultAsync(a => a.IdentityCard == identityCard);
+                return (user != null);
+            }
 
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xảy ra khi truy vấn tài khoản: ", ex);
+            }
+        }
         public Task<StaffDTO> ConvertToStaffDTO(Staff staff, User user, Account account)
         {
             try
@@ -238,5 +299,20 @@ namespace WebPBL3.Services
                 throw new Exception("Lỗi trong khi chuyển đổi User thành UserDTO: ", ex);
             }
         }
+        public async Task<string?> SaveStaffPhoto(IFormFile? photo)
+        {
+            if (photo != null && photo.Length > 0)
+            {
+                string newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(photo.FileName);
+                string imageFullPath = Path.Combine(environment.WebRootPath, "upload", "staff", newFilename);
+                using (var stream = new FileStream(imageFullPath, FileMode.Create))
+                {
+                    await photo.CopyToAsync(stream);
+                }
+                return newFilename;
+            }
+            return null;
+        }
+
     }
 }

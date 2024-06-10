@@ -35,7 +35,7 @@ namespace WebPBL3.Services
         }
 
         public Car ConvertToCar(CarDTO cardto)
-        {   
+        {
             try
             {
                 Car car = new Car
@@ -64,11 +64,12 @@ namespace WebPBL3.Services
 
                 };
                 return car;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("Lỗi trong khi chuyển đổi CarDTO thành Car: ", ex);
             }
-            
+
 
         }
 
@@ -78,7 +79,7 @@ namespace WebPBL3.Services
             try
             {
                 CarDTO cardto = new CarDTO
-                {   
+                {
                     CarID = car.CarID,
                     CarName = car.CarName,
                     Photo = car.Photo,
@@ -98,8 +99,9 @@ namespace WebPBL3.Services
                     MakeName = makeName,
                 };
                 return cardto;
-            
-            } catch (Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception("Lỗi trong khi chuyển đổi Car thành CarDTO: ", ex);
             }
@@ -134,12 +136,12 @@ namespace WebPBL3.Services
         }
 
         public async Task<IEnumerable<CarDTO>> GetAllCars(int makeid, string searchtxt, int page)
-        {   
+        {
             try
             {
                 List<CarDTO> cars = await _db.Cars
                 .OrderBy(c => c.CarID)
-                
+
                 .Where(c => c.Flag == false && (makeid == 0 || c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt)))
                 .Skip((page - 1) * limits).Take(limits)
                 .Include(c => c.Make)
@@ -156,16 +158,17 @@ namespace WebPBL3.Services
                     MakeName = c.Make.MakeName,
                 }).ToListAsync();
                 return cars;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("Lỗi trong khi lấy danh sách xe: ", ex);
             }
-            
-            
+
+
         }
 
         public async Task<IEnumerable<Make>> GetAllMakes()
-        {   
+        {
             return await _db.Makes.ToListAsync();
         }
         public async Task<Car> GetCarById(string id)
@@ -196,7 +199,7 @@ namespace WebPBL3.Services
         }
         public async Task<int> CountCars(int makeid, string searchtxt)
         {
-            return  await _db.Cars
+            return await _db.Cars
                 .Where(c => c.Flag == false && (makeid == 0 || c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt))).CountAsync();
         }
 

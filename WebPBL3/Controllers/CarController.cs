@@ -29,8 +29,8 @@ namespace WebPBL3.Controllers
 
         public async Task<IActionResult> Index(string searchTerm = "")
         {
-			ViewBag.HideHeader = false;
-			ViewBag.SearchTerm = searchTerm;
+            ViewBag.HideHeader = false;
+            ViewBag.SearchTerm = searchTerm;
 
             var makes = await _carService.GetAllMakes();
             var origins = await _carService.GetOrigins();
@@ -53,7 +53,7 @@ namespace WebPBL3.Controllers
 
             var item = await _carService.FilterCars(txtSearch, makeName, origin, color, seat, page, perPage, sortBy);
             int totalCount = item.Count();
-            var cars = item.Skip((page-1) * perPage)
+            var cars = item.Skip((page - 1) * perPage)
                 .Take(perPage)
                 .Select(i => new List<string>
             {
@@ -61,7 +61,7 @@ namespace WebPBL3.Controllers
                 i.Photo,
                 i.Price.ToString(),
                 i.CarName
-            }) ;
+            });
             int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
             return Json(new { Data = cars, TotalPages = totalPages });
 		}
@@ -87,7 +87,7 @@ namespace WebPBL3.Controllers
         }
 
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
+        public async Task<IActionResult> CarListTable(int makeid = 0, string searchtxt = "", int page = 1)
         {
 
             // Kiểm tra và lấy dữ liệu "makes" nếu chưa có trong TempData
@@ -108,15 +108,15 @@ namespace WebPBL3.Controllers
             if (page > totalPage && totalPage > 0) page = totalPage;
             IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
             // tổng số sản phẩm
-            
+
 
             ViewBag.totalRecord = total;
             ViewBag.totalPage = totalPage;
             ViewBag.currentPage = page;
             ViewBag.makeid = makeid;
             ViewBag.searchtxt = searchtxt;
-            
-             
+
+
             return View(cars);
         }
         // [GET]
@@ -150,9 +150,9 @@ namespace WebPBL3.Controllers
                 }
                 try
                 {
-                    
+
                     await _carService.AddCar(cardto);
-                        
+
                 }
                 catch (DbUpdateException ex)
                 {
@@ -174,21 +174,20 @@ namespace WebPBL3.Controllers
                 return NotFound("Id is null");
             }
             Car? car = await _carService.GetCarById(id);
-            
             if (car == null)
             {
                 return NotFound("Car is not found");
             }
 
             CarDTO CarDTOFromDb = _carService.ConvertToCarDTO(car);
-            
+
             return View(CarDTOFromDb);
         }
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Edit(CarDTO cardto,IFormFile? uploadimage)
+        public async Task<IActionResult> Edit(CarDTO cardto, IFormFile? uploadimage)
         {
-            
+
             if (ModelState.IsValid)
             {
                 ;
@@ -198,13 +197,13 @@ namespace WebPBL3.Controllers
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    cardto.Photo = await _photoService.EditPhoto("car",uploadimage,cardto.Photo);
+                    cardto.Photo = await _photoService.EditPhoto("car", uploadimage, cardto.Photo);
                 }
-               
+
                 try
                 {
                     await _carService.EditCar(cardto);
-                        
+
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -220,7 +219,7 @@ namespace WebPBL3.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Details(string? id)
         {
-            
+
             if (string.IsNullOrEmpty(id))
             {
                 return NotFound("Id is null");
@@ -238,7 +237,7 @@ namespace WebPBL3.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(string? id)
         {
-            
+
             if (string.IsNullOrEmpty(id))
             {
                 return NotFound("Id is null");
@@ -249,22 +248,22 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("Car is not found");
             }
-           
+
             try
             {
-               await _carService.DeleteCar(car);
-                
+                await _carService.DeleteCar(car);
+
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                
+
                 return BadRequest("Error delete car: " + ex.Message);
             }
 
             return RedirectToAction("CarListTable");
-            
+
         }
 
 
-	}
+    }
 }
