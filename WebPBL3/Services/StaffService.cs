@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using WebPBL3.DTO;
 using WebPBL3.Models;
 namespace WebPBL3.Services
@@ -7,65 +8,65 @@ namespace WebPBL3.Services
     public class StaffService : IStaffService
     {
         private readonly ApplicationDbContext _db;
-        private IWebHostEnvironment _environment;
+        private IWebHostEnvironment environment;
         IUserService _userService;
         public StaffService(ApplicationDbContext db, IWebHostEnvironment environment, IUserService userService)
         {
             _db = db;
-            _environment = environment;
+            this.environment = environment;
             _userService = userService; 
         }
-        public Task<List<StaffDTO>> GetAllStaffs()
+        public async Task<List<StaffDTO>> GetAllStaffs()
         {
-            var staffs = (from staff in _db.Staffs
-                             join user in _db.Users on staff.UserID equals user.UserID
-                             join ward in _db.Wards on user.WardID equals ward.WardID
-                             join district in _db.Districts on ward.DistrictID equals district.DistrictID
-                             join province in _db.Provinces on district.ProvinceID equals province.ProvinceID
-                             join account in _db.Accounts on user.AccountID equals account.AccountID
-                             select new StaffDTO
-                             {
-                                 StaffID = staff.StaffID,
-                                 FullName = user.FullName,
-                                 Email = account.Email,
-                                 PhoneNumber = user.PhoneNumber,
-                                 IdentityCard = user.IdentityCard,
-                                 Gender = user.Gender,
-                                 BirthDate = user.BirthDate,
-                                 Address = user.Address,
-                                 Position = staff.Position,
-                                 Salary = staff.Salary,
-                                 Status = account.Status,
-                                 WardName = ward.WardName,
-                                 ProvinceName = province.ProvinceName,
-                                 DistrictName = district.DistrictName
-                             }).ToListAsync();
-            return staffs;
+            var staff = await _db.Staffs
+                .Include(s => s.User)
+                .ThenInclude(u => u.Ward)
+                .ThenInclude(w => w.District)
+                .ThenInclude(d => d.Province)
+                .Include(s => s.User.Account)
+                .Select(s => new StaffDTO
+                {
+                    StaffID = s.StaffID,
+                    FullName = s.User.FullName,
+                    Email = s.User.Account.Email,
+                    PhoneNumber = s.User.PhoneNumber,
+                    IdentityCard = s.User.IdentityCard,
+                    Gender = s.User.Gender,
+                    BirthDate = s.User.BirthDate,
+                    Address = s.User.Address,
+                    Position = s.Position,
+                    Salary = s.Salary,
+                    ProvinceName = s.User.Ward.District.Province.ProvinceName,
+                    DistrictName = s.User.Ward.District.DistrictName,
+                    WardName = s.User.Ward.WardName
+
+                }).ToListAsync();
+            return staff;
         }
         public async Task<IEnumerable<StaffDTO>> GetStaffsBySearch(string searchTerm, string searchField)
         {
-            var staffQuery = from staff in _db.Staffs
-                             join user in _db.Users on staff.UserID equals user.UserID
-                             join ward in _db.Wards on user.WardID equals ward.WardID
-                             join district in _db.Districts on ward.DistrictID equals district.DistrictID
-                             join province in _db.Provinces on district.ProvinceID equals province.ProvinceID
-                             join account in _db.Accounts on user.AccountID equals account.AccountID
-                             select new StaffDTO
-                             {
-                                 StaffID = staff.StaffID,
-                                 FullName = user.FullName,
-                                 Email = account.Email,
-                                 PhoneNumber = user.PhoneNumber,
-                                 IdentityCard = user.IdentityCard,
-                                 Gender = user.Gender,
-                                 BirthDate = user.BirthDate,
-                                 Address = user.Address,
-                                 Position = staff.Position,
-                                 Salary = staff.Salary,
-                                 ProvinceName = province.ProvinceName,
-                                 DistrictName = district.DistrictName,
-                                 WardName = ward.WardName
-                             };
+            IQueryable<StaffDTO> staffQuery = _db.Staffs
+            .Include(s => s.User)
+            .ThenInclude(u => u.Ward)
+            .ThenInclude(w => w.District)
+            .ThenInclude(d => d.Province)
+            .Include(s => s.User.Account)
+            .Select(s => new StaffDTO
+            {
+                StaffID = s.StaffID,
+                FullName = s.User.FullName,
+                Email = s.User.Account.Email,
+                PhoneNumber = s.User.PhoneNumber,
+                IdentityCard = s.User.IdentityCard,
+                Gender = s.User.Gender,
+                BirthDate = s.User.BirthDate,
+                Address = s.User.Address,
+                Position = s.Position,
+                Salary = s.Salary,
+                ProvinceName = s.User.Ward.District.Province.ProvinceName,
+                DistrictName = s.User.Ward.District.DistrictName,
+                WardName = s.User.Ward.WardName
+            });
 
             if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(searchField))
             {
@@ -87,12 +88,48 @@ namespace WebPBL3.Services
             }
             return staffQuery;
         }
-        public async Task<Staff> GetStaffById(string id)
+        public async Task<FullStaffInfoDTO> GetStaffById(string id)
         {
             try
             {
                 Staff? staff = await _db.Staffs.FirstOrDefaultAsync(u => u.StaffID == id);
-                return staff;
+                if (staff == null) return null;
+
+                User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == staff.UserID);
+                if (user == null) return null;
+
+                Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
+                if (account == null) return null;
+
+                Ward? ward = await _db.Wards.FirstOrDefaultAsync(w => w.WardID == user.WardID);
+                District? district = null;
+                Province? province = null;
+
+                if (ward != null)
+                {
+                    district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
+                    province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
+                }
+
+                string? districtName = district?.DistrictName;
+                string? provinceName = province?.ProvinceName;
+                string? wardName = ward?.WardName;
+                int? districtID = district?.DistrictID;
+                int? provinceID = province?.ProvinceID;
+                int? wardID = ward?.WardID;
+
+                return new FullStaffInfoDTO
+                {
+                    Staff = staff,
+                    User = user,
+                    Account = account,
+                    WardName = wardName,
+                    DistrictName = districtName,
+                    ProvinceName = provinceName,
+                    WardID = wardID,
+                    DistrictID = districtID,
+                    ProvinceID = provinceID
+                };
             }
             catch (Exception ex)
             {
@@ -103,7 +140,6 @@ namespace WebPBL3.Services
         {
             try
             {
-                await _userService.AddUser(staffDTO);
                 Staff staff = ConvertToStaff(staffDTO);
                 _db.Staffs.Add(staff);
                 await _db.SaveChangesAsync();
@@ -263,5 +299,20 @@ namespace WebPBL3.Services
                 throw new Exception("Lỗi trong khi chuyển đổi User thành UserDTO: ", ex);
             }
         }
+        public async Task<string?> SaveStaffPhoto(IFormFile? photo)
+        {
+            if (photo != null && photo.Length > 0)
+            {
+                string newFilename = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(photo.FileName);
+                string imageFullPath = Path.Combine(environment.WebRootPath, "upload", "staff", newFilename);
+                using (var stream = new FileStream(imageFullPath, FileMode.Create))
+                {
+                    await photo.CopyToAsync(stream);
+                }
+                return newFilename;
+            }
+            return null;
+        }
+
     }
 }

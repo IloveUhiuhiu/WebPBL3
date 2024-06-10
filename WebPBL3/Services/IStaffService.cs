@@ -6,7 +6,7 @@ namespace WebPBL3.Services
     {
         Task<List<StaffDTO>> GetAllStaffs();
         Task<IEnumerable<StaffDTO>> GetStaffsBySearch(string searchTerm, string searchField);
-        Task<Staff> GetStaffById(string id);
+        Task<FullStaffInfoDTO> GetStaffById(string id);
         Task AddStaff(StaffDTO staffDTO);
         Task EditStaff(Staff staff);
         Task DeleteStaff(Staff staff);
@@ -17,5 +17,6 @@ namespace WebPBL3.Services
         Task<string> GenerateID();
         Task<bool> CheckIdentityCardExits(string? identityCard);
         Task<StaffDTO> ConvertToStaffDTO(Staff staff,User user, Account account);
+        Task<string?> SaveStaffPhoto(IFormFile? photo);
     }
 }
