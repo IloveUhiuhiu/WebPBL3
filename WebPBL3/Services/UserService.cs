@@ -22,7 +22,7 @@ namespace WebPBL3.Services
             
 			try
 			{   
-                await _accountService.AddDefaultAccount(userdto.Email,userdto.RoleID);
+                userdto.AccountID = await _accountService.AddDefaultAccount(userdto.Email,userdto.RoleID);
                 User user = ConvertToUser(userdto);
                 _db.Users.Add(user);
                 await _db.SaveChangesAsync();

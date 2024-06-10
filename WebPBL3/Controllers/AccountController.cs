@@ -216,51 +216,13 @@ namespace WebPBL3.Controllers
                 return BadRequest("Người dùng chưa đăng nhập");
             }
             string? email = User.Identity.Name;
-            Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
 
-            if (account == null)
+            if (email == null)
             {
                 return NotFound("Account is not found");
 
             }
-            User? user = account.User;
-
-            if (user == null)
-            {
-                return NotFound("User is not found");
-            }
-            List<Order> orders = await _db.Orders.Where(o => o.UserID == user.UserID)
-                .Include(o => o.DetailOrders)
-                .ThenInclude(d => d.Car).ThenInclude(c => c.Make).OrderByDescending(o => o.Date).ToListAsync();
-
-
-            List<HistoryOrderDTO> historyOrders = new List<HistoryOrderDTO>();
-
-            foreach (var item in orders)
-            {
-                HistoryOrderDTO historyOrder = new HistoryOrderDTO
-                {
-                    Date = item.Date,
-                    Totalprice = item.Totalprice,
-                    Status = item.Status,
-                    OrderID = item.OrderID,
-                };
-                foreach (var itemDetailOrder in item.DetailOrders)
-                {
-                    historyOrder.Items.Add(new HistoryOrderItem
-                    {
-
-                        CarID = itemDetailOrder.CarID,
-                        Photo = itemDetailOrder.Car.Photo,
-                        CarName = itemDetailOrder.Car.CarName,
-                        MakeName = itemDetailOrder.Car.Make.MakeName,
-                        Color = itemDetailOrder.Car.Color,
-                        Price = itemDetailOrder.Car.Price,
-                        Quantity = itemDetailOrder.Quantity
-                    });
-                }
-                historyOrders.Add(historyOrder);
-            }
+            IEnumerable<HistoryOrderDTO> historyOrders = await _accountService.GetHistoryOrders(email);
             //Console.WriteLine(historyOrders.Count);
             return View(historyOrders);
         }

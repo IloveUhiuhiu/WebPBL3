@@ -28,7 +28,7 @@ namespace WebPBL3.Services
             _httpContextAccessor = httpContextAccessor;
             _environment = environment;
         }
-        public async Task AddDefaultAccount(string email, int role)
+        public async Task<string> AddDefaultAccount(string email, int role)
         {
             try
             {   
@@ -42,6 +42,7 @@ namespace WebPBL3.Services
                     RoleID = role,
                 });
                 await _db.SaveChangesAsync();
+                return accountId;
             }
             catch (Exception ex)
             {
@@ -268,6 +269,55 @@ namespace WebPBL3.Services
         public async Task<Staff> GetInforStaff(string idUser)
         {
            return _db.Staffs.FirstOrDefault(s => s.UserID == idUser);
+        }
+
+        public async Task<IEnumerable<HistoryOrderDTO>> GetHistoryOrders(string email)
+        {   
+            Account? account = await  _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == email);
+            if (account  == null)
+            {
+                throw new InvalidOperationException("Lỗi trong khi truy vấn tài khoản");
+            }
+            User? user = account.User;
+
+            if (user == null)
+            {
+                throw new InvalidOperationException("Lỗi trong khi truy vấn người dùng");
+            }
+
+            List<Order> orders = await _db.Orders.Where(o => o.UserID == user.UserID)
+                .Include(o => o.DetailOrders)
+                .ThenInclude(d => d.Car).ThenInclude(c => c.Make).OrderByDescending(o => o.Date).ToListAsync();
+
+
+            List<HistoryOrderDTO> historyOrders = new List<HistoryOrderDTO>();
+
+            foreach (var item in orders)
+            {
+                HistoryOrderDTO historyOrder = new HistoryOrderDTO
+                {
+                    Date = item.Date,
+                    Totalprice = item.Totalprice,
+                    Status = item.Status,
+                    OrderID = item.OrderID,
+                };
+                foreach (var itemDetailOrder in item.DetailOrders)
+                {
+                    historyOrder.Items.Add(new HistoryOrderItem
+                    {
+
+                        CarID = itemDetailOrder.CarID,
+                        Photo = itemDetailOrder.Car.Photo,
+                        CarName = itemDetailOrder.Car.CarName,
+                        MakeName = itemDetailOrder.Car.Make.MakeName,
+                        Color = itemDetailOrder.Car.Color,
+                        Price = itemDetailOrder.Car.Price,
+                        Quantity = itemDetailOrder.Quantity
+                    });
+                }
+                historyOrders.Add(historyOrder);
+            }
+            return historyOrders;
         }
     }
 }
