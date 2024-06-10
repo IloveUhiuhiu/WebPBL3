@@ -1,9 +1,17 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebPBL3.Models;
+using WebPBL3.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+// Đăng ký IHttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IStatisticService, StatisticService>();
+builder.Services.AddScoped<IAccountService,AccountService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

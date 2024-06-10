@@ -20,6 +20,8 @@
     <hr class="mt-0 mb-4">
     <form method="post" enctype="multipart/form-data">
         <input type="hidden" name="UserID" value="@Model.UserID" />
+        <input type="hidden" name="AccountID" value="@Model.AccountID"/>
+        <input type="hidden" name="Photo" value="@Model.Photo"/>
         <div class="row">
             <div class="col-xl-4">
                 <!-- Profile picture card-->
@@ -224,13 +226,13 @@
         
         
         if (@Model.WardID) {
-            cities.value = @ViewBag.ProvinceID;
+            cities.value = @Model.ProvinceID;
             
             const listDistrict = await getDistrict(cities.value);
             listDistrict.forEach(district => {
                 districts.options[districts.options.length] = new Option(district.name, district.id);
             });
-            districts.value = @ViewBag.DistrictID;
+            districts.value = @Model.DistrictID;
             const listWard = await getWard(districts.value);
             listWard.forEach(ward => {
                 wards.options[wards.options.length] = new Option(ward.name, ward.id);
