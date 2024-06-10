@@ -8,25 +8,26 @@ namespace WebPBL3.Models
     {
         [Key]
         [StringLength(maximumLength: 10)]
-        public string NewsID { get; set; }
+        public string NewsID { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Tiêu đề không thể trống")]
+
         [Display(Name = "Tiêu đề")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
+
         [Display(Name = "Nội dung")]
-        [Required(ErrorMessage = "Nội dung không thể trống")]
-        public string Content { get; set; }
+        
+        public string Content { get; set; } = string.Empty ;
+
         [Display(Name = "Ảnh đính kèm")]
-        [Required(ErrorMessage = "Ảnh không thể trống")]
-        public string Photo { get; set; }
-        [Required]
+
+        public string Photo { get; set; } = string.Empty;
+        [Display(Name = "Ngày tạo")]
         public DateTime CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
-        [Display(Name = "Mã nhân viên cập nhật")]
-        [StringLength(maximumLength: 10)]
+        
         public string? UpdateBy { get; set; }
 
-        public Staff Staff { get; set; }
-        public string StaffID { get; set; }
+        public Staff? Staff { get; set; }
+        public string? StaffID { get; set; }
     }
 }

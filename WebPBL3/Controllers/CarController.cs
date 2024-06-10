@@ -11,21 +11,23 @@ using System.Runtime.ConstrainedExecution;
 using WebPBL3.Models;
 using WebPBL3.DTO;
 using Microsoft.AspNetCore.Authorization;
+using WebPBL3.Services;
+using Microsoft.Identity.Client;
 namespace WebPBL3.Controllers
 {
     public class CarController : Controller
     {
-        private ApplicationDbContext _db;
-        private IWebHostEnvironment _environment;
+        private ICarService _carService;
+        private IPhotoService _photoService;
         // Số lượng item mỗi trang
         private int limits = 10;
-        public CarController(ApplicationDbContext db, IWebHostEnvironment environment)
+        public CarController(ICarService carService, IPhotoService photoService)
         {
-            _db = db;
-            _environment = environment;
+            _carService = carService;
+            _photoService = photoService;
         }
 
-        public async Task<IActionResult> Index(string searchTerm = "")
+        /*public async Task<IActionResult> Index(string searchTerm = "")
         {
 			ViewBag.HideHeader = false;
 			ViewBag.SearchTerm = searchTerm;
@@ -161,7 +163,7 @@ namespace WebPBL3.Controllers
                         .ToList();
             ViewBag.RelatedCars = relatedCars;
             return View(CarDTOFromDb);
-        }
+        }*/
 
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
@@ -171,41 +173,13 @@ namespace WebPBL3.Controllers
             // TemData lưu trữ dữ liệu trong Session, khi Session hết hạn hoặc bị xóa thì makes bay
             if (!TempData.ContainsKey("makes"))
             {
-                List<Make> makes = _db.Makes.ToList();
+                IEnumerable<Make> makes = await _carService.GetAllMakes();
                 TempData["makes"] = JsonConvert.SerializeObject(makes);
                 TempData.Keep("makes");
             }
-            List<CarDTO> cars = await _db.Cars
-                .Include(c => c.Make)
-                .OrderBy(c => c.CarID)
-                .Where(c => c.Flag == false && (makeid == 0||c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt)))
-                .Select(c => new CarDTO
-            {
-                CarID = c.CarID,
-                CarName = c.CarName,
-                Photo = c.Photo,
-
-                Capacity = c.Capacity,
-                FuelConsumption = c.FuelConsumption,
-                Color = c.Color,
-
-                Description = c.Description,
-                Dimension = c.Dimension,
-                Engine = c.Engine,
-
-                Origin = c.Origin,
-                Price = c.Price,
-                Quantity = c.Quantity,
-
-                Seat = c.Seat,
-                Topspeed = c.Topspeed,
-                Year = c.Year,
-
-                MakeID = c.MakeID,
-                MakeName = c.Make.MakeName,
-            }).ToListAsync();
+            IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
             // tổng số sản phẩm
-            int total = cars.Count();
+            int total = await _carService.CountCars(makeid, searchtxt, page);
             // tổng số trang
             var totalPage = (total +limits - 1) / limits;
             // sử dụng khi previous là 1
@@ -218,7 +192,7 @@ namespace WebPBL3.Controllers
             ViewBag.currentPage = page;
             ViewBag.makeid = makeid;
             ViewBag.searchtxt = searchtxt;
-            cars = cars.Skip((page - 1) * limits).Take(limits).ToList();
+            
              
             return View(cars);
         }
@@ -231,7 +205,7 @@ namespace WebPBL3.Controllers
         // [POST]
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Create(CarDTO car, IFormFile uploadimage)
+        public async Task<IActionResult> Create(CarDTO cardto, IFormFile uploadimage)
         {
             foreach (var state in ModelState)
             {
@@ -242,63 +216,20 @@ namespace WebPBL3.Controllers
             }
 
             if (ModelState.IsValid)
-            {   
-                // carid bằng 1 vì trường hợp tập rỗng
-                var carid = 1;
-                // lấy xe có id lớn nhất
-                var lastCar = await _db.Cars.OrderByDescending(c => c.CarID).FirstOrDefaultAsync();
-                if (lastCar != null)
-                {
-                    carid = Convert.ToInt32(lastCar.CarID.Substring(2)) + 1;
-                }
-                // chuyển về đúng định dạng OT - 6 chữ số
-                var caridTxt = "OT" + carid.ToString().PadLeft(6, '0');
-                car.CarID = caridTxt;
+            {
 
-                
 
-                
+                cardto.CarID = await _carService.GenerateID();
+
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                    newFileName += Path.GetExtension(uploadimage!.FileName);
-                    car.Photo = newFileName;
-                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", newFileName);
-                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
+                    cardto.Photo = await _photoService.AddPhoto("car", uploadimage);
                 }
                 try
                 {
-                    _db.Cars.Add(new Car
-                    {
-                        CarID = car.CarID,
-                        CarName = car.CarName,
-                        Photo = car.Photo,
-
-                        Capacity = car.Capacity,
-                        FuelConsumption = car.FuelConsumption,
-                        Color = car.Color,
-
-                        Description = car.Description,
-                        Dimension = car.Dimension,
-                        Engine = car.Engine,
-
-                        Origin = car.Origin,
-                        Price = car.Price,
-                        Quantity = car.Quantity,
-
-                        Seat = car.Seat,
-                        Topspeed = car.Topspeed,
-                        Year = car.Year,
-
-                        MakeID = car.MakeID,
-
-                    });
-
-                    await _db.SaveChangesAsync();
+                    
+                    await _carService.AddCar(cardto);
+                        
                 }
                 catch (DbUpdateException ex)
                 {
@@ -309,7 +240,7 @@ namespace WebPBL3.Controllers
                 return RedirectToAction("CarListTable");
 
             }
-            return View(car);
+            return View(cardto);
 
         }
         [Authorize(Roles = "Admin, Staff")]
@@ -319,38 +250,15 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("Id is null");
             }
-            Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == id);
+            Car? car = await _carService.GetCarById(id);
             
             if (car == null)
             {
                 return NotFound("Car is not found");
             }
 
-            CarDTO CarDTOFromDb = new CarDTO
-            {
-                CarID = car.CarID,
-                CarName = car.CarName,
-                Photo = car.Photo,
-
-                Capacity = car.Capacity,
-                FuelConsumption = car.FuelConsumption,
-                Color = car.Color,
-
-                Description = car.Description,
-                Dimension = car.Dimension,
-                Engine = car.Engine,
-
-                Origin = car.Origin,
-                Price = car.Price,
-                Quantity = car.Quantity,
-
-                Seat = car.Seat,
-                Topspeed = car.Topspeed,
-                Year = car.Year,
-
-                MakeID = car.MakeID,
-
-            };
+            CarDTO CarDTOFromDb = _carService.ConvertToCarDTO(car);
+            
             return View(CarDTOFromDb);
         }
         [HttpPost]
@@ -359,61 +267,20 @@ namespace WebPBL3.Controllers
         {
             
             if (ModelState.IsValid)
-            {   
-                Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == cardto.CarID);
-                if (car == null)
+            {
+                ;
+                if (string.IsNullOrEmpty(cardto.CarID))
                 {
                     return NotFound("Car is not found");
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                    newFileName += Path.GetExtension(uploadimage!.FileName);
-                    if (!car.Photo.IsNullOrEmpty())
-                    {
-                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", car.Photo);
-                        if (System.IO.File.Exists(oldImageFullPath))
-                        {
-                            System.IO.File.Delete(oldImageFullPath);
-                        }
-                    }
-                    cardto.Photo = newFileName;
-                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", newFileName);
-                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
+                    cardto.Photo = await _photoService.EditPhoto("car",uploadimage,cardto.Photo);
                 }
-                
-
-                car.CarName = cardto.CarName;
-                car.Photo = cardto.Photo;
-
-                car.Capacity = cardto.Capacity;
-                car.FuelConsumption = cardto.FuelConsumption;
-                car.Color = cardto.Color;
-
-                car.Description = cardto.Description;
-                car.Dimension = cardto.Dimension;
-                car.Engine = cardto.Engine;
-
-                car.Origin = cardto.Origin;
-                car.Price = cardto.Price;
-                car.Quantity = cardto.Quantity;
-
-                car.Seat = cardto.Seat;
-                car.Topspeed = cardto.Topspeed;
-                car.Year = cardto.Year;
-
-                car.MakeID = cardto.MakeID;
-
-
+               
                 try
                 {
-                    _db.Cars.Update(car);
-
-                    await _db.SaveChangesAsync();
+                    await _carService.EditCar(cardto);
                         
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -435,41 +302,15 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("Id is null");
             }
-            Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == id);
+            Car? car = await _carService.GetCarById(id);
 
             if (car == null)
             {
                 return NotFound("Car is not found");
             }
-            Make? make = await _db.Makes.FirstOrDefaultAsync(m => m.MakeID == car.MakeID);
-            
-            CarDTO CarDTOFromDb = new CarDTO
-            {
-                CarID = car.CarID,
-                CarName = car.CarName,
-                Photo = car.Photo,
+            CarDTO cardtoFromDb = _carService.ConvertToCarDTO(car);
 
-                Capacity = car.Capacity,
-                FuelConsumption = car.FuelConsumption,
-                Color = car.Color,
-
-                Description = car.Description,
-                Dimension = car.Dimension,
-                Engine = car.Engine,
-
-                Origin = car.Origin,
-                Price = car.Price,
-                Quantity = car.Quantity,
-
-                Seat = car.Seat,
-                Topspeed = car.Topspeed,
-                Year = car.Year,
-
-                MakeID = car.MakeID,
-                MakeName = make.MakeName,
-
-            };
-            return View(CarDTOFromDb);
+            return View(cardtoFromDb);
         }
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(string? id)
@@ -479,18 +320,16 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("Id is null");
             }
-            Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == id);
+            Car? car = await _carService.GetCarById(id);
 
             if (car == null)
             {
                 return NotFound("Car is not found");
             }
            
-            car.Flag = true;
             try
             {
-                _db.Cars.Update(car);
-                await _db.SaveChangesAsync();
+               await _carService.DeleteCar(car);
                 
             }
             catch (DbUpdateConcurrencyException ex)

@@ -19,17 +19,14 @@ namespace WebPBL3.Models
         [Display(Name = "Mã hóa đơn")]
         public string OrderID { get; set; }
 
-
-
-        [Required(ErrorMessage = "Ngày xuất đơn không thể trống")]
         [Display(Name = "Ngày xuất đơn")]
         public DateTime Date { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "Tổng thanh toán không thể trống")]
+       
         [Display(Name = "Tổng thanh toán")]
         public double Totalprice { get; set; }
 
-        [Required(ErrorMessage = "Trạng thái thanh toán không thể trống")]
+        
         [Display(Name = "Trạng thái thanh toán")]
         public string Status { get; set; }
 
@@ -37,13 +34,13 @@ namespace WebPBL3.Models
 
 
 
-        public User User { get; set; }
+        public User? User { get; set; }
 
         public string UserID { get; set; }
 
-        public Staff Staff { get; set; }
+        public Staff? Staff { get; set; }
 
         public string StaffID { get; set; }
-        public List<DetailOrder> DetailOrders { get; set; }
+        public List<DetailOrder>? DetailOrders { get; set; }
     }
 }

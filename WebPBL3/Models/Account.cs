@@ -17,15 +17,15 @@ namespace  WebPBL3.Models
         [Display(Name = "Mã tài khoản")]
         public string AccountID { get; set; }
 
+
         [Display(Name = "Email")]
         [StringLength(maximumLength: 50)]
-        [Required(ErrorMessage = "Bạn phải nhập email")]
         public string Email { get; set; }
 
         [Display(Name = "Password")]
         [StringLength(maximumLength: 100)]
-        [Required(ErrorMessage = "Bạn phải nhập password")]
         public string Password { get; set; }
+
 
         [Display(Name = "Trạng thái hoạt động")]
         public bool Status { get; set; }

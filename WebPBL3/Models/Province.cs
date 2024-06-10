@@ -19,10 +19,9 @@ namespace WebPBL3.Models
 
         [StringLength(maximumLength: 50)]
 
-        [Required]
         public string ProvinceName { get; set; }
 
-        public List<District> Districts { get; set; }
+        public List<District>? Districts { get; set; }
 
 
     }
