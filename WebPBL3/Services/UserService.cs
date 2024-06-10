@@ -167,6 +167,27 @@ namespace WebPBL3.Services
                 return users;
         }
 
-        
-	}
+        public async Task<UserDTO> ExtractEmail(string email)
+        {
+            User? u =await _db.Users
+                .Include(a => a.Account)
+                .Include(w => w.Ward.District)
+                .FirstOrDefaultAsync(u => u.Account.Email == email);
+            if (u == null)
+            {
+                throw new Exception("Email không tồn tại");
+            }
+            return new UserDTO
+            {
+                FullName = u.FullName,
+                IdentityCard = u.IdentityCard,
+                PhoneNumber = u.PhoneNumber,
+                Email = email,
+                Address = u.Address,
+                WardID = u.WardID ?? 0,
+                ProvinceID = u.Ward != null ? u.Ward.District.ProvinceID : 0,
+                DistrictID = u.Ward != null ? u.Ward.DistrictID : 0,
+            };
+        }
+    }
 }

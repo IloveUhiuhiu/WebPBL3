@@ -9,8 +9,8 @@ namespace WebPBL3.Services
 		Task AddUser(User user);
         Task EditUser(User user);
         Task DeleteUser(User user);
-
 		User ConvertToUser(UserDTO UserDTO);
 		Task<UserDTO> ConvertToUserDTO(User user);
+		Task<UserDTO> ExtractEmail(string email);
 	}
 }
