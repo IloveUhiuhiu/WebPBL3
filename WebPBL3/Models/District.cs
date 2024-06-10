@@ -10,7 +10,7 @@ namespace WebPBL3.Models
         public District()
         {
             DistrictName = string.Empty;
-            DistrictID = 0;
+            DistrictID = ProvinceID = 0;
         }
 
         [Key]
@@ -25,10 +25,10 @@ namespace WebPBL3.Models
         [Required]
         public string DistrictName { get; set; }
 
-        public Province Province { get; set; }
+        public Province? Province { get; set; }
         public int ProvinceID { get; set; }
 
-        public List<Ward> Wards { get; set; }
+        public List<Ward>? Wards { get; set; }
 
 
 

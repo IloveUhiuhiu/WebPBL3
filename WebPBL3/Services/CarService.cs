@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using WebPBL3.DTO;
 using WebPBL3.Models;
 
@@ -9,16 +10,18 @@ namespace WebPBL3.Services
     {
         private readonly ApplicationDbContext _db;
         private IWebHostEnvironment _environment;
+        private int limits = 10;
         public CarService(ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
             _environment = environment;
         }
 
-        public async Task AddCar(Car car)
+        public async Task AddCar(CarDTO cardto)
         {
             try
             {
+                Car car = ConvertToCar(cardto);
                 _db.Cars.Add(car);
                 await _db.SaveChangesAsync();
             }
@@ -111,10 +114,11 @@ namespace WebPBL3.Services
             }
         }
 
-        public async Task EditCar(Car car)
+        public async Task EditCar(CarDTO cardto)
         {
             try
             {
+                Car car = ConvertToCar(cardto);
                 _db.Cars.Update(car);
                 await _db.SaveChangesAsync();
             }
@@ -129,31 +133,20 @@ namespace WebPBL3.Services
             try
             {
                 List<CarDTO> cars = await _db.Cars
-                .Include(c => c.Make)
                 .OrderBy(c => c.CarID)
+                
                 .Where(c => c.Flag == false && (makeid == 0 || c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt)))
+                .Skip((page - 1) * limits).Take(limits)
+                .Include(c => c.Make)
                 .Select(c => new CarDTO
                 {
                     CarID = c.CarID,
                     CarName = c.CarName,
                     Photo = c.Photo,
-
                     Capacity = c.Capacity,
-                    FuelConsumption = c.FuelConsumption,
-                    Color = c.Color,
-
-                    Description = c.Description,
-                    Dimension = c.Dimension,
-                    Engine = c.Engine,
-
-                    Origin = c.Origin,
                     Price = c.Price,
-                    Quantity = c.Quantity,
-
                     Seat = c.Seat,
-                    Topspeed = c.Topspeed,
-                    Year = c.Year,
-
+                    Quantity = c.Quantity,
                     MakeID = c.MakeID,
                     MakeName = c.Make.MakeName,
                 }).ToListAsync();
@@ -164,6 +157,11 @@ namespace WebPBL3.Services
             }
             
             
+        }
+
+        public async Task<IEnumerable<Make>> GetAllMakes()
+        {   
+            return await _db.Makes.ToListAsync();
         }
 
         public async Task<Car> GetCarById(string id)
@@ -177,6 +175,25 @@ namespace WebPBL3.Services
             {
                 throw new Exception("Lỗi xảy ra khi truy vấn xe: ", ex);
             }
+        }
+
+        public async Task<string> GenerateID()
+        {
+            int carId = 1;
+            // lấy xe có id lớn nhất
+            var lastCar = await _db.Cars.OrderByDescending(c => c.CarID).FirstOrDefaultAsync();
+            if (lastCar != null)
+            {
+                carId = Convert.ToInt32(lastCar.CarID.Substring(2)) + 1;
+            }
+            // chuyển về đúng định dạng OT - 6 chữ số
+            var caridTxt = "OT" + carId.ToString().PadLeft(6, '0');
+            return caridTxt;
+        }
+        public async Task<int> CountCars(int makeid, string searchtxt, int page)
+        {
+            return  await _db.Cars
+                .Where(c => c.Flag == false && (makeid == 0 || c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt))).CountAsync();
         }
     }
 }

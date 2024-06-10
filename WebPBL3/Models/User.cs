@@ -9,12 +9,7 @@ namespace WebPBL3.Models
     {
         public User()
         {
-            UserID = string.Empty;
-            FullName = "User";
-            PhoneNumber = string.Empty;
-            IdentityCard = string.Empty;
-            Address = string.Empty;
-            Photo = string.Empty;
+            UserID = string.Empty;   
         }
 
         [Key]
@@ -23,7 +18,7 @@ namespace WebPBL3.Models
         public string UserID { get; set; }
 
 
-        [Display(Name = "Họ và tên ")]
+        [Display(Name = "Họ và tên")]
         [StringLength(maximumLength: 50)]
         public string? FullName { get; set; }
 
@@ -43,22 +38,21 @@ namespace WebPBL3.Models
         public DateTime? BirthDate { get; set; }
 
         [Display(Name = "Địa chỉ")]
-        [StringLength(maximumLength: 200, ErrorMessage = "Địa chỉ quá dài")]
+        [StringLength(maximumLength: 200, ErrorMessage = "Địa chỉ quá dài.")]
         public string? Address { get; set; }
         public int? WardID { get; set; }
         public Ward? Ward { get; set; }
 
         [Display(Name = "Ảnh")]
-        public string? Photo { get; set; } = "";
+        public string? Photo { get; set; }
 
 
-        public Account Account { get; set; }
-        [StringLength(maximumLength: 10)]
-        public string AccountID { get; set; }
+        public Account? Account { get; set; }
+        public string? AccountID { get; set; }
 
-        public Staff Staff { get; set; }
+        public Staff? Staff { get; set; }
 
-        public List<Feedback> Feedbacks { get; set; }
-        public List<Order> Orders { get; set; }
+        public List<Feedback>? Feedbacks { get; set; }
+        public List<Order>? Orders { get; set; }
     }
 }

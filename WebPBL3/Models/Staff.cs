@@ -24,7 +24,7 @@ namespace WebPBL3.Models
         [Display(Name = "Lương")]
         public int Salary { get; set; }
 
-        [Required(ErrorMessage = "Chức vụ chưa có")]
+        
         [Display(Name = "Chức vụ")]
         [StringLength(maximumLength: 50)]
         public string Position { get; set; }
