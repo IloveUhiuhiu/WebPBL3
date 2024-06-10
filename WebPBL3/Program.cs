@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebPBL3.Models;
+using WebPBL3.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddSession(option =>
 {
     option.IdleTimeout = TimeSpan.FromMinutes(3);
 });
+// Register the INewsService and NewsService
+builder.Services.AddScoped<INewsService, NewsService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

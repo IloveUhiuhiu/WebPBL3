@@ -17,6 +17,7 @@ namespace WebPBL3.Models
             Photo = string.Empty;
         }
 
+        public static object Identity { get; internal set; }
         [Key]
         [Display(Name = "Mã người dùng")]
         [StringLength(maximumLength: 10)]

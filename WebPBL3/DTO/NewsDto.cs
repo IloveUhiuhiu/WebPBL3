@@ -9,13 +9,13 @@ namespace WebPBL3.DTO
         public string? NewsID { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string Title { get; set; } 
         [Required]
-        public string Content { get; set; }
+        public string Content { get; set; } 
+
+        [Required]
+        public string Photo { get; set; } 
         
-        [Required]
-        public string Photo { get; set; }
-        [Required]
         public DateTime CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
         public string? UpdateBy { get; set; }
