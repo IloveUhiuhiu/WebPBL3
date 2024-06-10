@@ -28,7 +28,7 @@ namespace WebPBL3.Services
             _httpContextAccessor = httpContextAccessor;
             _environment = environment;
         }
-        public async Task AddDefaultAccount(string email, int role)
+        public async Task<string> AddDefaultAccount(string email, int role)
         {
             try
             {   
@@ -42,6 +42,7 @@ namespace WebPBL3.Services
                     RoleID = role,
                 });
                 await _db.SaveChangesAsync();
+                return accountId;
             }
             catch (Exception ex)
             {

@@ -89,7 +89,7 @@ namespace WebPBL3.Controllers
                 }
                 try
                 {
-                    
+                    userdto.RoleID = 3;
                     await _userService.AddUser(userdto);
 
                 } catch (DbUpdateException ex)

@@ -6,7 +6,7 @@ namespace WebPBL3.Services
     public interface IAccountService
     {
         public Task<string> GenerateID();
-        public Task AddDefaultAccount(string email, int role);
+        public Task<string> AddDefaultAccount(string email, int role);
         public Task Login(string username, string password);
         public Task Register(RegisterDTO model);
         public Task ForgotPassword(string email);
