@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Net;
 using System.Security.Claims;
 using WebPBL3.DTO;
 using WebPBL3.Models;
+using Microsoft.AspNetCore.Authentication;
+using WebPBL3.DTO;
+using System.Net.Mail;
+using System.Net;
+using System;
 
 namespace WebPBL3.Services
 {
@@ -62,7 +69,7 @@ namespace WebPBL3.Services
         public async Task Login(string email, string password)
             {
                 var user = _db.Accounts.Include(u => u.Role).FirstOrDefault(u => u.Email == email);
-                if (user == null)
+            if(user == null)
                 {
                     throw new Exception("Tài khoản hoặc mật khẩu không hợp lệ");
                 }
@@ -181,6 +188,7 @@ namespace WebPBL3.Services
                 _db.Accounts.Update(existAccount);
                 await _db.SaveChangesAsync();
             }
+
         public async Task UpdateInforAccount(UserDTO UserDTO, IFormFile? uploadimage)
             {
                 User user = _db.Users.Find(UserDTO.UserID);
@@ -214,7 +222,7 @@ namespace WebPBL3.Services
 
         public async Task<UserDTO> getInforAccount()
             {
-                string email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            string email =_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
                 if (email == null)
                 {
                     throw new Exception("Not found");
@@ -224,8 +232,7 @@ namespace WebPBL3.Services
                 {
                     throw new Exception("Not found");
                 }
-                return new UserDTO
-                {
+            return new UserDTO {
                     UserID = account.User.UserID,
                     RoleID = account.RoleID,
                     Email = account.Email,
@@ -258,6 +265,9 @@ namespace WebPBL3.Services
                 _db.SaveChangesAsync();
             }
 
-        
+        public async Task<Staff> GetInforStaff(string idUser)
+        {
+           return _db.Staffs.FirstOrDefault(s => s.UserID == idUser);
+        }
     }
 }

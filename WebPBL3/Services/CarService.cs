@@ -163,7 +163,6 @@ namespace WebPBL3.Services
         {   
             return await _db.Makes.ToListAsync();
         }
-
         public async Task<Car> GetCarById(string id)
         {
             try

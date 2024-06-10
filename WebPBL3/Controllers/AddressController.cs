@@ -1,32 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebPBL3.Models;
+using WebPBL3.Services;
 
 namespace WebPBL3.Controllers
 {
     public class AddressController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public AddressController(ApplicationDbContext db)
+        private readonly IAddressService _addressService;
+        public AddressController(IAddressService addressService)
         {
-            _context = db;
+            _addressService = addressService;
         }
-        public JsonResult GetProvince()
+        public async Task<JsonResult> GetProvince()
         {
-            var provinces = _context.Provinces.ToList();
-            return new JsonResult(provinces);
-        }
-
-        public JsonResult GetDistrict(int id)
-        {
-            var districts = _context.Districts.Where(d => d.ProvinceID == id).Select(d => new { id = d.DistrictID, name = d.DistrictName }).ToList();
-            return new JsonResult(districts);
+            return new JsonResult(await _addressService.GetProvinces());
         }
 
-        public JsonResult GetWard(int id)
+        public async Task<JsonResult> GetDistrict(int id)
         {
-            var wards = _context.Wards.Where(w => w.DistrictID == id).Select(w => new { id = w.WardID, name = w.WardName }).ToList();
-            return new JsonResult(wards);
+            return new JsonResult(await _addressService.GetDistricts(id));
+        }
+
+        public async Task<JsonResult> GetWard(int id)
+        {
+            return new JsonResult(await _addressService.GetWards(id));
         }
     }
 }
