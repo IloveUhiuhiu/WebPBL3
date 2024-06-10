@@ -8,12 +8,16 @@ namespace WebPBL3.Services
     {
         Task<IEnumerable<CarDTO>> GetAllCars(int makeid, string searchtxt, int page);
         Task<Car> GetCarById(string id);
-        Task AddCar(Car car);
-        Task EditCar (Car car);
+        Task AddCar(CarDTO cardto);
+        Task EditCar (CarDTO cardto);
         Task DeleteCar(Car car);
-
+        Task<IEnumerable<Make>> GetAllMakes();
         CarDTO ConvertToCarDTO(Car car);
         Car ConvertToCar(CarDTO cardto);
+
+        Task<string> GenerateID();
+
+        Task<int> CountCars(int makeid, string searchtxt, int page);
 
 
     }

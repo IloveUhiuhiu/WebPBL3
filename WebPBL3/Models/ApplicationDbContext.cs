@@ -10,6 +10,11 @@ namespace WebPBL3.Models
             : base(options)
         {
         }
+
+        public ApplicationDbContext()
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

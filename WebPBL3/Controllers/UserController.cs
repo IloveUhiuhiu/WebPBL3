@@ -13,6 +13,7 @@ using System.Net;
 using System.Numerics;
 using WebPBL3.DTO;
 using WebPBL3.Models;
+using WebPBL3.Services;
 
 namespace WebPBL3.Controllers
 {
@@ -20,13 +21,15 @@ namespace WebPBL3.Controllers
 
     public class UserController : Controller
     {
-        ApplicationDbContext _db;
-        private IWebHostEnvironment _environment;
+        IUserService _userService;
+        IPhotoService _photoService;
+        
         private int limits = 10;
-        public UserController (ApplicationDbContext db, IWebHostEnvironment environment)
+        public UserController (IUserService userService, IPhotoService photoService)
         {
-            _db = db;
-            _environment = environment;
+            _photoService = photoService;
+            _userService = userService;
+           
         }
         public IActionResult Index()
         {
@@ -35,57 +38,27 @@ namespace WebPBL3.Controllers
         // GET
         public async Task<IActionResult> UserListTable(string searchtxt = "",int fieldsearch = 1, int page = 1)
         {
-            
 
-            List<UserDTO> users =  await _db.Users
-                .Include(a => a.Account)
-                .Include(w => w.Ward)
-                .ThenInclude(d => d.District)
-                .Where(u => u.Account.RoleID == 3 &&  (searchtxt.IsNullOrEmpty() 
-                || (fieldsearch == 1 && u.FullName.Contains(searchtxt)) 
-                || (fieldsearch == 2 && u.PhoneNumber.Contains(searchtxt))
-                || (fieldsearch == 3 && u.Account.Email.Contains(searchtxt))
-                || (fieldsearch == 4 && u.IdentityCard.Contains(searchtxt))))
-                .Select(u => new UserDTO
-               {
-                AccountID = u.AccountID,
-                Email = u.Account.Email,
-                Password = u.Account.Password,
-                Status = u.Account.Status,
-
-                RoleID = 3,
-                UserID = u.UserID,
-                FullName = u.FullName,
-                PhoneNumber = u.PhoneNumber,
-                IdentityCard = u.IdentityCard,
-
-                Gender = u.Gender,
-                BirthDate = u.BirthDate,
-                Address = u.Address,
-                Photo = u.Photo,
-                WardID = u.WardID,
-                WardName = u.Ward.WardName,
-                DistrictName = u.Ward.District.DistrictName,
-                ProvinceName = u.Ward.District.Province.ProvinceName,
-
-            }).ToListAsync();
-            // tổng số  người dùng
-            int total = users.Count;
+            int total = await _userService.CountUsers(searchtxt, fieldsearch, page);
             // tổng số trang
             int totalPage = (total + limits - 1) / limits;
 
             if (page < 1) page = 1;
             if (page > totalPage) page = totalPage;
+            IEnumerable<UserDTO> users = await _userService.GetAllUsers(searchtxt, fieldsearch, page);
+            // tổng số  người dùng
+            
             ViewBag.totalRecord = total;
             ViewBag.totalPage = totalPage;
             ViewBag.currentPage = page;
             ViewBag.searchtxt = searchtxt;
             ViewBag.fieldsearch = fieldsearch;
-            users = users.Skip((page - 1) * limits).Take(limits).ToList();
+            
             
            
             return View(users);
         }
+        
         // GET
         public IActionResult Create()
         {
@@ -94,91 +67,31 @@ namespace WebPBL3.Controllers
         }
         // POST
         [HttpPost]
-        public async Task<IActionResult> Create(UserDTO user, IFormFile? uploadimage)
+        public async Task<IActionResult> Create(UserDTO userdto, IFormFile? uploadimage)
         {
-            
             if (ModelState.IsValid)
-
             {   
-                // Account
-                int accid = 1;
-
-                Account? lastAcc = await _db.Accounts.OrderByDescending(a => a.AccountID).FirstOrDefaultAsync();
-                if (lastAcc != null)
-                {
-                    accid = Convert.ToInt32(lastAcc.AccountID)+1;
-                }
-                //Console.WriteLine(accid + user.Email);
-                var accidTxt = accid.ToString().PadLeft(8,'0');
-                user.AccountID = accidTxt;
-                Account? accWithEmail =  await _db.Accounts.FirstOrDefaultAsync(u => u.Email == user.Email);
-                if (accWithEmail != null)
+                
+                bool checkEmailExist =  await _userService.CheckEmailExits(userdto.Email);
+                if (checkEmailExist)
                 {
                     TempData["Error"] = "Email đã tồn tại";
-                    return View(user);
-                }
-                // Add Account
-                try
-                {
-                    _db.Accounts.Add(new Account
-                    {
-                        AccountID = user.AccountID,
-                        Email = user.Email,
-                        Password = BCrypt.Net.BCrypt.HashPassword("123456"),
-                        Status = false,
-                        RoleID = 3,
-                    });
-                    await _db.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    // 404
-                    return BadRequest("Error add account: " + ex.Message);
-
+                    return View(userdto);
                 }
                 
-                // User
-                var userid = 1;
-                var lastUser = _db.Users.OrderByDescending(u => u.UserID).FirstOrDefault();
-                if (lastUser != null)
-                {
-                    userid = Convert.ToInt32(lastUser.UserID.Substring(2)) + 1;
-                }
-                var useridTxt = "KH" + userid.ToString().PadLeft(6, '0');
-                user.UserID = useridTxt;
+                userdto.UserID = await _userService.GenerateID();
+
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                    newFileName += Path.GetExtension(uploadimage!.FileName);
-                    user.Photo = newFileName;
-                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
-                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
+                    
+                    userdto.Photo = await _photoService.AddPhoto("user",uploadimage);
+                    
                 }
-            
-
-                //Console.WriteLine("Ward: " + user.WardID);
                 try
                 {
-                    _db.Users.Add(new User
-                    {
-                        UserID = user.UserID,
-                        FullName = user.FullName,
-                        PhoneNumber = user.PhoneNumber,
-                        IdentityCard = user.IdentityCard,
-                        Gender = user.Gender,
-                        Address = user.Address,
-                        BirthDate = user.BirthDate,
-                        Photo = user.Photo,
-                        WardID = user.WardID,
-                        AccountID = user.AccountID,
+                    userdto.RoleID = 3;
+                    await _userService.AddUser(userdto);
 
-                    });
-
-                    await _db.SaveChangesAsync();
                 } catch (DbUpdateException ex)
                 {
                     return BadRequest("Error add user: " + ex.Message);
@@ -187,7 +100,7 @@ namespace WebPBL3.Controllers
                 return RedirectToAction("UserListTable");
 
             }
-            return View(user);
+            return View(userdto);
         }
         // GET
         public async Task<IActionResult> Edit(string ?id)
@@ -196,100 +109,40 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("Id is null");
             }
-            User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == id);
+            User? user = await _userService.GetUserById(id);
 
             if (user == null)
             {
                 return NotFound("User is not found");
             }
-
-            Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
-            if (account == null)
-            {
-                return NotFound("Account is not found");
-            }
-
             
-            Ward? ward = await _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefaultAsync();
-            ViewBag.DistrictID = 0;
-            ViewBag.ProvinceID = 0;
-            if (ward != null)
-            {
-                District? district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
-                if (district != null)
-                {
-                    ViewBag.DistrictID = district.DistrictID;
-                    ViewBag.ProvinceID = district.ProvinceID;
-                }
-            } else user.WardID = 0;
-            
-            UserDTO UserDTOFromDb = new UserDTO
-            {
-                UserID = user.UserID,
-                FullName = user.FullName,
-                Password = account.Password,
-                Email = account.Email,
-                PhoneNumber = user.PhoneNumber,
-                IdentityCard = user.IdentityCard,
-                Gender = user.Gender,
-                Address = user.Address,
-                BirthDate = user.BirthDate,
-                Photo = user.Photo,
-                WardID = user.WardID,
-                AccountID = user.AccountID,
-
-            };
-            return View(UserDTOFromDb);
+            UserDTO userdtoFromDb = await _userService.ConvertToUserDTO(user);
+            //Console.WriteLine(user.UserID);
+            return View(userdtoFromDb);
         }
         
 
         // POST
         [HttpPost]
-        public async Task<IActionResult> Edit(UserDTO UserDTO, IFormFile? uploadimage)
+        public async Task<IActionResult> Edit(UserDTO userdto, IFormFile? uploadimage)
         {
             if (ModelState.IsValid)
             {
-                User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == UserDTO.UserID);
+                //Console.WriteLine(userdto.UserID);
+                User? user = await _userService.GetUserById(userdto.UserID);
+
                 if (user == null)
                 {
                     return NotFound("User is not found");
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                    newFileName += Path.GetExtension(uploadimage!.FileName);
-                    if (!UserDTO.Photo.IsNullOrEmpty())
-                    {
-                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", UserDTO.Photo);
-                        if (System.IO.File.Exists(oldImageFullPath))
-                        {
-                            System.IO.File.Delete(oldImageFullPath);
-                        }
-                    }
-                    UserDTO.Photo = newFileName;
-                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\user", newFileName);
-                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
+                    userdto.Photo = await _photoService.EditPhoto("user",uploadimage,userdto.Photo);
                 }
-
-                user.FullName = UserDTO.FullName;
-                user.PhoneNumber = UserDTO.PhoneNumber;
-                user.IdentityCard = UserDTO.IdentityCard;
-                user.Gender = UserDTO.Gender;
-                user.Address = UserDTO.Address;
-                user.BirthDate = UserDTO.BirthDate;
-                user.Photo = UserDTO.Photo;
-                user.WardID = (UserDTO.WardID>0?UserDTO.WardID:null);
-
-
+                Console.WriteLine("Account " + userdto.AccountID);
                 try
                 {
-                    _db.Users.Update(user);
-
-                    await _db.SaveChangesAsync();
+                    await _userService.EditUser(userdto);
 
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -301,7 +154,7 @@ namespace WebPBL3.Controllers
 
                 return RedirectToAction("UserListTable");
             }
-            return View(UserDTO);
+            return View(userdto);
         }
         // GET
         public async Task<IActionResult> Details(string? id)
@@ -310,52 +163,15 @@ namespace WebPBL3.Controllers
             {
                 return NotFound("Id is null");
             }
-            User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == id);
+            User? user = await _userService.GetUserById(id);
 
             if (user == null)
             {
                 return NotFound("User is not found");
             }
-
-            Account? account =  await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
-            if (account == null)
-            {
-                return NotFound("Account is not found");
-            }
-            string wardName = string.Empty, districtName = string.Empty, provinceName = string.Empty;
-            Ward? ward = await _db.Wards.Where(w => w.WardID == user.WardID).FirstOrDefaultAsync();
             
-            if (ward != null)
-            {   
-                wardName = ward.WardName;
-                District? district = await _db.Districts.FirstOrDefaultAsync(d => d.DistrictID == ward.DistrictID);
-                if (district != null)
-                {
-                    districtName = district.DistrictName;
-                    Province? province = await _db.Provinces.FirstOrDefaultAsync(p => p.ProvinceID == district.ProvinceID);
-                    if (province != null)
-                    {
-                        provinceName = province.ProvinceName;
-                    }
-                }
-            }
+            UserDTO userFromDb = await _userService.ConvertToUserDTO(user);
             
-            UserDTO userFromDb = new UserDTO
-            {
-                UserID = user.AccountID,
-                FullName = user.FullName,
-                Email = account.Email,
-                PhoneNumber = user.PhoneNumber,
-                IdentityCard = user.IdentityCard,
-                Gender = user.Gender,
-                BirthDate = user.BirthDate,
-                Address = user.Address,
-                ProvinceName = provinceName,
-                DistrictName = districtName,
-                WardName = wardName,  
-                Photo = user.Photo,
-            };
-
             return View(userFromDb);
         }
         [HttpGet]
@@ -367,23 +183,15 @@ namespace WebPBL3.Controllers
                 return NotFound("Id is null");
             }
             
-            User? user =  await _db.Users.FirstOrDefaultAsync(u => u.UserID == id);
+            User? user =  await _userService.GetUserById(id);
             if (user == null)
             {
                 return NotFound("User is not found");
             }
-            Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.AccountID == user.AccountID);
-            if (account == null)
-            {
-                return NotFound("Account is not found");
-            }
-
-           
+            
             try
             {
-                _db.Users.Remove(user);
-                _db.Accounts.Remove(account);
-                _db.SaveChanges();
+                await _userService.DeleteUser(user.AccountID);
 
             }
             catch (Exception ex)

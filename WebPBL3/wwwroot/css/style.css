@@ -8512,8 +8512,8 @@ a {
   color: #1089ff !important; }
 
 .ftco-navbar-light {
-    background: rgb(0 0 0 / 0%);
-   padding-top: 20px;
+    /*background: rgb(0 0 0 / 0%) !important;*/
+    padding-top: 20px;
     padding-bottom: 20px;
     position: absolute;
     left: 0;
@@ -8544,7 +8544,7 @@ a {
     color: #fff;
     font-weight: 400;
     opacity: 1 !important;
-    width: 140px;
+    /*width: 140px;*/
 }
     .ftco-navbar-light .navbar-nav .nav-item .nav-link:hover {
       color: darkred; }
