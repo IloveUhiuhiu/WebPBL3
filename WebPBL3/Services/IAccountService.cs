@@ -15,6 +15,7 @@ namespace WebPBL3.Services
         public Task UpdateInforAccount(UserDTO UserDTO, IFormFile? uploadimage);
         public Task ChangePassword(string password,string newPassword);
         public Task<Staff> GetInforStaff(string idUser);
+        public Task<IEnumerable<HistoryOrderDTO>> GetHistoryOrders(string email);
 
     }
 }
