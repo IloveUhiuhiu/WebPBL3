@@ -22,7 +22,7 @@ namespace WebPBL3.Services
             
 			try
 			{   
-                await _accountService.AddDefaultAccount(userdto.Email,3);
+                await _accountService.AddDefaultAccount(userdto.Email,userdto.RoleID);
                 User user = ConvertToUser(userdto);
                 _db.Users.Add(user);
                 await _db.SaveChangesAsync();
@@ -219,6 +219,28 @@ namespace WebPBL3.Services
            }   
         }
 
+        public async Task<UserDTO> ExtractEmail(string email)
+        {
+            User? u =await _db.Users
+                .Include(a => a.Account)
+                .Include(w => w.Ward.District)
+                .FirstOrDefaultAsync(u => u.Account.Email == email);
+            if (u == null)
+            {
+                throw new Exception("Email không tồn tại");
+            }
+            return new UserDTO
+            {
+                FullName = u.FullName,
+                IdentityCard = u.IdentityCard,
+                PhoneNumber = u.PhoneNumber,
+                Email = email,
+                Address = u.Address,
+                WardID = u.WardID ?? 0,
+                ProvinceID = u.Ward != null ? u.Ward.District.ProvinceID : 0,
+                DistrictID = u.Ward != null ? u.Ward.DistrictID : 0,
+            };
+        }
         public async Task<int> CountUsers(string searchtxt, int fieldsearch, int page)
         {
             return await _db.Users

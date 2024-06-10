@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebPBL3.DTO;
 using WebPBL3.DTO.Statistic;
 
 namespace WebPBL3.Services
@@ -13,5 +14,9 @@ namespace WebPBL3.Services
         Task<IEnumerable<StatisticRevenue>> GetStatisticMonths();
         Task<IEnumerable<StatisticTable>> GetStatisticTables(DateOnly? _startTime, DateOnly? _endTime, string? maNV, string? maXe, string? hangXe);
         Task<MemoryStream> CreateAndSaveExcel(List<StatisticTable> statisticTables);
+
+        Task<IEnumerable<CarDTO>> GetBestCars();
+        Task<IEnumerable<FeedBackHomeDTO>> GetBestFeedBacks();
+        Task<IEnumerable<NewsDTO>> GetBestNews();
     }
 }

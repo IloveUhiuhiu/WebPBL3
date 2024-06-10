@@ -190,7 +190,7 @@
     });
     async function getData() {
         try {
-            const response = await fetch("/Order/GetProvince");
+            const response = await fetch("/Address/GetProvince");
             const data = await response.json();
             console.log(data);
             return data;
@@ -200,7 +200,7 @@
     }
     async function getDistrict(id) {
         try {
-            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const response = await fetch(`/Address/GetDistrict/${id}`);
             const data = await response.json();
             console.log(data);
             return data;
@@ -210,7 +210,7 @@
     }
     async function getWard(id) {
         try {
-            const response = await fetch(`/Order/GetWard/${id}`);
+            const response = await fetch(`/Address/GetWard/${id}`);
             const data = await response.json();
             console.log(data);
             return data;

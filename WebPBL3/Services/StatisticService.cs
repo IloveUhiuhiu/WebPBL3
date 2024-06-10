@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using WebPBL3.DTO;
 using WebPBL3.DTO.Statistic;
 using WebPBL3.Models;
 
@@ -15,7 +16,7 @@ namespace WebPBL3.Services
         }
         public async Task<int> CountCars()
         {
-            return  await _db.Cars.CountAsync();
+            return  await _db.Cars.Where(c => c.Flag == false).CountAsync();
 
         }
 
@@ -31,7 +32,7 @@ namespace WebPBL3.Services
 
         public async Task<int> CountUsers()
         {
-            return await _db.Users.CountAsync();
+            return await _db.Users.Include(u => u.Account).Where(u=>u.Account.RoleID == 3).CountAsync();
         }
 
 
@@ -180,6 +181,84 @@ namespace WebPBL3.Services
                 startTime = startTime.AddMonths(1);
             }
             return statisticRevenues;
+        }
+
+        public async Task<IEnumerable<CarDTO>> GetBestCars()
+        {
+            List<Order> orders = await _db.Orders
+                .Include(o => o.DetailOrders)
+                .ThenInclude(deo => deo.Car)
+                .ThenInclude(c => c.Make)
+                .Where(o => o.Status == "Đã thanh toán")
+                .ToListAsync();
+            Dictionary<string, int> quantity = new Dictionary<string, int>();
+            foreach (var order in orders)
+            {
+                foreach (var detailOrder in order.DetailOrders)
+                {
+                    if (!quantity.ContainsKey(detailOrder.Car.CarID))
+                    {
+                        quantity[detailOrder.Car.CarID] = 0;
+                    }
+                    quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
+                }
+            }
+            var sortedDict = quantity.OrderBy(q => q.Value).Take(4).ToList();
+            List<CarDTO> cars = new List<CarDTO>();
+            foreach (var item in sortedDict)
+            {
+                Car? _car = await _db.Cars.Include(c => c.Make).FirstOrDefaultAsync(c => c.CarID == item.Key);
+
+
+                cars.Add(new CarDTO
+                {
+                    CarID = item.Key,
+                    CarName = _car.CarName,
+                    MakeName = _car.Make.MakeName,
+                    Price = _car.Price,
+                    Photo = _car.Photo
+                });
+
+
+            }
+            return cars;
+        }
+        public async Task<IEnumerable<FeedBackHomeDTO>> GetBestFeedBacks()
+        {
+            List<Feedback> _feedBacks = await _db.Feedbacks.Include(fb => fb.User).Take(5).ToListAsync();
+            List<FeedBackHomeDTO> feedBacks = new List<FeedBackHomeDTO>();
+
+
+            foreach (var item in _feedBacks)
+            {
+                User? user = await _db.Users.FirstOrDefaultAsync(u => u.UserID == item.UserID);
+
+                feedBacks.Add(new FeedBackHomeDTO
+                {
+                    FullName = item.FullName,
+                    Title = item.Title,
+                    Content = item.Content,
+                    Photo = (user != null) ? user.Photo : string.Empty
+                });
+            }
+            return feedBacks;
+        }
+        public async Task<IEnumerable<NewsDTO>> GetBestNews()
+        {
+            List<News> _news = await _db.NewS.Include(n => n.Staff).ThenInclude(s => s.User).OrderByDescending(s => s.CreateAt).Take(3).ToListAsync();
+            List<NewsDTO> news = new List<NewsDTO>();
+            foreach (var item in _news)
+            {
+                news.Add(new NewsDTO
+                {
+                    NewsID = item.NewsID,
+                    Photo = item.Photo,
+                    FullName = item.Staff.User.FullName,
+                    Title = item.Title,
+                    CreateAt = item.CreateAt,
+                });
+            }
+            return news;
         }
 
         public async Task<IEnumerable<StatisticTable>> GetStatisticTables(DateOnly? _startTime, DateOnly? _endTime, string? maNV, string? maXe, string? hangXe)

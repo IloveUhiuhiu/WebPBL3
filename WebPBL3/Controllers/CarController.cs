@@ -177,15 +177,17 @@ namespace WebPBL3.Controllers
                 TempData["makes"] = JsonConvert.SerializeObject(makes);
                 TempData.Keep("makes");
             }
-            IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
-            // tổng số sản phẩm
+
             int total = await _carService.CountCars(makeid, searchtxt, page);
             // tổng số trang
-            var totalPage = (total +limits - 1) / limits;
+            var totalPage = (total + limits - 1) / limits;
             // sử dụng khi previous là 1
             if (page < 1) page = 1;
             // sử dụng khi next là totalPage 
             if (page > totalPage) page = totalPage;
+            IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
+            // tổng số sản phẩm
+            
 
             ViewBag.totalRecord = total;
             ViewBag.totalPage = totalPage;
@@ -341,5 +343,7 @@ namespace WebPBL3.Controllers
             return RedirectToAction("CarListTable");
             
         }
+
+
 	}
 }
