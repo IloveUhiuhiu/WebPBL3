@@ -3,7 +3,7 @@ using WebPBL3.Models;
 
 namespace WebPBL3.DTO
 {
-	public class UserDTO
+	public class UserDTO 
 	{	
 		
 

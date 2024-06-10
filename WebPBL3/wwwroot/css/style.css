@@ -8512,7 +8512,7 @@ a {
   color: #1089ff !important; }
 
 .ftco-navbar-light {
-    background: rgb(0 0 0 / 0%) !important;
+    /*background: rgb(0 0 0 / 0%) !important;*/
     padding-top: 20px;
     padding-bottom: 20px;
     position: absolute;
