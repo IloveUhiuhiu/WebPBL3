@@ -8,10 +8,12 @@ namespace WebPBL3.Services
     {
         private readonly ApplicationDbContext _db;
         private IWebHostEnvironment _environment;
-        public StaffService(ApplicationDbContext db, IWebHostEnvironment environment)
+        IUserService _userService;
+        public StaffService(ApplicationDbContext db, IWebHostEnvironment environment, IUserService userService)
         {
             _db = db;
             _environment = environment;
+            _userService = userService; 
         }
         public Task<List<StaffDTO>> GetAllStaffs()
         {
@@ -97,10 +99,12 @@ namespace WebPBL3.Services
                 throw new Exception("Lỗi xảy ra khi truy vấn người dùng: ", ex);
             }
         }
-        public async Task AddStaff(Staff staff)
+        public async Task AddStaff(StaffDTO staffDTO)
         {
             try
             {
+                await _userService.AddUser(staffDTO);
+                Staff staff = ConvertToStaff(staffDTO);
                 _db.Staffs.Add(staff);
                 await _db.SaveChangesAsync();
             }
@@ -196,7 +200,30 @@ namespace WebPBL3.Services
                 throw new Exception("Lỗi trong khi chuyển đổi StaffDTO thành Staff: ", ex);
             }
         }
+        public async Task<string> GenerateID()
+        {
+            int staffId = 1;
+            Staff? lastUser = await _db.Staffs.OrderByDescending(u => u.StaffID).FirstOrDefaultAsync();
+            if (lastUser != null)
+            {
+                staffId = Convert.ToInt32(lastUser.StaffID.Substring(2)) + 1;
+            }
+            string staffIdTxt = "NV" + staffId.ToString().PadLeft(6, '0');
+            return staffIdTxt;
+        }
+        public async Task<bool> CheckIdentityCardExits(string? identityCard)
+        {
+            try
+            {
+                User? user = await _db.Users.FirstOrDefaultAsync(a => a.IdentityCard == identityCard);
+                return (user != null);
+            }
 
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xảy ra khi truy vấn tài khoản: ", ex);
+            }
+        }
         public Task<StaffDTO> ConvertToStaffDTO(Staff staff, User user, Account account)
         {
             try

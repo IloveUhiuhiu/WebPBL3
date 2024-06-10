@@ -23,7 +23,7 @@ namespace WebPBL3.DTO
         public string Email { get; set; } = string.Empty;
         public string? Password { get; set; }
         public bool Status { get; set; }
-        [NotMapped]
-        public IFormFile? Photo { get; set; }
+        //[NotMapped]
+        //public IFormFile? Photo { get; set; }
     }
 }
