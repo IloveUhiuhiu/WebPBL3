@@ -242,6 +242,7 @@ namespace WebPBL3.Services
         {
             var newsQuery = _db.NewS.Include(s => s.Staff)
                                     .ThenInclude(u => u.User)
+                                    .OrderByDescending(n => n.NewsID)
                                     .Select(n => new NewsDTO
                                     {
                                         NewsID = n.NewsID,
@@ -254,6 +255,7 @@ namespace WebPBL3.Services
                                         StaffID = n.StaffID,
                                         FullName = n.Staff.User.FullName,
                                     });
+                                   
 
             if (!string.IsNullOrWhiteSpace(searchtxt))
             {
@@ -343,15 +345,13 @@ namespace WebPBL3.Services
             };
         }
 
-        public async Task UpdateNewsAsync(NewsDTO n, string userEmail, string filename, string? id)
+        public async Task UpdateNewsAsync(NewsDTO n, string userEmail, string FILENAME, string? id)
         {
             News? news = _db.NewS.Find(id);
-            if (filename != null)
+            if (FILENAME != "")
             {
-                news.Photo = filename;
-            }
-            else
-                news.Photo = n.Photo;          
+                news.Photo = FILENAME;
+            }        
             Account? account = await _db.Accounts.Include(a => a.User).FirstOrDefaultAsync(a => a.Email == userEmail);
             if (account == null)
             {

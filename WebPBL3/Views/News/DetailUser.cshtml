@@ -53,7 +53,8 @@
             <h2>Tin nổi bật</h2>
             <div class="container">
                 <div class="row">
-                    @foreach (var news in _news.Take(4))
+                    @foreach (var news in _news.OrderByDescending(news => news.CreateAt)
+                    .Take(4))
                     {
                         string[] words1 = news.Title.Split(' ');
                         string Titles = string.Join(" ", words1.Take(8)) + ". . .";
