@@ -39,12 +39,12 @@ namespace WebPBL3.Controllers
         public async Task<IActionResult> UserListTable(string searchtxt = "", int fieldsearch = 1, int page = 1)
         {
 
-            int total = await _userService.CountUsers(searchtxt, fieldsearch, page);
+            int total = await _userService.CountUsers(searchtxt, fieldsearch);
             // tổng số trang
             int totalPage = (total + limits - 1) / limits;
 
             if (page < 1) page = 1;
-            if (page > totalPage) page = totalPage;
+            if (page > totalPage && total > 0) page = totalPage;
             IEnumerable<UserDTO> users = await _userService.GetAllUsers(searchtxt, fieldsearch, page);
             // tổng số  người dùng
 

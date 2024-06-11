@@ -137,7 +137,7 @@
             <div class="col-md-6 heading-section heading-section-white ftco-animate">
                 <h2 class="mb-3">Nhận thông tin xe bằng cách liên hệ</h2>
                 <h3 class="mb-3">Lưu ý, bạn hãy tìm ra những mẫu xe yêu thích trước khi liên hệ với chúng tôi</h3>
-                <a href="@Url.Action("Contact","Home")" class="btn btn-primary btn-lg" style="width: 150px">Liên Hệ</a>
+                <a href="@Url.Action("Index","Contact")" class="btn btn-primary btn-lg" style="width: 150px">Liên Hệ</a>
             </div>
         </div>
     </div>
@@ -158,12 +158,12 @@
                         
                         <div class="item">
                             <div class="car-wrap rounded ftco-animate">
-                                <div class="img rounded d-flex align-items-end" style="background-image: url(upload/car/@item.Photo);">
+                                <div class="img rounded d-flex align-items-end" style="background-image: url(upload/car/@item.Photo);background-size: contain;">
                                 </div>
                                 <div class="text">
                                     <h2 class="mb-0"><a href="#">@item.CarName - @item.MakeName</a></h2>
                                     <p class="price ml-auto">@String.Format("{0:N0}", item.Price) VNĐ</p>
-                                    <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Chi Tiết</a></p>
+                                    <p class="d-flex mb-0 d-block"><a class="btn btn-primary" asp-controller="Car" asp-action="Detail" asp-route-id="@item.CarID" class="btn btn-primary py-2 mr-1">Chi Tiết</a></p>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +201,7 @@
                         và mang đến những xu hướng mới nhất trong ngành công nghiệp ô tô để đáp ứng mọi nhu cầu của khách hàng.
                     </p>
                     <p class="mb-4">Hãy đến và trải nghiệm sự hoàn hảo cùng DragonCar - nơi thực hiện những giấc mơ về xe hơi của bạn!</p>
-                <a href="@Url.Action("Contact","Home")" class="btn btn-primary btn-lg" style="width: 150px">Tìm xe</a>
+                <a href="@Url.Action("Index","Car")" class="btn btn-primary btn-lg" style="width: 150px">Tìm xe</a>
                 </div>
             </div>
         </div>

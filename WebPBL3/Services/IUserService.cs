@@ -15,7 +15,7 @@ namespace WebPBL3.Services
         Task<UserDTO> ExtractEmail(string email);
         Task<string> GenerateID();
         Task<bool> CheckEmailExits(string email);
-        Task<int> CountUsers(string searchtxt, int fieldsearch, int page);
+        Task<int> CountUsers(string searchtxt, int fieldsearch);
 
     }
 }

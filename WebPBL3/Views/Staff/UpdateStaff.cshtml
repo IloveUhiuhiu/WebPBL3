@@ -3,6 +3,11 @@
 @{
     ViewData["Title"] = "UpdateStaff";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string Photo = "userkh000000.jpg";
+    if (!string.IsNullOrEmpty(ViewData["Photo"] as string))
+    {
+        Photo = ViewData["Photo"].ToString();
+    }
 }
 
 @* <div class="form-group form-check">
@@ -19,7 +24,7 @@
             <div class="col-xl-4">
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-body text-center">
-                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="/upload/staff/@ViewData["Photo"]" alt="" style=" width: 230px;height:230px;">
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="/upload/staff/@Photo" alt="" style=" width: 230px;height:230px;">
                         <div class="form-group">
                             <input id="photoInput" asp-for="Photo" type="file" class="form-control" style="display: none;">
                             <span asp-validation-for="Photo" class="text-danger"></span>

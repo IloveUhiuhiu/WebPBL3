@@ -243,7 +243,7 @@ namespace WebPBL3.Services
                 DistrictID = u.Ward != null ? u.Ward.DistrictID : 0,
             };
         }
-        public async Task<int> CountUsers(string searchtxt, int fieldsearch, int page)
+        public async Task<int> CountUsers(string searchtxt, int fieldsearch)
         {
             return await _db.Users
                 .Where(u => u.Account.RoleID == 3 &&

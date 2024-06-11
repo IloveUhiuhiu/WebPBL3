@@ -257,9 +257,19 @@
                     <tr>
                         <td>@obj.STT</td>
                         <td>@obj.Title</td>
-                        <td>@obj.Content</td>
                         <td>
-                            <img src="~/images/@obj.Photo" width="100" height="auto;" />
+                            @{
+                                
+
+                                // Kiểm tra và cắt chuỗi nếu cần thiết
+                                string content = obj.Content.Length > 150
+                                ? obj.Content.Substring(0, 150) + "..."
+                                : obj.Content;
+                            }
+                            @content
+                        </td>
+                        <td>
+                            <img src="~/upload/news/@obj.Photo" width="100" height="auto;" />
                         </td>
                         <td>@obj.CreateAt.ToString("dd/MM/yyyy")</td>
                         <td>@obj.FullName</td>
@@ -275,24 +285,28 @@
                                     <i class="fa-solid fa-trash"></i> Xóa
                                 </a>
                                 <div id="myModal-@obj.NewsID" class="modal fade">
-                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div class="modal-dialog modal-dialog-centered modal-confirm">
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <div class="icon-box" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                            <div class="modal-header flex-column">
+                                                <div class="icon-box">
+                                                    <i class="material-icons">&#xE5CD;</i>
                                                 </div>
-                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <h4 class="modal-title w-100">Xác nhận</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
-                                            <div class="modal-body">
-                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                            <div class="modal-body" style="color: black">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
                                             </div>
-                                            <div class="modal-footer">
-                                                <a asp-controller="News" asp-action="Delete" asp-route-id="@obj.NewsID" class="btn btn-danger">Xác nhận</a>
-                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                <a asp-controller="News" asp-action="Delete" asp-route-id="@obj.NewsID" class="btn btn-danger" style="color:white; line-height: 30px">
+                                                    Xác nhận
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
+
+
                                 </div>
                             </div>
                         </td>

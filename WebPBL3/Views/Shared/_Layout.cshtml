@@ -31,11 +31,20 @@
     @RenderSection("AboutStyles",required:false)
     @RenderSection("ContactStyles",required: false)
     @RenderSection("CarStyles", required: false)
+    
   </head>
   <body>
+    @{
+        var avatar = TempData["avatar"] as string;
+        TempData.Keep("avatar");
+        string Avatar = "userkh000000.jpg";
+            if (!string.IsNullOrEmpty(avatar))
+            {
+                Avatar = avatar;
+            }
+       }
       <!--Header-->
-    @* @if (ViewBag.HideHeader != null && !(bool)ViewBag.HideHeader)
-    { *@
+    
         <header>
             <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar ftco-navbar-light" id="ftco-navbar">
                 <div class="container">
@@ -66,8 +75,15 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown">
-                                    <img class="img-responsive rounded-circle" src="~/admin_images/layout_img/user_img.jpg" alt="#" style="width: 65px;" />
+								<a class="dropdown-toggle" data-toggle="dropdown">
+									@if(User.IsInRole("Staff"))
+                                    {
+                                        <img class="img-responsive rounded-circle" src="~/upload/staff/@Avatar" alt="#" style="width: 65px; height: 65px;" />
+                                    } else
+                                    {
+                                        <img class="img-responsive rounded-circle" src="~/upload/user/@Avatar" alt="#" style="width: 65px; height: 65px;" />
+                                    }
+                                    
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="@Url.Action("InforAccount","Account")">Thông tin cá nhân</a>
@@ -91,7 +107,7 @@
                 
             </nav>
         </header>
-    @* } *@
+ 
     
     <main>
        @RenderBody()

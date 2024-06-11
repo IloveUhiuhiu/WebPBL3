@@ -24,6 +24,7 @@ namespace WebPBL3.Services
                 .ThenInclude(w => w.District)
                 .ThenInclude(d => d.Province)
                 .Include(s => s.User.Account)
+                .OrderBy(s => s.StaffID)
                 .Select(s => new StaffDTO
                 {
                     StaffID = s.StaffID,

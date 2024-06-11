@@ -202,22 +202,31 @@ namespace WebPBL3.Services
                 user.IdentityCard = UserDTO.IdentityCard;
                 user.Gender = UserDTO.Gender;
                 user.BirthDate = UserDTO.BirthDate;
-                if (!_db.Orders.Any(o => o.UserID == user.UserID))
+                if (!_db.Users.Any(o => o.UserID == user.UserID))
                 {
                     user.Address = UserDTO.Address;
-                    user.WardID = UserDTO.WardID;
+                    user.WardID = UserDTO.WardID??0;
                 }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
                     string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(uploadimage.FileName);
                     user.Photo = fileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\user", fileName);
+                    string _path;
+                    if (UserDTO.RoleID == 2)
+                    {
+                        _path = Path.Combine(_environment.WebRootPath, "upload\\staff", fileName);
+                    } else
+                    {
+                        _path = Path.Combine(_environment.WebRootPath, "upload\\user", fileName);
+                    }
+                   
                     Console.WriteLine(_path);
                     using (var fileStream = new FileStream(_path, FileMode.Create))
                     {
                         uploadimage.CopyTo(fileStream);
                     }
                 }
+                 _db.Users.Update(user);
                 await _db.SaveChangesAsync();
             }
 

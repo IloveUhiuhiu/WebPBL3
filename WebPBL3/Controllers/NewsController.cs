@@ -227,7 +227,7 @@ namespace WebPBL3.Controllers
                  StaffID = "1",
              };*/
             NewsDTO NewsDTOFromDb = _newsService.ConvertToNewsDTO(news);
-            var url = $"{Request.Scheme}://{Request.Host}/images/{news.Photo}";
+            var url = $"{Request.Scheme}://{Request.Host}/upload/news/{news.Photo}";
             ViewBag.filePath = url;
             return View(NewsDTOFromDb);
         }
@@ -401,7 +401,7 @@ namespace WebPBL3.Controllers
             try
             {
                 string fileName = await _newsService.UploadImageAsync(upload);
-                string url =  $"{Request.Scheme}://{Request.Host}/images/{fileName}";
+                string url =  $"{Request.Scheme}://{Request.Host}/upload/news/{fileName}";
                 TempData["UploadedFileName"] = fileName;
                 return Json(new { uploaded = true, url });
             }

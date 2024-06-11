@@ -150,7 +150,18 @@
                             @obj.IdentityCard
                         </td>
                         <td>
-                            @obj.Address
+                            @{
+                                string Address = string.Empty;
+                                string address = !string.IsNullOrEmpty(obj.Address) ? obj.Address + "," : string.Empty;
+                                string wardname = !string.IsNullOrEmpty(obj.WardName) ? obj.WardName + "," : string.Empty;
+                                string districtname = !string.IsNullOrEmpty(obj.DistrictName) ? obj.DistrictName + "," : string.Empty;
+                                string provincename = !string.IsNullOrEmpty(obj.ProvinceName) ? obj.ProvinceName + "" : string.Empty;
+                                if (!string.IsNullOrEmpty(wardname) && !string.IsNullOrEmpty(districtname) && !string.IsNullOrEmpty(provincename))
+                                {
+                                    Address = $"{address} {wardname} {districtname} {provincename}";
+                                }
+                            }
+                            @Address
                         </td>
 
                         <td style ="width: 30px;">

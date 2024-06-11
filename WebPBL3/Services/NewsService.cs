@@ -392,7 +392,7 @@ namespace WebPBL3.Services
             }
 
             var fileName = Path.GetFileName(upload.FileName);
-            var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
+            var filePath = Path.Combine(_environment.WebRootPath, "upload/news", fileName);
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
             using (var stream = new FileStream(filePath, FileMode.Create))

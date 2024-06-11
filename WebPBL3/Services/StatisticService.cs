@@ -14,6 +14,16 @@ namespace WebPBL3.Services
         {
             _db = db;
         }
+        public async Task<string> GetPhotoByEmail(string email)
+        {
+            Account? account = await _db.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+            if (account != null) 
+            {
+                User? user = await _db.Users.FirstOrDefaultAsync(u => u.AccountID == account.AccountID);
+                return user.Photo;
+            }
+            return string.Empty;
+        }
         public async Task<int> CountCars()
         {
             return  await _db.Cars.Where(c => c.Flag == false).CountAsync();

@@ -18,5 +18,6 @@ namespace WebPBL3.Services
         Task<IEnumerable<CarDTO>> GetBestCars();
         Task<IEnumerable<FeedBackHomeDTO>> GetBestFeedBacks();
         Task<IEnumerable<NewsDTO>> GetBestNews();
+        Task<string> GetPhotoByEmail(string email);
     }
 }

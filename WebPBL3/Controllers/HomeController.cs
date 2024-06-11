@@ -11,14 +11,14 @@ namespace WebPBL3.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _db;
+        
         private readonly IStatisticService _statisticService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db,IStatisticService statisticService)
+        public HomeController(ILogger<HomeController> logger,IStatisticService statisticService)
         {
             _logger = logger;
-            _db = db;   
             _statisticService = statisticService;
+            
         }
         
 
@@ -29,6 +29,12 @@ namespace WebPBL3.Controllers
             ViewBag.news = await _statisticService.GetBestNews();
             ViewBag.cars = await _statisticService.GetBestCars(); 
             ViewBag.feedBacks = await _statisticService.GetBestFeedBacks();
+            if (User.Identity.IsAuthenticated)
+            {
+                string email = User.Identity.Name;
+                string photo = await _statisticService.GetPhotoByEmail(email);
+                TempData["avatar"] = photo;
+            }
             return View();
 
         }
@@ -41,8 +47,8 @@ namespace WebPBL3.Controllers
         public IActionResult Contact()
         {
             ViewBag.HideHeader = false;
-            List<Province> provinces = _db.Provinces.ToList();
-            return View(provinces);
+            //List<Province> provinces = new List<Province>();
+            return View();
         }
 
         public IActionResult Privacy()
