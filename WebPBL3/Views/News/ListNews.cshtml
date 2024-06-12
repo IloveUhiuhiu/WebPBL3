@@ -252,7 +252,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var obj in Model.OrderBy(u => u.NewsID))
+                @foreach (var obj in Model.OrderByDescending(u => u.NewsID))
                 {
                     <tr>
                         <td>@obj.STT</td>

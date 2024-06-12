@@ -110,10 +110,10 @@ namespace WebPBL3.Controllers
             ViewBag.exactDate = exactDate;
             ViewBag.startDate = startDate;
             ViewBag.endDate = endDate;
-            int cnt = 1;
+            int cnt = paginatedNews.Count();
             foreach (var n in paginatedNews)
             {
-                n.STT = cnt++;
+                n.STT = cnt--;
             }
             return View(paginatedNews);
         }
@@ -193,12 +193,18 @@ namespace WebPBL3.Controllers
                     {
                         FILENAME = TempData["UploadedFileName"].ToString();
                     }
+                    if (string.IsNullOrEmpty(FILENAME))
+                    {
+                        ModelState.AddModelError(string.Empty, "Ảnh không thể trống");
+                        return View(news);
+                    }
+                    TempData.Remove("UploadedFileName");
                     await _newsService.CreateNewsAsync(news, uploadimage, userEmail, FILENAME);
                     return RedirectToAction("ListNews");
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "");
                 }
             }
             return View(news);
@@ -301,12 +307,13 @@ namespace WebPBL3.Controllers
                         return BadRequest("Người dùng chưa đăng nhập");
                     }
                     string userEmail = User.Identity.Name;
+                    TempData.Remove("UploadedFileName");
                     await _newsService.UpdateNewsAsync(n, userEmail, FILENAME, id);
                     return RedirectToAction("ListNews");
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "");
                 }
             }
             return View(n);
