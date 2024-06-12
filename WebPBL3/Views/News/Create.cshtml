@@ -14,9 +14,9 @@
             <input type="hidden" name="Photo" value="0" />
 
             <div class="form row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-9">
                     <label asp-for="Title" class="control-label">Tiêu đề</label>
-                    <input asp-for="Title" class="form-control" />
+                    <textarea asp-for="Title" class="form-control"></textarea>
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
                 @* <div class="form-group col-md-3">
@@ -26,7 +26,7 @@
                 </div> *@
                 <div class="form-group col-md-3">
                     <label asp-for="CreateAt" class="control-label">Ngày Tạo</label>
-                    <input class="form-control" name="NgayTao" value="@Html.Raw(DateTime.Now.ToString("yyyy-MM-dd").Replace(' ','T'))" type="da   tetime-local" />
+                    <input class="form-control" name="NgayTao" value="@Html.Raw(DateTime.Now.ToString("yyyy-MM-dd").Replace(' ','T'))" type="da   tetime-local" readonly />
                     <span asp-validation-for="CreateAt" class="text-danger"></span>
                 </div>
             </div>

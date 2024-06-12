@@ -110,7 +110,7 @@ namespace WebPBL3.Controllers
             ViewBag.exactDate = exactDate;
             ViewBag.startDate = startDate;
             ViewBag.endDate = endDate;
-            int cnt = 10;
+            int cnt = paginatedNews.Count();
             foreach (var n in paginatedNews)
             {
                 n.STT = cnt--;
@@ -204,7 +204,7 @@ namespace WebPBL3.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "");
                 }
             }
             return View(news);
@@ -313,7 +313,7 @@ namespace WebPBL3.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "");
                 }
             }
             return View(n);

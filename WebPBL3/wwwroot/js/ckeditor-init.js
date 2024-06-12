@@ -68,7 +68,7 @@ CKEDITOR.ClassicEditor
             ]
         },
         // https://ckeditor.com/docs/ckeditor5/latest/features/editor-placeholder.html#using-the-editor-configuration
-        placeholder: 'Welcome to CKEditor 5!',
+        placeholder: 'Nhập nội dung tin tức và upload ảnh!',
         // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-family-feature
         fontFamily: {
             options: [

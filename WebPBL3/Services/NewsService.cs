@@ -242,7 +242,6 @@ namespace WebPBL3.Services
         {
             var newsQuery = _db.NewS.Include(s => s.Staff)
                                     .ThenInclude(u => u.User)
-                                    .OrderByDescending(n => n.NewsID)
                                     .Select(n => new NewsDTO
                                     {
                                         NewsID = n.NewsID,
