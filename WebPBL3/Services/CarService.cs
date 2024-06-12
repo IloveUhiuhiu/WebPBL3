@@ -168,8 +168,15 @@ namespace WebPBL3.Services
         }
 
         public async Task<IEnumerable<Make>> GetAllMakes()
-        {
-            return await _db.Makes.ToListAsync();
+        {   
+            try
+            {
+                return await _db.Makes.ToListAsync();
+            } catch (Exception ex)
+            {
+                throw new Exception("Lỗi trong khi lấy danh sách hãng: ", ex);
+            }
+            
         }
         public async Task<Car> GetCarById(string id)
         {
@@ -185,106 +192,161 @@ namespace WebPBL3.Services
         }
 
         public async Task<string> GenerateID()
-        {
-            int carId = 1;
-            // lấy xe có id lớn nhất
-            var lastCar = await _db.Cars.OrderByDescending(c => c.CarID).FirstOrDefaultAsync();
-            if (lastCar != null)
+        {   
+            try
             {
-                carId = Convert.ToInt32(lastCar.CarID.Substring(2)) + 1;
+                int carId = 1;
+                // lấy xe có id lớn nhất
+                var lastCar = await _db.Cars.OrderByDescending(c => c.CarID).FirstOrDefaultAsync();
+                if (lastCar != null)
+                {
+                    carId = Convert.ToInt32(lastCar.CarID.Substring(2)) + 1;
+                }
+                // chuyển về đúng định dạng OT - 6 chữ số
+                var caridTxt = "OT" + carId.ToString().PadLeft(6, '0');
+                return caridTxt;
+            } catch (Exception ex)
+            {
+                throw new Exception("Lỗi trong khi tạo ID: ", ex);
             }
-            // chuyển về đúng định dạng OT - 6 chữ số
-            var caridTxt = "OT" + carId.ToString().PadLeft(6, '0');
-            return caridTxt;
+            
         }
         public async Task<int> CountCars(int makeid, string searchtxt)
-        {
-            return await _db.Cars
+        {   
+            try
+            {
+                return await _db.Cars
                 .Where(c => c.Flag == false && (makeid == 0 || c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt))).CountAsync();
+            } catch(Exception ex)
+            {
+                throw new Exception("Lỗi trong khi đếm xe: ", ex);
+            }
+            
         }
 
         public async Task<IEnumerable<string>> GetOrigins()
-        {
-            return await _db.Cars.Select(c => c.Origin).Distinct().ToListAsync();
+        {   
+            try
+            {
+                return await _db.Cars.Select(c => c.Origin).Distinct().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi trong khi lấy xuất xứ: ", ex);
+            }
         }
         public async Task<IEnumerable<string>> GetColors()
         {
-            return await _db.Cars.Select(c => c.Color).Distinct().ToListAsync();
+            try
+            {
+                return await _db.Cars.Select(c => c.Color).Distinct().ToListAsync();
+            } catch (Exception ex) {
+                throw new Exception("Lỗi trong khi lấy danh sách màu: ", ex);
+            }
+            
         }
         public async Task<IEnumerable<string>> GetFuelConsumption()
-        {
-            return await _db.Cars.Select(c => c.FuelConsumption).Distinct().ToListAsync();
+        {   
+            try
+            {
+                return await _db.Cars.Select(c => c.FuelConsumption).Distinct().ToListAsync();
+            } catch (Exception ex)
+            {
+                throw new Exception("Lỗi trong khi lấy nhiên liệu: ", ex);
+            }
+            
         }
         public async Task<IEnumerable<int>> GetSeats()
         {
-            return await _db.Cars.Select(c => c.Seat).Distinct().ToListAsync();
+            try
+            {
+                return await _db.Cars.Select(c => c.Seat).Distinct().ToListAsync();
+            } catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy số chỗ ngồi: ", ex);
+            }
+            
         }
 
         public async Task<IEnumerable<Car>> FilterCars(string txtSearch, string makeName, string origin, string color, string seat, int page, int perPage, string sortBy)
-        {
-            var item = await _db.Cars
+        {   
+            try
+            {
+                var item = await _db.Cars
             .Include(c => c.Make)
             .Where(c => !c.Flag) // Lọc những xe không bị gắn cờ
             .ToListAsync();
-            if (!string.IsNullOrEmpty(txtSearch))
-            {
-                item = item.Where(car => car.CarName.ToLower().Contains(txtSearch.ToLower())).ToList();
-            }
-            if (!string.IsNullOrEmpty(makeName))
-            {
-                item = item.Where(c => c.Make.MakeName == makeName).ToList();
-}
-            if (!string.IsNullOrEmpty(origin))
-            {
-                item = item.Where(c => c.Origin == origin).ToList();
-            }
-            if (!string.IsNullOrEmpty(color))
-            {
-                item = item.Where(c => c.Color == color).ToList();
-            }
-            if (!string.IsNullOrEmpty(seat) && int.TryParse(seat, out int seatNumber))
-            {
-                item = item.Where(c => c.Seat == seatNumber).ToList();
-            }
-            switch (sortBy)
-            {
-                case "Price":
-                    item = item.OrderBy(p => p.Price).ToList();
-                    break;
-                case "bestSelling":
-                    var orders = await _db.Orders
-                        .Include(o => o.DetailOrders)
-                        .ThenInclude(deo => deo.Car)
-                        .Where(o => o.Status == "Đã thanh toán")
-                        .ToListAsync();
-                    Dictionary<string, int> quantity = new Dictionary<string, int>();
-                    foreach (var car in item)
-                    {
-                        quantity[car.CarID] = 0;
-                    }
-                    foreach (var order in orders)
-                    {
-                        foreach (var detailOrder in order.DetailOrders)
+                if (!string.IsNullOrEmpty(txtSearch))
+                {
+                    item = item.Where(car => car.CarName.ToLower().Contains(txtSearch.ToLower())).ToList();
+                }
+                if (!string.IsNullOrEmpty(makeName))
+                {
+                    item = item.Where(c => c.Make.MakeName == makeName).ToList();
+                }
+                if (!string.IsNullOrEmpty(origin))
+                {
+                    item = item.Where(c => c.Origin == origin).ToList();
+                }
+                if (!string.IsNullOrEmpty(color))
+                {
+                    item = item.Where(c => c.Color == color).ToList();
+                }
+                if (!string.IsNullOrEmpty(seat) && int.TryParse(seat, out int seatNumber))
+                {
+                    item = item.Where(c => c.Seat == seatNumber).ToList();
+                }
+                switch (sortBy)
+                {
+                    case "Price":
+                        item = item.OrderBy(p => p.Price).ToList();
+                        break;
+                    case "bestSelling":
+                        var orders = await _db.Orders
+                            .Include(o => o.DetailOrders)
+                            .ThenInclude(deo => deo.Car)
+                            .Where(o => o.Status == "Đã thanh toán")
+                            .ToListAsync();
+                        Dictionary<string, int> quantity = new Dictionary<string, int>();
+                        foreach (var car in item)
                         {
-                            if (!quantity.ContainsKey(detailOrder.Car.CarID))
-                            {
-                                quantity[detailOrder.Car.CarID] = 0;
-                            }
-                            quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
+                            quantity[car.CarID] = 0;
                         }
-                    }
-                    item = item.OrderByDescending(c => quantity[c.CarID]).ToList();
-                    break;
+                        foreach (var order in orders)
+                        {
+                            foreach (var detailOrder in order.DetailOrders)
+                            {
+                                if (!quantity.ContainsKey(detailOrder.Car.CarID))
+                                {
+                                    quantity[detailOrder.Car.CarID] = 0;
+                                }
+                                quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
+                            }
+                        }
+                        item = item.OrderByDescending(c => quantity[c.CarID]).ToList();
+                        break;
+                }
+                return item;
+            } catch (Exception ex)
+            {
+                throw new Exception("Lỗi trong khi lọc: ", ex);
             }
-            return item;
+            
             
             
         }
         public async Task<IEnumerable<Car>> GetRelatedCars(Car car)
-        {
-            return await _db.Cars
-                        .Where(c => c.MakeID == car.MakeID && c.CarID != car.CarID && !c.Flag)
-                        .ToListAsync();
+        {   
+            try
+            {
+                return await _db.Cars
+                       .Where(c => c.MakeID == car.MakeID && c.CarID != car.CarID && !c.Flag)
+                       .ToListAsync();
+            } catch (Exception ex)
+            {
+                throw new Exception("Lỗi trong khi lấy xe liên quan: ", ex);
+            }
+           
         }
 
     }

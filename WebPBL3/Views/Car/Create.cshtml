@@ -20,7 +20,7 @@
         <div class="card mb-3 mb-xl-0">
             <div class="card-body text-center">
                 <!-- Profile picture image-->
-                <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/car/carot000000.jpg" alt="" style=" width: 200px;height:200px;">
+                <img id="profileimage" class="img-account-profile  mb-2" src="~/upload/car/carot000000.jpg" alt="" style=" width: 200px;height:200px;border-radius:5px;">
                 <!-- Profile picture help block-->
                 <input type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none">
                     <div id="error-message" style="color: red; display: none;">Vui lòng tải lên một ảnh.</div>
@@ -120,14 +120,14 @@
                 </div>
                 
             </div>
-            <div class="form row col-md-12" ">
+            <div class="form row ">
                 <div class="form-group >
                     <label asp-for="Engine" class="control-label">Động cơ</label>
                     <textarea asp-for="Engine" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="Engine" class="text-danger"></span>
                 </div>
             </div>
-            <div class="form row col-md-12">
+            <div class="form row ">
                 <div class="form-group ">
                     <label asp-for="Description" class="control-label">Mô tả</label>
                     <textarea asp-for="Description" class="form-control" rows="3"></textarea>

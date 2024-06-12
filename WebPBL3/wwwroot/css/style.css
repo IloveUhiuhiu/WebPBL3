@@ -9828,8 +9828,9 @@ textarea.form-control {
       margin: 5px;
       border-radius: 50%;
       background: rgba(0, 0, 0, 0.1); }
-      .testimony-section .owl-dots .owl-dot.active {
-        background: #01d28e; }
+        .testimony-section .owl-dots .owl-dot.active {
+            background: #b3b3b3;    
+        }
 
 .testimony-wrap {
   display: block;

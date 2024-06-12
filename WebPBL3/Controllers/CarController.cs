@@ -31,93 +31,122 @@ namespace WebPBL3.Controllers
         {
             ViewBag.HideHeader = false;
             ViewBag.SearchTerm = searchTerm;
+            try
+            {
+                var makes = await _carService.GetAllMakes();
+                var origins = await _carService.GetOrigins();
+                var colors = await _carService.GetColors();
+                var fuels = await _carService.GetFuelConsumption();
+                var seats = await _carService.GetSeats();
+            
+            
 
-            var makes = await _carService.GetAllMakes();
-            var origins = await _carService.GetOrigins();
-            var colors = await _carService.GetColors();
-            var fuels = await _carService.GetFuelConsumption();
-            var seats = await _carService.GetSeats();
+                // Đưa danh sách vào ViewBag
+                ViewBag.Makes = new SelectList(makes, "MakeID", "MakeName");
+                ViewBag.Origins = new SelectList(origins);
+                ViewBag.Colors = new SelectList(colors);
+                ViewBag.Fuels = new SelectList(fuels);
+                ViewBag.Seats = new SelectList(seats);
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            // Đưa danh sách vào ViewBag
-            ViewBag.Makes = new SelectList(makes, "MakeID", "MakeName");
-            ViewBag.Origins = new SelectList(origins);
-            ViewBag.Colors = new SelectList(colors);
-            ViewBag.Fuels = new SelectList(fuels);
-            ViewBag.Seats = new SelectList(seats);
-
-            return View();
+            
         }
         
         public async Task<ActionResult> Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9, string sortBy = "")
         {
-
-            var item = await _carService.FilterCars(txtSearch, makeName, origin, color, seat, page, perPage, sortBy);
-            int totalCount = item.Count();
-            var cars = item.Skip((page - 1) * perPage)
-                .Take(perPage)
-                .Select(i => new List<string>
+            try
             {
+                var item = await _carService.FilterCars(txtSearch, makeName, origin, color, seat, page, perPage, sortBy);
+                int totalCount = item.Count();
+                var cars = item.Skip((page - 1) * perPage)
+                    .Take(perPage)
+                    .Select(i => new List<string>
+                {
                 i.CarID,
                 i.Photo,
                 i.Price.ToString(),
                 i.CarName
-            });
-            int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
-            return Json(new { Data = cars, TotalPages = totalPages });
+                });
+                int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
+                return Json(new { Data = cars, TotalPages = totalPages });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 		}
         
 		public async Task<IActionResult> Detail(string id)
         {
 			ViewBag.HideHeader = false;
-			if (String.IsNullOrEmpty(id))
+			if (string.IsNullOrEmpty(id))
 			{
-				return NotFound();
+				return NotFound("Id is null or empty.");
 			}
 			Car? car = await _carService.GetCarById(id);
 
 			if (car == null)
 			{
-				return NotFound();
+				return NotFound("Car is not found.");
 			}
+            try
+            {
+                CarDTO CarDTOFromDb = _carService.ConvertToCarDTO(car);
 
-            CarDTO CarDTOFromDb =  _carService.ConvertToCarDTO(car);
+                ViewBag.RelatedCars = await _carService.GetRelatedCars(car);
+                return View(CarDTOFromDb);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             
-            ViewBag.RelatedCars = await _carService.GetRelatedCars(car);
-            return View(CarDTOFromDb);
         }
 
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> CarListTable(int makeid = 0, string searchtxt = "", int page = 1)
         {
-
-            // Kiểm tra và lấy dữ liệu "makes" nếu chưa có trong TempData
-            // TemData lưu trữ dữ liệu trong Session, khi Session hết hạn hoặc bị xóa thì makes bay
-            if (!TempData.ContainsKey("makes"))
+            try
             {
-                IEnumerable<Make> makes = await _carService.GetAllMakes();
-                TempData["makes"] = JsonConvert.SerializeObject(makes);
-                TempData.Keep("makes");
+
+
+
+                // Kiểm tra và lấy dữ liệu "makes" nếu chưa có trong TempData
+                // TemData lưu trữ dữ liệu trong Session, khi Session hết hạn hoặc bị xóa thì makes bay
+                if (!TempData.ContainsKey("makes"))
+                {
+                    IEnumerable<Make> makes = await _carService.GetAllMakes();
+                    TempData["makes"] = JsonConvert.SerializeObject(makes);
+                    TempData.Keep("makes");
+                }
+
+                int total = await _carService.CountCars(makeid, searchtxt);
+                // tổng số trang
+                var totalPage = (total + limits - 1) / limits;
+                // sử dụng khi previous là 1
+                if (page < 1) page = 1;
+                // sử dụng khi next là totalPage 
+                if (page > totalPage && totalPage > 0) page = totalPage;
+                IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
+                // tổng số sản phẩm
+
+
+                ViewBag.totalRecord = total;
+                ViewBag.totalPage = totalPage;
+                ViewBag.currentPage = page;
+                ViewBag.makeid = makeid;
+                ViewBag.searchtxt = searchtxt;
+
+
+                return View(cars);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
-
-            int total = await _carService.CountCars(makeid, searchtxt);
-            // tổng số trang
-            var totalPage = (total + limits - 1) / limits;
-            // sử dụng khi previous là 1
-            if (page < 1) page = 1;
-            // sử dụng khi next là totalPage 
-            if (page > totalPage && totalPage > 0) page = totalPage;
-            IEnumerable<CarDTO> cars = await _carService.GetAllCars(makeid, searchtxt, page);
-            // tổng số sản phẩm
-
-
-            ViewBag.totalRecord = total;
-            ViewBag.totalPage = totalPage;
-            ViewBag.currentPage = page;
-            ViewBag.makeid = makeid;
-            ViewBag.searchtxt = searchtxt;
-
-
-            return View(cars);
         }
         // [GET]
         [Authorize(Roles = "Admin, Staff")]
@@ -171,17 +200,24 @@ namespace WebPBL3.Controllers
         {
             if (string.IsNullOrEmpty(id))
             {
-                return NotFound("Id is null");
+                return NotFound("Id is null or empty");
             }
             Car? car = await _carService.GetCarById(id);
             if (car == null)
             {
                 return NotFound("Car is not found");
             }
+            try
+            {
+                CarDTO CarDTOFromDb = _carService.ConvertToCarDTO(car);
+                return View(CarDTOFromDb);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
-            CarDTO CarDTOFromDb = _carService.ConvertToCarDTO(car);
-
-            return View(CarDTOFromDb);
+            
         }
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
@@ -190,7 +226,7 @@ namespace WebPBL3.Controllers
 
             if (ModelState.IsValid)
             {
-                ;
+                
                 if (string.IsNullOrEmpty(cardto.CarID))
                 {
                     return NotFound("Car is not found");
@@ -219,48 +255,62 @@ namespace WebPBL3.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Details(string? id)
         {
-
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                return NotFound("Id is null");
-            }
-            Car? car = await _carService.GetCarById(id);
 
-            if (car == null)
+
+                if (string.IsNullOrEmpty(id))
+                {
+                    return NotFound("Id is null");
+                }
+                Car? car = await _carService.GetCarById(id);
+
+                if (car == null)
+                {
+                    return NotFound("Car is not found");
+                }
+                CarDTO cardtoFromDb = _carService.ConvertToCarDTO(car);
+
+                return View(cardtoFromDb);
+            } catch (Exception ex)
             {
-                return NotFound("Car is not found");
+                return BadRequest(ex.Message);
             }
-            CarDTO cardtoFromDb = _carService.ConvertToCarDTO(car);
-
-            return View(cardtoFromDb);
         }
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(string? id)
         {
-
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound("Id is null");
-            }
-            Car? car = await _carService.GetCarById(id);
-
-            if (car == null)
-            {
-                return NotFound("Car is not found");
-            }
-
             try
             {
-                await _carService.DeleteCar(car);
 
-            }
-            catch (DbUpdateConcurrencyException ex)
+
+                if (string.IsNullOrEmpty(id))
+                {
+                    return NotFound("Id is null");
+                }
+                Car? car = await _carService.GetCarById(id);
+
+                if (car == null)
+                {
+                    return NotFound("Car is not found");
+                }
+
+                try
+                {
+                    await _carService.DeleteCar(car);
+
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+
+                    return BadRequest("Error delete car: " + ex.Message);
+                }
+
+                return RedirectToAction("CarListTable");
+            } catch (Exception ex)
             {
-
-                return BadRequest("Error delete car: " + ex.Message);
+                return BadRequest(ex.Message);
             }
-
-            return RedirectToAction("CarListTable");
 
         }
 
